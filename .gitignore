@@ -2,3 +2,6 @@ node_modules/
 dist/
 *.tsbuildinfo
 .DS_Store
+
+# local preview / agent tooling (not part of the app)
+.freebuff/

@@ -5,6 +5,7 @@ import {
 import { LessonDemo } from "../components/viz";
 import { Badge, Card, SectionHeading } from "../components/ui";
 import { Ket } from "../components/quantum/display";
+import { useRegisterPageContext } from "../lib/tutorContext";
 
 // three.js is heavy — lazy-load it
 const BlochSphere = lazy(() => import("../components/viz3d/BlochSphere").then((m) => ({ default: m.BlochSphere })));
@@ -48,6 +49,19 @@ const COLOR_MAP: Record<string, string> = {
 export default function Visualize() {
   const [selected, setSelected] = useState<string | null>(null);
   const active = CONCEPTS.find((c) => c.id === selected);
+
+  // Tell the copilot which concept is open, so a doubt stays next to the demo.
+  useRegisterPageContext({
+    kind: "visualize",
+    title: active ? active.title : "Visualize",
+    circuit: null,
+    facts: active
+      ? [`The learner has the “${active.title}” interactive demo open on screen. ${active.blurb}`]
+      : ["The learner is browsing the interactive concept cards."],
+    prompts: active
+      ? [`Explain ${active.title} simply`, `Give me an analogy for ${active.title}`, "What am I looking at?"]
+      : ["Explain superposition simply", "What is a Bloch sphere?"],
+  });
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">

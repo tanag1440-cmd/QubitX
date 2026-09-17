@@ -1,16 +1,52 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Cpu, FlaskConical, Info } from "lucide-react";
 import { CircuitBuilder } from "../components/lab/CircuitBuilder";
 import { EmptyState, SectionHeading } from "../components/ui";
 import { useStore } from "../lib/store";
+import { useRegisterPageContext } from "../lib/tutorContext";
 import type { CircuitOp } from "../types";
+
+const circuitSig = (ops: CircuitOp[]) => ops.map((o) => `${o.gate}:${o.qubits.join(",")}@${o.col}`).join(";");
 
 export default function Lab() {
   const { currentUser, db } = useStore();
   const navigate = useNavigate();
   const [loadKey, setLoadKey] = useState(0);
   const [pendingLoad, setPendingLoad] = useState<{ ops: CircuitOp[]; qubits: number } | null>(null);
+  const [liveCircuit, setLiveCircuit] = useState<{ ops: CircuitOp[]; numQubits: number }>({ ops: [], numQubits: 2 });
+
+  // Publishes the unsaved, in-progress circuit so the tutor can reason about
+  // exactly what the learner is looking at. Stable identity keeps the builder's
+  // change effect from re-firing on every render.
+  const handleCircuitChange = useCallback((ops: CircuitOp[], numQubits: number) => {
+    setLiveCircuit((cur) =>
+      cur.numQubits === numQubits && circuitSig(cur.ops) === circuitSig(ops) ? cur : { ops, numQubits }
+    );
+  }, []);
+
+  // Only page-specific provenance here. The gates, distribution and entanglement
+  // status are computed from the circuit itself by the grounded AI service, so
+  // restating them would just duplicate the same numbers twice.
+  const circuitFacts = useMemo(
+    () => [
+      liveCircuit.ops.length === 0
+        ? "The Quantum Lab circuit builder is open and currently empty."
+        : "Reading the learner's in-progress (unsaved) circuit straight from the Quantum Lab builder.",
+    ],
+    [liveCircuit.ops.length]
+  );
+
+  useRegisterPageContext({
+    kind: "lab",
+    title: "Quantum Lab",
+    subtitle: "Circuit builder",
+    circuit: liveCircuit,
+    facts: circuitFacts,
+    prompts: liveCircuit.ops.length === 0
+      ? ["How do I build a Bell state?", "What does the Hadamard gate do?", "Which gate should I start with?", "Explain my circuit"]
+      : ["Explain my circuit", "Debug my circuit", "What happens if I remove a gate?", "Is my circuit entangled?"],
+  });
 
   const myExperiments = currentUser
     ? db.experiments.filter((e) => e.userId === currentUser.id)
@@ -49,6 +85,8 @@ export default function Lab() {
         key={loadKey}
         initialOps={pendingLoad?.ops}
         initialQubits={pendingLoad?.qubits ?? 2}
+        onCircuitChange={handleCircuitChange}
+        showAiTools
       />
 
       {/* saved experiments */}

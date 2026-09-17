@@ -6,8 +6,14 @@ import {
 } from "recharts";
 import { Award, Flame, LineChart as LineChartIcon, Target, TrendingUp, Zap } from "lucide-react";
 import { ProgressBar, StatCard } from "../components/ui";
+import { GroundedChip, MasteryBar } from "../components/learning";
 import { ACHIEVEMENTS, LESSONS, lessonById } from "../data/content";
+import { learningSummary } from "../lib/learning/engine";
+import { topicName } from "../data/learningTopics";
+import { LinkButton } from "../components/ui";
 import { overallProgress, useStore } from "../lib/store";
+import { MISTAKE_LABELS } from "../lib/learning/engine";
+import { useRegisterPageContext } from "../lib/tutorContext";
 
 const SKILLS = [
   { name: "Classical vs Quantum", lessons: ["l1"] },
@@ -30,7 +36,31 @@ const TOOLTIP_STYLE = {
 };
 
 export default function ProgressPage() {
-  const { currentUser, db, completedLessonIds, totalXp, level, streakDays, bestStreak } = useStore();
+  const {
+    currentUser, db, completedLessonIds, totalXp, level, streakDays, bestStreak,
+    topicMasteryList, mistakePatterns, suggestedNext, overallMasteryValue,
+  } = useStore();
+
+  // Publish the analytics already on screen so the tutor explains the learner's
+  // own numbers instead of generic advice.
+  const tutorSummary = currentUser ? learningSummary(topicMasteryList, currentUser.id, mistakePatterns) : null;
+  useRegisterPageContext({
+    kind: "progress",
+    title: "My Quantum Progress",
+    circuit: null,
+    facts: currentUser
+      ? [
+          `Overall quantum mastery ${overallMasteryValue}% · ${totalXp} XP · ${streakDays}-day streak (best ${bestStreak}).`,
+          ...(tutorSummary ? [tutorSummary.strengthsText, tutorSummary.gapsText] : []),
+          ...(suggestedNext[0] ? [`Recommended next: “${suggestedNext[0].title}” — ${suggestedNext[0].reason}`] : []),
+          ...(tutorSummary && tutorSummary.activeMistakes.length > 0
+            ? [`Active misconceptions: ${tutorSummary.activeMistakes.map((m) => MISTAKE_LABELS[m.mistakeType] ?? m.mistakeType).join(", ")}.`]
+            : []),
+        ]
+      : [],
+    prompts: ["What are my weakest topics?", "How can I improve?", "Explain my next recommendation"],
+  });
+
   if (!currentUser) return null;
   const uid = currentUser.id;
 
@@ -79,6 +109,15 @@ export default function ProgressPage() {
     score: Math.round((a.score / a.total) * 100),
   }));
 
+  // ── Adaptive learning analytics ──
+  const summary = learningSummary(topicMasteryList, uid, mistakePatterns);
+  const circuitAttempts = (db.circuitAttempts ?? []).filter((a) => a.userId === uid);
+  const challengeSuccess = circuitAttempts.filter((a) => a.success).length;
+  const learningTimeMin = Math.round(
+    (db.learningAttempts ?? []).filter((a) => a.userId === uid).reduce((s, a) => s + a.timeTaken, 0) / 60
+  );
+  const measuredTopics = [...topicMasteryList].filter((m) => m.attempts > 0).sort((a, b) => b.mastery - a.mastery);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -99,6 +138,78 @@ export default function ProgressPage() {
         <StatCard icon={<Flame className="h-5 w-5" />} label="Streak" value={`${streakDays}d`} sub={`best ${bestStreak}d`} accent="rose" />
         <StatCard icon={<Award className="h-5 w-5" />} label="Achievements" value={achievements.length} sub={`of ${ACHIEVEMENTS.length}`} accent="mint" />
         <StatCard icon={<TrendingUp className="h-5 w-5" />} label="Avg quiz" value={avgScore !== null ? `${avgScore}%` : "—"} sub={`${attempts.length} quizzes`} accent="cyan" />
+      </div>
+
+      {/* ── Adaptive learning analytics ── */}
+      <div className="mt-6 rounded-2xl border border-white/10 bg-ink-850/80 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-semibold text-white">Quantum knowledge</h2>
+            <p className="mt-1 text-xs text-slate-500">Topic-level mastery, computed from your attempts and circuits</p>
+          </div>
+          <GroundedChip label="Updated automatically" />
+        </div>
+
+        <div className="mt-5 flex items-center gap-4">
+          <span className="font-mono text-4xl font-bold text-white">{overallMasteryValue}%</span>
+          <div className="flex-1">
+            <ProgressBar value={overallMasteryValue} />
+            <p className="mt-1.5 text-xs text-slate-500">
+              {measuredTopics.length} topic{measuredTopics.length === 1 ? "" : "s"} measured · {challengeSuccess}/{circuitAttempts.length || 0} challenges passed
+              {learningTimeMin > 0 ? ` · ${learningTimeMin} min of practice logged` : ""}
+            </p>
+          </div>
+        </div>
+
+        {measuredTopics.length === 0 ? (
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-white/10 px-4 py-5">
+            <p className="text-sm text-slate-400">No topic evidence yet. Take the diagnostic to seed your profile.</p>
+            <LinkButton to="/diagnostic" size="sm">Run diagnostic</LinkButton>
+          </div>
+        ) : (
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {measuredTopics.slice(0, 10).map((m) => (
+              <MasteryBar key={m.topicId} topicId={m.topicId} mastery={m.mastery} attempts={m.attempts} confidence={m.confidence} compact />
+            ))}
+          </div>
+        )}
+
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          <div className="rounded-xl border border-qx-mint/25 bg-qx-mint/[0.06] p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-qx-mint">Strengths</p>
+            <p className="mt-2 text-sm text-slate-300">{summary.strengthsText}</p>
+          </div>
+          <div className="rounded-xl border border-qx-amber/25 bg-qx-amber/[0.06] p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-qx-amber">Areas to improve</p>
+            <p className="mt-2 text-sm text-slate-300">{summary.gapsText}</p>
+          </div>
+          <div className="rounded-xl border border-qx-cyan/25 bg-qx-cyan/[0.06] p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-qx-cyan">Recommended next step</p>
+            {suggestedNext[0] ? (
+              <>
+                <p className="mt-2 text-sm font-semibold text-white">{suggestedNext[0].title}</p>
+                <p className="mt-1 text-xs text-slate-400">{suggestedNext[0].reason}</p>
+                <LinkButton to="/ai-challenges" size="sm" variant="secondary" className="mt-3">Practise it</LinkButton>
+              </>
+            ) : (
+              <p className="mt-2 text-sm text-slate-300">Nothing outstanding — pick an expert-level challenge or explore the Lab.</p>
+            )}
+          </div>
+        </div>
+
+        {summary.activeMistakes.length > 0 && (
+          <div className="mt-5 rounded-xl border border-white/10 bg-ink-900/50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Recent recurring mistakes</p>
+            <ul className="mt-2 grid gap-2 sm:grid-cols-3">
+              {summary.activeMistakes.slice(0, 3).map((mp) => (
+                <li key={mp.id} className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
+                  <p className="text-sm text-slate-200">{mp.label}</p>
+                  <p className="text-xs text-slate-500">{topicName(mp.topicId)} · {mp.frequency}×</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">

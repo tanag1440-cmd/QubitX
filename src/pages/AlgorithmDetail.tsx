@@ -5,6 +5,7 @@ import { BB84Viz } from "../components/viz/BB84Viz";
 import { Ket, SimulatedBadge } from "../components/quantum/display";
 import { Badge, Button, Card } from "../components/ui";
 import { ALGORITHMS, algorithmById } from "../data/algorithms";
+import { useRegisterPageContext } from "../lib/tutorContext";
 import {
   applyOp, applySingleQubit, cScale, cRound, describeStateWithPct, GATES,
   probabilities, runCircuit, zeroState,
@@ -379,6 +380,23 @@ export default function AlgorithmDetail() {
       default: return null;
     }
   }, [algo]);
+
+  // Publish which algorithm is open so a doubt stays beside the explanation.
+  useRegisterPageContext({
+    kind: "algorithm",
+    title: algo ? algo.title : "Algorithms",
+    subtitle: algo?.tagline,
+    circuit: null,
+    facts: algo
+      ? [
+          `The learner is reading the algorithm “${algo.title}” (level: ${algo.level}).`,
+          `Its tagline: ${algo.tagline}`,
+        ]
+      : [],
+    prompts: algo
+      ? [`Explain ${algo.title} step by step`, `Why is ${algo.title} faster than the classical approach?`, "Give me an analogy"]
+      : ["Which algorithm should I learn first?", "Explain Grover's algorithm"],
+  });
 
   if (!algo) {
     return (

@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Eraser, Minus, Play, Plus, RotateCcw, Save, Trash2 } from "lucide-react";
 import {
   explainCircuit, ket, probabilities, runCircuit,
 } from "../../lib/simulator";
-import type { CircuitOp, GateType } from "../../types";
+import type { ChallengeSpec, CircuitOp, GateType, TopicId } from "../../types";
+import { CircuitAiPanel } from "./CircuitAiPanel";
 import { SimulatedBadge } from "../quantum/display";
 import { Button, Card } from "../ui";
 import { useStore } from "../../lib/store";
@@ -51,6 +52,8 @@ function op(gate: GateType, qubits: number[], col: number): CircuitOp {
 const MAX_COLS = 8;
 const COL_W = 56;
 const ROW_H = 64;
+/** Horizontal space reserved for the q0/q1 wire labels, so column-0 gates never overlap them. */
+const LABEL_W = 32;
 
 interface Props {
   maxQubits?: number;
@@ -61,9 +64,19 @@ interface Props {
   onRun?: (ops: CircuitOp[], numQubits: number) => void;
   evaluator?: (ops: CircuitOp[], numQubits: number) => { pass: boolean; message: string } | null;
   evaluatorLabel?: string;
+  /**
+   * Publish the circuit as it changes (additive, optional). Used by the tutor
+   * copilot so it can reason about the circuit the learner is *currently*
+   * building, including unsaved and half-finished ones.
+   */
+  onCircuitChange?: (ops: CircuitOp[], numQubits: number) => void;
+  /** Opt-in circuit-aware AI tools (Explain / Debug / Frameworks / Noise). */
+  showAiTools?: boolean;
+  aiTopicId?: TopicId;
+  aiSpec?: ChallengeSpec;
 }
 
-export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, embedded, onSave, onRun, evaluator, evaluatorLabel }: Props) {
+export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, embedded, onSave, onRun, evaluator, evaluatorLabel, onCircuitChange, showAiTools, aiTopicId, aiSpec }: Props) {
   const { currentUser, addExperiment, recordActivity } = useStore();
   const [qubits, setQubits] = useState(Math.min(initialQubits, maxQubits));
   const [ops, setOps] = useState<CircuitOp[]>(initialOps ?? []);
@@ -77,6 +90,11 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
   const [error, setError] = useState<string | null>(null);
 
   const maxCol = useMemo(() => ops.reduce((m, o) => Math.max(m, o.col), -1), [ops]);
+
+  // Let the host page (and through it the tutor copilot) see the live circuit.
+  useEffect(() => {
+    onCircuitChange?.(ops, qubits);
+  }, [ops, qubits, onCircuitChange]);
 
   const selectGate = (g: GateType) => {
     setArmed((cur) => (cur === g ? null : g));
@@ -302,9 +320,9 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
         {/* canvas */}
         <Card className="overflow-x-auto p-4">
           <svg
-            width={Math.max((MAX_COLS + 1) * COL_W, qubits * COL_W + 40)}
+            width={Math.max((MAX_COLS + 1) * COL_W + LABEL_W, qubits * COL_W + 40 + LABEL_W)}
             height={qubits * ROW_H + 10}
-            viewBox={`0 0 ${Math.max((MAX_COLS + 1) * COL_W, qubits * COL_W + 40)} ${qubits * ROW_H + 10}`}
+            viewBox={`0 0 ${Math.max((MAX_COLS + 1) * COL_W + LABEL_W, qubits * COL_W + 40 + LABEL_W)} ${qubits * ROW_H + 10}`}
             className="block"
             role="img"
             aria-label="Circuit canvas"
@@ -312,7 +330,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
             {/* wires */}
             {Array.from({ length: qubits }).map((_, q) => (
               <g key={q}>
-                <line x1={40} y1={q * ROW_H + ROW_H / 2} x2={(MAX_COLS + 1) * COL_W} y2={q * ROW_H + ROW_H / 2} stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
+                <line x1={44} y1={q * ROW_H + ROW_H / 2} x2={(MAX_COLS + 1) * COL_W + LABEL_W} y2={q * ROW_H + ROW_H / 2} stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
                 <text x={34} y={q * ROW_H + ROW_H / 2 + 4} textAnchor="end" fill={q === 0 ? "#a78bfa" : "#67e8f9"} fontSize="12" fontFamily="monospace">q{q}</text>
               </g>
             ))}
@@ -321,7 +339,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
               Array.from({ length: MAX_COLS + 1 }).map((_, c) => (
                 <g
                   key={`${q}-${c}`}
-                  transform={`translate(${c * COL_W + COL_W / 2}, ${q * ROW_H + ROW_H / 2})`}
+                  transform={`translate(${c * COL_W + COL_W / 2 + LABEL_W}, ${q * ROW_H + ROW_H / 2})`}
                 >
                   <rect
                     x={-20}
@@ -341,7 +359,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
             )}
             {/* column guides */}
             {Array.from({ length: MAX_COLS + 1 }).map((_, c) => (
-              <text key={c} x={c * COL_W + COL_W / 2} y={qubits * ROW_H + 2} textAnchor="middle" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="monospace">
+              <text key={c} x={c * COL_W + COL_W / 2 + LABEL_W} y={qubits * ROW_H + 2} textAnchor="middle" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="monospace">
                 {c + 1}
               </text>
             ))}
@@ -460,6 +478,12 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
               {results ? explainCircuit(ops, qubits) : "Run the circuit and we'll explain each step in plain language."}
             </p>
           </Card>
+        </div>
+      )}
+
+      {showAiTools && (
+        <div className={embedded ? "" : "xl:col-span-2"}>
+          <CircuitAiPanel ops={ops} qubits={qubits} topicId={aiTopicId} spec={aiSpec} />
         </div>
       )}
     </div>

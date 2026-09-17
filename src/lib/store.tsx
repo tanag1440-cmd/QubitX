@@ -1,16 +1,35 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type {
   AppDB,
+  ActivityType,
   ChallengeAttempt,
+  ChallengeSpec,
+  CircuitAttemptRecord,
   CircuitOp,
+  Difficulty,
+  DiagnosticResult,
+  LearningAttempt,
+  LearningGoal,
+  LearningMode,
+  LearningRecommendation,
   LessonProgress,
+  MistakePattern,
+  UserLearningProfile,
   QuantumExperiment,
   QuizAttempt,
   ResourceItem,
+  TopicId,
+  TopicMastery,
   User,
   UserAchievement,
 } from "../types";
 import { ACHIEVEMENTS, LESSONS, lessonById, LESSON_ORDER } from "../data/content";
+import { topicById } from "../data/learningTopics";
+import {
+  activeMistakes, analyzeCircuit, applyAttemptToMastery, buildRecommendations, debugCircuit,
+  difficultyIndex, emptyMastery, mistakeLabel, overallMastery, recordMistake, resolveMistakes,
+  scoreDiagnostic, validateSpec, type DiagnosticScore,
+} from "./learning/engine";
 
 const DB_KEY = "qubitx.db.v1";
 
@@ -25,6 +44,55 @@ export const xpForNextLevel = (xp: number) => XP_PER_LEVEL - (xp % XP_PER_LEVEL)
 
 function demoExperiment(name: string, circuit: CircuitOp[], numQubits: number, summary: string): QuantumExperiment {
   return { id: crypto.randomUUID(), userId: "demo-user", name, circuit, numQubits, resultSummary: summary, createdAt: new Date().toISOString() };
+}
+
+/** Seeded mastery for the demo learner: Student A — strong fundamentals, weak entanglement. */
+function demoMastery(): TopicMastery[] {
+  const now = Date.now();
+  const spec: [TopicId, number, number, Difficulty][] = [
+    ["qubits", 90, 4, "Easy"],
+    ["superposition", 86, 5, "Easy"],
+    ["hadamard", 88, 4, "Easy"],
+    ["measurement", 84, 4, "Easy"],
+    ["pauli-x", 85, 3, "Easy"],
+    ["quantum-gates", 82, 5, "Intermediate"],
+    ["circuits", 70, 3, "Intermediate"],
+    ["cnot", 62, 4, "Intermediate"],
+    ["entanglement", 48, 4, "Intermediate"],
+    ["bell-states", 41, 3, "Intermediate"],
+    ["algorithms", 35, 2, "Advanced"],
+    ["grover", 28, 1, "Advanced"],
+  ];
+  return spec.map(([topicId, mastery, attempts, difficulty]) => ({
+    userId: "demo-user", topicId, mastery, attempts,
+    correctAttempts: Math.max(0, Math.round((attempts * mastery) / 100)),
+    averageTime: 42,
+    lastAttempted: new Date(now - 2 * 86400000).toISOString(),
+    lastRevised: null,
+    confidence: Math.min(1, attempts / 5),
+    difficulty,
+    recentScores: [mastery / 100],
+  }));
+}
+
+function demoDiagnostic(): DiagnosticResult {
+  const now = Date.now();
+  return {
+    userId: "demo-user",
+    topicScores: [
+      { topicId: "classical", correct: 1, total: 1 },
+      { topicId: "superposition", correct: 1, total: 1 },
+      { topicId: "hadamard", correct: 1, total: 1 },
+      { topicId: "measurement", correct: 1, total: 1 },
+      { topicId: "cnot", correct: 1, total: 1 },
+      { topicId: "bell-states", correct: 0, total: 1 },
+      { topicId: "entanglement", correct: 0, total: 1 },
+      { topicId: "interference", correct: 1, total: 1 },
+    ],
+    overallScore: 74,
+    summary: "You're already solid on the single-qubit foundations. Your main gap is entanglement — we'll strengthen that before multi-qubit algorithms.",
+    takenAt: new Date(now - 12 * 86400000).toISOString(),
+  };
 }
 
 function seedDemo(): AppDB {
@@ -94,6 +162,20 @@ function seedDemo(): AppDB {
     streak: { current: 5, best: 5, lastActiveDay: new Date(now - 86400000).toISOString().slice(0, 10) },
     xp: { "demo-user": 730 },
     sessionUserId: null,
+    learningProfiles: [{
+      userId: "demo-user", overallMastery: 0, learningGoal: "build-circuits", currentLevel: "Beginner",
+      mode: "practice", onboardingComplete: true, createdAt: iso(14), updatedAt: iso(1),
+    }],
+    topicMastery: demoMastery(),
+    learningAttempts: [],
+    circuitAttempts: [],
+    mistakePatterns: [
+      { id: crypto.randomUUID(), userId: "demo-user", topicId: "cnot", mistakeType: "cnot-control-confusion", label: mistakeLabel("cnot-control-confusion"), frequency: 4, severity: "high", lastSeen: iso(1), resolved: false },
+      { id: crypto.randomUUID(), userId: "demo-user", topicId: "bell-states", mistakeType: "bell-state-outcomes", label: mistakeLabel("bell-state-outcomes"), frequency: 2, severity: "medium", lastSeen: iso(2), resolved: false },
+      { id: crypto.randomUUID(), userId: "demo-user", topicId: "entanglement", mistakeType: "entanglement-as-independence", label: mistakeLabel("entanglement-as-independence"), frequency: 2, severity: "medium", lastSeen: iso(3), resolved: false },
+    ],
+    recommendations: [],
+    diagnostics: [demoDiagnostic()],
   };
 }
 
@@ -110,6 +192,28 @@ function emptyDB(): AppDB {
     streak: { current: 0, best: 0, lastActiveDay: null },
     xp: {},
     sessionUserId: null,
+    learningProfiles: [],
+    topicMastery: [],
+    learningAttempts: [],
+    circuitAttempts: [],
+    mistakePatterns: [],
+    recommendations: [],
+    diagnostics: [],
+  };
+}
+
+/** Fill in any collections missing from an older saved database. */
+function normalizeDB(parsed: AppDB): AppDB {
+  return {
+    ...emptyDB(),
+    ...parsed,
+    learningProfiles: parsed.learningProfiles ?? [],
+    topicMastery: parsed.topicMastery ?? [],
+    learningAttempts: parsed.learningAttempts ?? [],
+    circuitAttempts: parsed.circuitAttempts ?? [],
+    mistakePatterns: parsed.mistakePatterns ?? [],
+    recommendations: parsed.recommendations ?? [],
+    diagnostics: parsed.diagnostics ?? [],
   };
 }
 
@@ -119,7 +223,7 @@ function loadDB(): AppDB {
     if (!raw) return emptyDB();
     const parsed = JSON.parse(raw) as AppDB;
     if (!parsed.users || !parsed.lessonProgress) return emptyDB();
-    return parsed;
+    return normalizeDB(parsed);
   } catch {
     return emptyDB();
   }
@@ -132,6 +236,35 @@ export interface QuizOutcome {
   total: number;
   xpEarned: number;
   perfect: boolean;
+}
+
+/** Evidence supplied when the learner answers/attempts something. */
+export interface LearningAttemptInput {
+  topicId: TopicId;
+  activityId: string;
+  activityType: ActivityType;
+  difficulty: Difficulty;
+  score: number; // 0–1
+  timeTaken?: number;
+  hintsUsed?: number;
+  mistakes?: string[];
+}
+
+/** Evidence supplied when the learner submits a circuit. */
+export interface CircuitAttemptInput {
+  topicId: TopicId;
+  ops: CircuitOp[];
+  numQubits: number;
+  challengeId?: string;
+  spec?: ChallengeSpec;
+  timeTaken?: number;
+  hintsUsed?: number;
+}
+
+function levelFromDiagnostic(overall: number): User["level"] {
+  if (overall >= 70) return "Advanced";
+  if (overall >= 40) return "Intermediate";
+  return "Beginner";
 }
 
 interface StoreValue {
@@ -153,6 +286,21 @@ interface StoreValue {
   addExperiment: (name: string, circuit: CircuitOp[], numQubits: number, summary: string) => void;
   askTutor: () => void;
   solveChallenge: (challengeId: string, success: boolean) => void;
+  // ── Adaptive learning system (Qubit-X 2.0) ──
+  learningProfile: UserLearningProfile | null;
+  topicMasteryList: TopicMastery[];
+  mistakePatterns: MistakePattern[];
+  diagnostic: DiagnosticResult | null;
+  overallMasteryValue: number;
+  learningMode: LearningMode;
+  suggestedNext: LearningRecommendation[];
+  setLearningGoal: (goal: LearningGoal) => void;
+  setLearningMode: (mode: LearningMode) => void;
+  saveDiagnostic: (answers: number[], goal: LearningGoal | null) => DiagnosticScore | null;
+  recordAttempt: (input: LearningAttemptInput) => void;
+  recordCircuitAttempt: (input: CircuitAttemptInput) => { success: boolean; message: string } | null;
+  completeRecommendation: (id: string) => void;
+  clearLearningData: () => void;
   // derived
   completedLessonIds: string[];
   completedCount: number;
@@ -361,6 +509,27 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         merged.streak = demo.streak;
         merged.xp = { ...prev.xp, ...demo.xp };
       }
+      // Seed the adaptive-learning profile independently, so a demo user created
+      // by an older version of the app still gets the learning data.
+      const hasDemoLearning = (prev.learningProfiles ?? []).some((p) => p.userId === "demo-user");
+      if (!hasDemoLearning) {
+        merged.learningProfiles = [
+          ...(prev.learningProfiles ?? []).filter((p) => p.userId !== "demo-user"),
+          ...(demo.learningProfiles ?? []),
+        ];
+        merged.topicMastery = [
+          ...(prev.topicMastery ?? []).filter((m) => m.userId !== "demo-user"),
+          ...(demo.topicMastery ?? []),
+        ];
+        merged.mistakePatterns = [
+          ...(prev.mistakePatterns ?? []).filter((m) => m.userId !== "demo-user"),
+          ...(demo.mistakePatterns ?? []),
+        ];
+        merged.diagnostics = [
+          ...(prev.diagnostics ?? []).filter((x) => x.userId !== "demo-user"),
+          ...(demo.diagnostics ?? []),
+        ];
+      }
       return merged;
     });
   }, []);
@@ -484,6 +653,240 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   }, [mutate]);
 
+  // ── Adaptive learning actions (Qubit-X 2.0) ───────────────────────────────
+
+  const ensureProfile = useCallback((d: AppDB, userId: string, goal: LearningGoal | null): AppDB => {
+    if ((d.learningProfiles ?? []).some((p) => p.userId === userId)) return d;
+    const user = d.users.find((u) => u.id === userId);
+    const now = new Date().toISOString();
+    const profile: UserLearningProfile = {
+      userId,
+      overallMastery: 0,
+      learningGoal: goal,
+      currentLevel: user?.level ?? "Beginner",
+      mode: "guided",
+      onboardingComplete: false,
+      createdAt: now,
+      updatedAt: now,
+    };
+    return { ...d, learningProfiles: [...(d.learningProfiles ?? []), profile] };
+  }, []);
+
+  /**
+   * Fold one piece of evidence into the learner's profile: topic mastery,
+   * mistake memory, attempt log, XP and level. Deterministic — no AI needed for
+   * scoring, exactly as the requirements ask.
+   */
+  const applyEvidence = useCallback((d: AppDB, userId: string, ev: LearningAttemptInput & { createdAt?: string }): AppDB => {
+    const now = ev.createdAt ?? new Date().toISOString();
+    const base = ensureProfile(d, userId, null);
+    const attempts = base.learningAttempts ?? [];
+    const attemptNumber = attempts.filter((a) => a.userId === userId && a.activityId === ev.activityId).length + 1;
+    const attempt: LearningAttempt = {
+      id: crypto.randomUUID(), userId, activityId: ev.activityId, topicId: ev.topicId,
+      activityType: ev.activityType, difficulty: ev.difficulty, score: ev.score,
+      timeTaken: ev.timeTaken ?? 0, attemptNumber, hintsUsed: ev.hintsUsed ?? 0,
+      mistakes: ev.mistakes ?? [], createdAt: now,
+    };
+
+    const masteryList = [...(base.topicMastery ?? [])];
+    const idx = masteryList.findIndex((m) => m.userId === userId && m.topicId === ev.topicId);
+    const prev = idx === -1
+      ? emptyMastery(userId, ev.topicId, topicById(ev.topicId)?.defaultDifficulty ?? "Beginner")
+      : masteryList[idx];
+    const updated = applyAttemptToMastery(prev, attempt);
+    if (idx === -1) masteryList.push(updated);
+    else masteryList[idx] = updated;
+
+    let patterns = [...(base.mistakePatterns ?? [])];
+    for (const m of attempt.mistakes) patterns = recordMistake(patterns, userId, ev.topicId, m, now);
+    if (ev.score >= 0.8) patterns = resolveMistakes(patterns, userId, ev.topicId);
+
+    const xpGain = Math.max(2, Math.round(ev.score * (8 + difficultyIndex(ev.difficulty) * 6)));
+
+    return {
+      ...base,
+      learningProfiles: (base.learningProfiles ?? []).map((p) => (p.userId === userId ? { ...p, updatedAt: now } : p)),
+      topicMastery: masteryList,
+      mistakePatterns: patterns,
+      learningAttempts: [...attempts, attempt].slice(-500),
+      xp: { ...base.xp, [userId]: (base.xp[userId] ?? 0) + xpGain },
+    };
+  }, [ensureProfile]);
+
+  /** Regenerate the persisted recommendation set from current evidence. */
+  const refreshRecommendations = useCallback((d: AppDB, userId: string): AppDB => {
+    const profile = (d.learningProfiles ?? []).find((p) => p.userId === userId);
+    const recs = buildRecommendations({
+      userId,
+      mastery: d.topicMastery ?? [],
+      mistakes: d.mistakePatterns ?? [],
+      goal: profile?.learningGoal ?? null,
+      completedLessonIds: d.lessonProgress.filter((p) => p.userId === userId && p.status === "completed").map((p) => p.lessonId),
+    }).slice(0, 6);
+    const history = (d.recommendations ?? []).filter((r) => r.userId === userId && r.completed);
+    return { ...d, recommendations: [...history, ...recs] };
+  }, []);
+
+  const setLearningGoal = useCallback((goal: LearningGoal) => {
+    mutate((d) => {
+      const uid = d.sessionUserId;
+      if (!uid) return d;
+      const base = ensureProfile(d, uid, goal);
+      const now = new Date().toISOString();
+      return refreshRecommendations({
+        ...base,
+        learningProfiles: (base.learningProfiles ?? []).map((p) =>
+          p.userId === uid ? { ...p, learningGoal: goal, updatedAt: now } : p
+        ),
+      }, uid);
+    });
+  }, [mutate, ensureProfile, refreshRecommendations]);
+
+  const setLearningMode = useCallback((mode: LearningMode) => {
+    mutate((d) => {
+      const uid = d.sessionUserId;
+      if (!uid) return d;
+      const base = ensureProfile(d, uid, null);
+      const now = new Date().toISOString();
+      return {
+        ...base,
+        learningProfiles: (base.learningProfiles ?? []).map((p) =>
+          p.userId === uid ? { ...p, mode, updatedAt: now } : p
+        ),
+      };
+    });
+  }, [mutate, ensureProfile]);
+
+  const saveDiagnostic = useCallback((answers: number[], goal: LearningGoal | null): DiagnosticScore | null => {
+    const uid = db.sessionUserId;
+    if (!uid) return null;
+    const scored = scoreDiagnostic(answers, uid);
+    mutate((d) => {
+      const base = ensureProfile(d, uid, goal);
+      const existing = [...(base.topicMastery ?? [])];
+      for (const s of scored.seed) {
+        const row = scored.result.topicScores.find((t) => t.topicId === s.topicId);
+        const idx = existing.findIndex((m) => m.userId === uid && m.topicId === s.topicId);
+        if (idx === -1) {
+          existing.push({
+            ...emptyMastery(uid, s.topicId, topicById(s.topicId)?.defaultDifficulty ?? "Beginner"),
+            mastery: s.mastery,
+            attempts: 1,
+            correctAttempts: row?.correct ?? 0,
+            confidence: 0.4,
+            lastAttempted: scored.result.takenAt,
+            recentScores: [row && row.total ? row.correct / row.total : 0.5],
+          });
+        } else {
+          existing[idx] = {
+            ...existing[idx],
+            mastery: Math.max(existing[idx].mastery, s.mastery),
+            confidence: Math.max(existing[idx].confidence, 0.35),
+          };
+        }
+      }
+      let patterns = [...(base.mistakePatterns ?? [])];
+      for (const m of scored.mistakes) patterns = recordMistake(patterns, uid, m.topicId, m.mistakeType, scored.result.takenAt);
+      const now = new Date().toISOString();
+      const next: AppDB = {
+        ...base,
+        topicMastery: existing,
+        mistakePatterns: patterns,
+        diagnostics: [...(base.diagnostics ?? []), scored.result],
+        learningProfiles: (base.learningProfiles ?? []).map((p) =>
+          p.userId === uid
+            ? { ...p, onboardingComplete: true, learningGoal: goal ?? p.learningGoal, currentLevel: levelFromDiagnostic(scored.result.overallScore), updatedAt: now }
+            : p
+        ),
+        xp: { ...base.xp, [uid]: (base.xp[uid] ?? 0) + 60 },
+      };
+      return refreshRecommendations(next, uid);
+    });
+    return scored;
+  }, [db.sessionUserId, mutate, ensureProfile, refreshRecommendations]);
+
+  const recordAttempt = useCallback((input: LearningAttemptInput) => {
+    mutate((d) => {
+      const uid = d.sessionUserId;
+      if (!uid) return d;
+      return refreshRecommendations(applyEvidence(d, uid, input), uid);
+    });
+  }, [mutate, applyEvidence, refreshRecommendations]);
+
+  const recordCircuitAttempt = useCallback((input: CircuitAttemptInput) => {
+    const uid = db.sessionUserId;
+    if (!uid) return null;
+    const analysis = analyzeCircuit(input.ops, input.numQubits);
+    const validation = input.spec ? validateSpec(input.ops, input.numQubits, input.spec) : null;
+    const success = validation ? validation.pass : analysis.gateCount > 0;
+    const dbg = debugCircuit(input.ops, input.numQubits, input.spec);
+
+    const mistakes = new Set<string>();
+    if (validation && !validation.pass && validation.mistakeType) mistakes.add(validation.mistakeType);
+    for (const issue of dbg.issues) if (issue.severity === "high") mistakes.add(issue.mistakeType);
+
+    const record: CircuitAttemptRecord = {
+      id: crypto.randomUUID(),
+      userId: uid,
+      challengeId: input.challengeId,
+      topicId: input.topicId,
+      framework: "local-simulator",
+      circuitRepresentation: input.ops.filter((o) => o.gate !== "M").map((o) => ({ gate: o.gate, qubits: o.qubits })),
+      numQubits: input.numQubits,
+      executionResult: { probabilities: analysis.idealProbabilities },
+      expectedResult: validation?.expectedProbabilities ? { probabilities: validation.expectedProbabilities } : null,
+      success,
+      errors: Array.from(mistakes),
+      createdAt: new Date().toISOString(),
+    };
+
+    mutate((d) => {
+      const difficulty = (d.topicMastery ?? []).find((m) => m.userId === uid && m.topicId === input.topicId)?.difficulty
+        ?? topicById(input.topicId)?.defaultDifficulty ?? "Intermediate";
+      const base = applyEvidence(d, uid, {
+        topicId: input.topicId,
+        activityId: input.challengeId ?? `circuit-${input.topicId}`,
+        activityType: "circuit",
+        difficulty,
+        score: validation ? (success ? 1 : 0) : (analysis.gateCount > 0 ? 0.7 : 0),
+        timeTaken: input.timeTaken,
+        hintsUsed: input.hintsUsed,
+        mistakes: Array.from(mistakes),
+      });
+      const withRecord: AppDB = { ...base, circuitAttempts: [...(base.circuitAttempts ?? []), record].slice(-300) };
+      return refreshRecommendations(withRecord, uid);
+    });
+
+    return { success, message: validation?.message ?? (success ? "Your circuit ran successfully." : "Your circuit is empty — add a gate first.") };
+  }, [db.sessionUserId, applyEvidence, mutate, refreshRecommendations]);
+
+  const completeRecommendation = useCallback((id: string) => {
+    mutate((d) => ({
+      ...d,
+      recommendations: (d.recommendations ?? []).map((r) => (r.id === id ? { ...r, completed: true } : r)),
+    }));
+  }, [mutate]);
+
+  const clearLearningData = useCallback(() => {
+    mutate((d) => {
+      const uid = d.sessionUserId;
+      if (!uid) return d;
+      return {
+        ...d,
+        topicMastery: (d.topicMastery ?? []).filter((m) => m.userId !== uid),
+        learningAttempts: (d.learningAttempts ?? []).filter((a) => a.userId !== uid),
+        circuitAttempts: (d.circuitAttempts ?? []).filter((a) => a.userId !== uid),
+        mistakePatterns: (d.mistakePatterns ?? []).filter((m) => m.userId !== uid),
+        recommendations: (d.recommendations ?? []).filter((r) => r.userId !== uid),
+        diagnostics: (d.diagnostics ?? []).filter((x) => x.userId !== uid),
+        learningProfiles: (d.learningProfiles ?? []).map((p) =>
+          p.userId === uid ? { ...p, onboardingComplete: false, updatedAt: new Date().toISOString() } : p
+        ),
+      };
+    });
+  }, [mutate]);
+
   const recordActivity = useCallback(() => {
     mutate((d) => d);
   }, [mutate]);
@@ -501,6 +904,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       ? db.lessonProgress.filter((p) => p.userId === uid && p.status === "completed").map((p) => p.lessonId)
       : [];
     const totalXp = uid ? (db.xp[uid] ?? 0) : 0;
+
+    const learningProfile = uid ? (db.learningProfiles ?? []).find((p) => p.userId === uid) ?? null : null;
+    const topicMasteryList = uid ? (db.topicMastery ?? []).filter((m) => m.userId === uid) : [];
+    const mistakePatterns = uid ? activeMistakes(db.mistakePatterns ?? [], uid) : [];
+    const diagnostic = uid
+      ? (db.diagnostics ?? []).filter((x) => x.userId === uid).sort((a, b) => b.takenAt.localeCompare(a.takenAt))[0] ?? null
+      : null;
+    const overallMasteryValue = overallMastery(db.topicMastery ?? [], uid ?? undefined);
+    const suggestedNext = uid
+      ? buildRecommendations({
+          userId: uid,
+          mastery: db.topicMastery ?? [],
+          mistakes: db.mistakePatterns ?? [],
+          goal: learningProfile?.learningGoal ?? null,
+          completedLessonIds,
+        })
+      : [];
+
     return {
       db,
       currentUser,
@@ -520,6 +941,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addExperiment,
       askTutor,
       solveChallenge,
+      learningProfile,
+      topicMasteryList,
+      mistakePatterns,
+      diagnostic,
+      overallMasteryValue,
+      learningMode: learningProfile?.mode ?? "guided",
+      suggestedNext,
+      setLearningGoal,
+      setLearningMode,
+      saveDiagnostic,
+      recordAttempt,
+      recordCircuitAttempt,
+      completeRecommendation,
+      clearLearningData,
       completedLessonIds,
       completedCount: completedLessonIds.length,
       totalXp,
@@ -532,6 +967,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     db, currentUser, signup, login, logout, resetPassword, enterDemo, updateProfile,
     addResource, deleteResource, deleteUser, recordActivity,
     completeLesson, setLessonProgress, submitQuiz, addExperiment, askTutor, solveChallenge,
+    setLearningGoal, setLearningMode, saveDiagnostic, recordAttempt, recordCircuitAttempt,
+    completeRecommendation, clearLearningData,
   ]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

@@ -9,8 +9,11 @@ import { Avatar } from "../components/layout/Avatar";
 import { DemoGuide } from "../components/demo/DemoGuide";
 import { Ket } from "../components/quantum/display";
 import { Badge, Button, Card, LinkButton, ProgressBar, StatCard } from "../components/ui";
+import { GroundedChip, MasteryBar } from "../components/learning";
 import { MODULES, moduleById, LESSONS } from "../data/content";
 import { nextLesson, overallProgress, useStore } from "../lib/store";
+import { MISTAKE_LABELS, learningSummary } from "../lib/learning/engine";
+import { useRegisterPageContext } from "../lib/tutorContext";
 
 const MODULE_ICONS: Record<string, React.ReactNode> = {
   Cpu: <Cpu className="h-4 w-4" />, CircleDot: <CircleDot className="h-4 w-4" />, Waves: <Waves className="h-4 w-4" />,
@@ -19,8 +22,34 @@ const MODULE_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function Dashboard() {
-  const { currentUser, completedLessonIds, completedCount, totalXp, level, streakDays, db, setLessonProgress } = useStore();
+  const {
+    currentUser, completedLessonIds, completedCount, totalXp, level, streakDays, db, setLessonProgress,
+    topicMasteryList, mistakePatterns, suggestedNext, overallMasteryValue, learningProfile, diagnostic,
+  } = useStore();
   const navigate = useNavigate();
+
+  // The dashboard's numbers are already computed here, so publish them verbatim
+  // rather than letting the tutor re-derive (or guess) them.
+  const tutorSummary = currentUser ? learningSummary(topicMasteryList, currentUser.id, mistakePatterns) : null;
+  useRegisterPageContext({
+    kind: "dashboard",
+    title: "Dashboard",
+    circuit: null,
+    facts: currentUser
+      ? [
+          `${currentUser.name} · level ${currentUser.level} · ${totalXp} XP · ${streakDays}-day streak.`,
+          `Lessons completed: ${completedCount}/10.`,
+          `Overall quantum mastery: ${overallMasteryValue}%.`,
+          ...(tutorSummary ? [tutorSummary.strengthsText, tutorSummary.gapsText] : []),
+          ...(suggestedNext[0] ? [`The app's current recommendation is “${suggestedNext[0].title}” — ${suggestedNext[0].reason}`] : []),
+          ...(tutorSummary && tutorSummary.activeMistakes.length > 0
+            ? [`Active misconceptions: ${tutorSummary.activeMistakes.map((m) => MISTAKE_LABELS[m.mistakeType] ?? m.mistakeType).join(", ")}.`]
+            : []),
+        ]
+      : [],
+    prompts: ["What should I learn next?", "How am I doing?", "What are my weakest topics?"],
+  });
+
   if (!currentUser) return null;
 
   const overall = overallProgress(completedLessonIds);
@@ -82,6 +111,102 @@ export default function Dashboard() {
         <StatCard icon={<Zap className="h-5 w-5" />} label="Level" value={level} sub={`${totalXp} XP total`} accent="amber" />
         <StatCard icon={<Flame className="h-5 w-5" />} label="Current streak" value={`${streakDays} day${streakDays === 1 ? "" : "s"}`} sub="Keep it burning 🔥" accent="rose" />
         <StatCard icon={<Award className="h-5 w-5" />} label="Achievements" value={db.userAchievements.filter((a) => a.userId === currentUser.id).length} sub="Badges earned" accent="mint" />
+      </div>
+
+      {/* ── Adaptive learning recommendations ── */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <Card className="p-6">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h2 className="flex items-center gap-2 font-semibold text-white">
+              <Sparkles className="h-4.5 w-4.5 text-qx-cyan" /> What should I learn next?
+            </h2>
+            <GroundedChip />
+          </div>
+
+          {!diagnostic && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-qx-cyan/25 bg-qx-cyan/[0.06] px-4 py-3">
+              <p className="text-sm text-slate-300">Take the 3-minute diagnostic so recommendations aren't guesswork.</p>
+              <LinkButton to="/diagnostic" size="sm">Run diagnostic</LinkButton>
+            </div>
+          )}
+
+          {suggestedNext[0] ? (
+            <div className="rounded-2xl border border-qx-cyan/25 bg-gradient-to-br from-qx-cyan/10 to-transparent p-5">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge color="cyan">{suggestedNext[0].recommendationType}</Badge>
+                <span className="text-xs uppercase tracking-wider text-slate-500">Recommended next</span>
+              </div>
+              <h3 className="mt-2 text-lg font-bold text-white">{suggestedNext[0].title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-400">
+                <span className="font-semibold text-slate-300">Reason: </span>{suggestedNext[0].reason}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <LinkButton to="/ai-challenges" size="sm">Start adapted challenge <ChevronRight className="h-4 w-4" /></LinkButton>
+                <LinkButton to="/learning-path" size="sm" variant="secondary">View full path</LinkButton>
+              </div>
+            </div>
+          ) : (
+            <p className="rounded-xl border border-dashed border-white/15 px-4 py-6 text-center text-sm text-slate-400">
+              Complete a lesson, quiz or circuit and I'll recommend the next step here.
+            </p>
+          )}
+
+          {suggestedNext.length > 1 && (
+            <div className="mt-4 space-y-2">
+              {suggestedNext.slice(1, 3).map((r) => (
+                <div key={r.id} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
+                  <Compass className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-200">{r.title}</p>
+                    <p className="text-xs text-slate-500">{r.reason}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="font-semibold text-white">Your learning profile</h2>
+          <p className="mt-1 text-xs text-slate-500">
+            {learningProfile?.learningGoal
+              ? `Goal: ${learningProfile.learningGoal.replace(/-/g, " ")} · mode: ${learningProfile.mode}`
+              : "Set a goal and mode to steer the engine."}
+          </p>
+
+          <div className="mt-4 flex items-center gap-3">
+            <span className="font-mono text-3xl font-bold text-white">{overallMasteryValue}%</span>
+            <div className="flex-1">
+              <ProgressBar value={overallMasteryValue} />
+              <p className="mt-1 text-xs text-slate-500">overall quantum knowledge</p>
+            </div>
+          </div>
+
+          {topicMasteryList.filter((m) => m.attempts > 0).length > 0 ? (
+            <div className="mt-4 space-y-3">
+              {[...topicMasteryList]
+                .filter((m) => m.attempts > 0)
+                .sort((a, b) => b.mastery - a.mastery)
+                .slice(0, 4)
+                .map((m) => (
+                  <MasteryBar key={m.topicId} topicId={m.topicId} mastery={m.mastery} attempts={m.attempts} compact />
+                ))}
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-slate-400">No topic evidence yet.</p>
+          )}
+
+          {mistakePatterns.length > 0 && (
+            <p className="mt-4 rounded-lg border border-qx-amber/25 bg-qx-amber/[0.06] px-3 py-2 text-xs text-qx-amber">
+              Tracking {mistakePatterns.length} recurring misconception{mistakePatterns.length === 1 ? "" : "s"} — targeted practice is queued.
+            </p>
+          )}
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <LinkButton to="/learning-path" size="sm" variant="secondary">My Learning Path</LinkButton>
+            <LinkButton to="/progress" size="sm" variant="ghost">Full analytics</LinkButton>
+          </div>
+        </Card>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">

@@ -9,6 +9,8 @@ import { Ket } from "../components/quantum/display";
 import { Badge, Button, Card, ProgressBar } from "../components/ui";
 import { LESSONS, MODULES, lessonById, moduleById } from "../data/content";
 import { useStore, type QuizOutcome } from "../lib/store";
+import { matchTopic } from "../lib/learning/aiService";
+import { useRegisterPageContext } from "../lib/tutorContext";
 import type { QuizQuestion } from "../types";
 
 export default function LessonPage() {
@@ -36,6 +38,54 @@ export default function LessonPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lessonId]);
+
+  // ── Publish this lesson (and the exact quiz question in front of the learner)
+  // so the copilot can help with the doubt they actually have, in place.
+  const activeQuestion = lesson ? lesson.quiz[quizIndex] : undefined;
+  const answered = revealed && selected !== null && activeQuestion;
+  const answerNote = !answered
+    ? undefined
+    : selected === activeQuestion!.correctIndex
+      ? `The learner just answered “${activeQuestion!.options[selected!]}” — that is CORRECT. ${activeQuestion!.explanation}`
+      : `The learner just answered “${activeQuestion!.options[selected!]}” — that is WRONG. The correct answer is “${activeQuestion!.options[activeQuestion!.correctIndex]}”. ${activeQuestion!.explanation}`;
+
+  // The topic of the question on screen, so "why was my answer wrong?" is
+  // answered about the right concept rather than generically.
+  const questionTopic = activeQuestion
+    ? matchTopic(`${activeQuestion.question} ${activeQuestion.options.join(" ")} ${activeQuestion.explanation}`)
+    : null;
+
+  useRegisterPageContext({
+    kind: "lesson",
+    title: lesson ? lesson.title : "Lesson",
+    subtitle: module?.title,
+    topicId: questionTopic,
+    circuit: null,
+    focus:
+      quizStarted && activeQuestion && !outcome
+        ? { question: activeQuestion.question, note: answerNote }
+        : undefined,
+    facts: lesson
+      ? [
+          `Reader is on the lesson “${lesson.title}” (module ${module?.order}: ${module?.title}).`,
+          completedLessonIds.includes(lesson.id)
+            ? "They have already completed this lesson."
+            : "This lesson is still in progress.",
+          `Key takeaway: ${lesson.keyTakeaway}`,
+          ...(answerNote ? [answerNote] : []),
+        ]
+      : [],
+    prompts: !lesson
+      ? []
+      : quizStarted && activeQuestion && !outcome
+        ? (revealed
+            ? [
+                selected === activeQuestion.correctIndex ? "Why is that the right answer?" : "Why was my answer wrong?",
+                "Explain the correct answer simply",
+              ]
+            : ["Give me a hint for this question", "What concept does this question test?", "Explain this concept simply"])
+        : ["Explain this lesson simply", `Give me an analogy for ${lesson.title}`, "Quiz me on this"],
+  });
 
   if (!lesson || !module) {
     return (

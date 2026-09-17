@@ -2,7 +2,9 @@ import React, { Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Navbar } from "./components/layout/Navbar";
 import { Footer } from "./components/layout/Footer";
+import { TutorDock } from "./components/tutor/TutorDock";
 import { useStore } from "./lib/store";
+import { TutorProvider, useTutor } from "./lib/tutorContext";
 
 // Lazy-load heavy pages (charts / 3D) to keep first paint fast.
 const Landing = lazy(() => import("./pages/Landing"));
@@ -10,6 +12,10 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Diagnostic = lazy(() => import("./pages/Diagnostic"));
+const LearningPath = lazy(() => import("./pages/LearningPath"));
+const AiChallenges = lazy(() => import("./pages/AiChallenges"));
+const Experiments = lazy(() => import("./pages/Experiments"));
 const Learn = lazy(() => import("./pages/Learn"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
 const Lab = lazy(() => import("./pages/Lab"));
@@ -40,9 +46,24 @@ function Protected({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // The tutor provider lives above the routes so the conversation survives
+  // navigation, and above the dock so both read the same thread.
+  return (
+    <TutorProvider>
+      <AppShell />
+    </TutorProvider>
+  );
+}
+
+function AppShell() {
+  const { open, dockVisible } = useTutor();
+  // On lg+ the dock is a side rail and the content narrows rather than being covered.
+  const railOpen = open && dockVisible;
+
   return (
     <div className="flex min-h-screen flex-col bg-ink-950 text-slate-200 antialiased">
       <Navbar />
+      <div className={`flex flex-1 flex-col transition-[padding] duration-300 ${railOpen ? "lg:pr-[380px]" : ""}`}>
       <main className="flex-1">
         <Suspense fallback={<PageLoader />}>
           <Routes>
@@ -51,6 +72,10 @@ export default function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
+            <Route path="/diagnostic" element={<Diagnostic />} />
+            <Route path="/learning-path" element={<LearningPath />} />
+            <Route path="/ai-challenges" element={<AiChallenges />} />
+            <Route path="/experiments" element={<Experiments />} />
             <Route path="/learn" element={<Learn />} />
             <Route path="/learn/:lessonId" element={<LessonPage />} />
             <Route path="/lab" element={<Lab />} />
@@ -69,6 +94,8 @@ export default function App() {
         </Suspense>
       </main>
       <Footer />
+      </div>
+      <TutorDock />
     </div>
   );
 }
