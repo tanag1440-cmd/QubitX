@@ -26,7 +26,7 @@ export function StateViz({ alpha, beta, size = 180, collapsedTo }: {
     <div className="flex flex-col items-center" style={{ width: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="select-none">
         {/* dial background */}
-        <circle cx={size / 2} cy={size / 2} r={size / 2 - 4} fill="var(--surface-2)" stroke="var(--viz-wire-strong)" strokeWidth="1.5" />
+        <circle cx={size / 2} cy={size / 2} r={size / 2 - 4} fill="rgb(var(--surface-2) / 1)" stroke="var(--viz-wire-strong)" strokeWidth="1.5" />
         {/* |0⟩ half */}
         <path
           d={`M ${size / 2} ${size / 2} A ${size / 2 - 4} ${size / 2 - 4} 0 0 1 ${size - 4} ${size / 2} L ${size / 2} ${size / 2} Z`}

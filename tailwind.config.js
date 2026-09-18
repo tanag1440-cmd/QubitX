@@ -6,30 +6,30 @@ export default {
     extend: {
       colors: {
         // semantic surfaces & text (CSS variables, switched by .dark on <html>)
-        page: "var(--bg)",
-        card: "var(--surface)",
-        card2: "var(--surface-2)",
+        page: "rgb(var(--bg) / <alpha-value>)",
+        card: "rgb(var(--surface) / <alpha-value>)",
+        card2: "rgb(var(--surface-2) / <alpha-value>)",
         line: {
-          DEFAULT: "var(--border)",
-          strong: "var(--border-strong)",
+          DEFAULT: "rgb(var(--border) / <alpha-value>)",
+          strong: "rgb(var(--border-strong) / <alpha-value>)",
         },
         ink: {
-          DEFAULT: "var(--text-1)",
-          2: "var(--text-2)",
-          3: "var(--text-3)",
+          DEFAULT: "rgb(var(--text-1) / <alpha-value>)",
+          2: "rgb(var(--text-2) / <alpha-value>)",
+          3: "rgb(var(--text-3) / <alpha-value>)",
           // legacy surface scale remapped onto themed surfaces
-          950: "var(--bg)",
-          900: "var(--surface-2)",
-          850: "var(--surface)",
-          800: "var(--surface)",
-          700: "var(--surface-2)",
-          600: "var(--border-strong)",
+          950: "rgb(var(--bg) / <alpha-value>)",
+          900: "rgb(var(--surface-2) / <alpha-value>)",
+          850: "rgb(var(--surface) / <alpha-value>)",
+          800: "rgb(var(--surface) / <alpha-value>)",
+          700: "rgb(var(--surface-2) / <alpha-value>)",
+          600: "rgb(var(--border-strong) / <alpha-value>)",
         },
         // single brand accent
         accent: {
-          DEFAULT: "var(--accent)",
-          strong: "var(--accent-strong)",
-          soft: "var(--accent-soft)",
+          DEFAULT: "rgb(var(--accent) / <alpha-value>)",
+          strong: "rgb(var(--accent-strong) / <alpha-value>)",
+          soft: "rgb(var(--accent-soft) / <alpha-value>)",
         },
         // semantic states (channel vars so /opacity works)
         ok: "rgb(var(--ok) / <alpha-value>)",

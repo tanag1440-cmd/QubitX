@@ -10,19 +10,19 @@
 :root {
   color-scheme: light;
 
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --surface-2: #eef0f4;
-  --border: #e3e6ec;
-  --border-strong: #cfd4dd;
+  --bg: 246 247 249;  /* rgb channels */
+  --surface: 255 255 255;  /* rgb channels */
+  --surface-2: 238 240 244;  /* rgb channels */
+  --border: 227 230 236;  /* rgb channels */
+  --border-strong: 207 212 221;  /* rgb channels */
 
-  --text-1: #16181d;
-  --text-2: #4b5058;
-  --text-3: #838893;
+  --text-1: 22 24 29;  /* rgb channels */
+  --text-2: 75 80 88;  /* rgb channels */
+  --text-3: 131 136 147;  /* rgb channels */
 
-  --accent: #6d28d9;
-  --accent-strong: #5b21b6;
-  --accent-soft: #ede9fe;
+  --accent: 109 40 217;  /* rgb channels */
+  --accent-strong: 91 33 182;  /* rgb channels */
+  --accent-soft: 237 233 254;  /* rgb channels */
 
   --ok: 21 128 61;
   --warn: 180 83 9;
@@ -55,27 +55,27 @@
   --hero-glow-1: rgba(109, 40, 217, 0.07);
   --hero-glow-2: rgba(8, 145, 178, 0.05);
 
-  --scrollbar-track: #eef0f4;
-  --scrollbar-thumb: #cfd4dd;
-  --scrollbar-thumb-hover: #b6bcc8;
+  --scrollbar-track: rgb(var(--surface-2) / 1);
+  --scrollbar-thumb: rgb(var(--border-strong) / 1);
+  --scrollbar-thumb-hover: rgb(var(--border-strong) / 1);
 }
 
 .dark {
   color-scheme: dark;
 
-  --bg: #0d0e13;
-  --surface: #15161d;
-  --surface-2: #1c1e27;
-  --border: #272a35;
-  --border-strong: #3a3e4d;
+  --bg: 13 14 19;  /* rgb channels */
+  --surface: 21 22 29;  /* rgb channels */
+  --surface-2: 28 30 39;  /* rgb channels */
+  --border: 39 42 53;  /* rgb channels */
+  --border-strong: 58 62 77;  /* rgb channels */
 
-  --text-1: #f0f1f4;
-  --text-2: #a6abb8;
-  --text-3: #6e7482;
+  --text-1: 240 241 244;  /* rgb channels */
+  --text-2: 166 171 184;  /* rgb channels */
+  --text-3: 110 116 130;  /* rgb channels */
 
-  --accent: #8b78f0;
-  --accent-strong: #a394f4;
-  --accent-soft: #221f38;
+  --accent: 139 120 240;  /* rgb channels */
+  --accent-strong: 163 148 244;  /* rgb channels */
+  --accent-soft: 34 31 56;  /* rgb channels */
 
   --ok: 74 222 128;
   --warn: 251 191 36;
@@ -107,8 +107,8 @@
   --hero-glow-1: rgba(139, 92, 246, 0.1);
   --hero-glow-2: rgba(34, 211, 238, 0.06);
 
-  --scrollbar-track: var(--surface-2);
-  --scrollbar-thumb: var(--border-strong);
+  --scrollbar-track: rgb(var(--surface-2) / 1);
+  --scrollbar-thumb: rgb(var(--border-strong) / 1);
   --scrollbar-thumb-hover: #4a4f60;
 }
 
@@ -118,8 +118,8 @@ html {
 
 body {
   margin: 0;
-  background-color: var(--bg);
-  color: var(--text-1);
+  background-color: rgb(var(--bg) / 1);
+  color: rgb(var(--text-1) / 1);
 }
 
 /* Subtle quantum grid backdrop — themed */

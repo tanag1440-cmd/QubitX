@@ -83,7 +83,7 @@ export default function Landing() {
               </Button>
               <button
                 onClick={startDemo}
-                className="group inline-flex items-center gap-2 text-sm font-semibold text-qx-cyan hover:text-accent/80"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-accent-strong"
               >
                 <Compass className="h-4 w-4" />
                 Explore Demo
