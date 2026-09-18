@@ -32,13 +32,13 @@ export default function Tutor() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold text-white sm:text-3xl">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-qx-violet to-qx-cyan shadow-glow">
+          <h1 className="flex items-center gap-2.5 text-2xl font-bold text-ink sm:text-3xl">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent">
               <Bot className="h-5 w-5 text-white" />
             </span>
             Qubit-X AI Tutor
           </h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-ink-2">
             The same tutor that follows you around the app — answers shaped by your level, your mastery, and whatever
             page you were just on.
           </p>
@@ -49,12 +49,12 @@ export default function Tutor() {
       </div>
 
       <Card className="mb-5 flex flex-wrap items-center gap-2.5 border-qx-cyan/20 bg-qx-cyan/[0.06] p-4">
-        <Command className="h-4 w-4 shrink-0 text-qx-cyan" />
-        <p className="text-xs leading-relaxed text-slate-300">
+        <Command className="h-4 w-4 shrink-0 text-accent" />
+        <p className="text-xs leading-relaxed text-ink-2">
           This is one continuous conversation. Open the tutor anywhere with{" "}
-          <span className="font-semibold text-white">Ask AI Tutor</span> (or{" "}
-          <kbd className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px]">Ctrl</kbd>{" "}
-          <kbd className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px]">I</kbd>) and
+          <span className="font-semibold text-ink">Ask AI Tutor</span> (or{" "}
+          <kbd className="rounded border border-line bg-card2 px-1.5 py-0.5 font-mono text-[10px]">Ctrl</kbd>{" "}
+          <kbd className="rounded border border-line bg-card2 px-1.5 py-0.5 font-mono text-[10px]">I</kbd>) and
           your thread is still here — with the page you're on folded in as context.
         </p>
       </Card>
@@ -77,22 +77,22 @@ export default function Tutor() {
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="mb-1 font-semibold text-white">Tutor mode</h3>
-            <p className="mb-3 text-xs text-slate-400">How should I answer? “{activeMode.hint}”</p>
+            <h3 className="mb-1 font-semibold text-ink">Tutor mode</h3>
+            <p className="mb-3 text-xs text-ink-2">How should I answer? “{activeMode.hint}”</p>
             <TutorModeChips mode={mode} onSelect={setMode} />
           </Card>
 
           <Card className="p-5">
-            <h3 className="mb-2 flex items-center gap-2 font-semibold text-white">
-              <CircuitBoard className="h-4 w-4 text-qx-cyan" /> What I can see right now
+            <h3 className="mb-2 flex items-center gap-2 font-semibold text-ink">
+              <CircuitBoard className="h-4 w-4 text-accent" /> What I can see right now
             </h3>
             <ContextChip title={pageContext.title} kind={pageContext.kind} hasCircuit={Boolean(contextCircuit)} />
             {published && published.ops.length === 0 && (
-              <p className="mt-2 text-[11px] text-slate-500">
+              <p className="mt-2 text-[11px] text-ink-3">
                 The builder you came from is open but empty — the tutor will say so rather than invent a circuit.
               </p>
             )}
-            <p className="mt-2.5 text-xs leading-relaxed text-slate-400">
+            <p className="mt-2.5 text-xs leading-relaxed text-ink-2">
               {contextCircuit
                 ? `The circuit live on the page you came from — ${contextCircuit.ops.length} gate${contextCircuit.ops.length === 1 ? "" : "s"} across ${contextCircuit.numQubits} qubit${contextCircuit.numQubits === 1 ? "" : "s"}.`
                 : latestCircuit
@@ -103,7 +103,7 @@ export default function Tutor() {
               <button
                 onClick={() => ask("Explain my circuit", "explain")}
                 disabled={typing}
-                className="mt-3 w-full rounded-xl border border-qx-cyan/30 bg-qx-cyan/10 px-3 py-2 text-sm font-medium text-qx-cyan transition hover:bg-qx-cyan/20"
+                className="mt-3 w-full rounded-xl border border-qx-cyan/30 bg-qx-cyan/10 px-3 py-2 text-sm font-medium text-accent transition hover:bg-qx-cyan/20"
               >
                 Explain the circuit on my page
               </button>
@@ -111,26 +111,26 @@ export default function Tutor() {
               <button
                 onClick={() => ask("What does my circuit do?", "explain")}
                 disabled={typing}
-                className="mt-3 w-full rounded-xl border border-qx-cyan/30 bg-qx-cyan/10 px-3 py-2 text-sm font-medium text-qx-cyan transition hover:bg-qx-cyan/20"
+                className="mt-3 w-full rounded-xl border border-qx-cyan/30 bg-qx-cyan/10 px-3 py-2 text-sm font-medium text-accent transition hover:bg-qx-cyan/20"
               >
                 What does my circuit do?
               </button>
             ) : (
-              <Link to="/lab" className="mt-3 inline-block text-sm text-qx-cyan hover:underline">
+              <Link to="/lab" className="mt-3 inline-block text-sm text-accent hover:underline">
                 Open the Quantum Lab →
               </Link>
             )}
           </Card>
 
           <Card className="p-5">
-            <h3 className="mb-3 font-semibold text-white">Try asking</h3>
+            <h3 className="mb-3 font-semibold text-ink">Try asking</h3>
             <div className="flex flex-col gap-2">
               {QUICK_PROMPTS.map((p) => (
                 <button
                   key={p}
                   onClick={() => ask(p)}
                   disabled={typing}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-left text-sm text-slate-300 transition hover:border-qx-violet/40 hover:bg-qx-violet/10 hover:text-white"
+                  className="rounded-xl border border-line bg-card2/50 px-3.5 py-2.5 text-left text-sm text-ink-2 transition hover:border-qx-violet/40 hover:bg-qx-violet/10 hover:text-ink"
                 >
                   {p}
                 </button>
@@ -139,10 +139,10 @@ export default function Tutor() {
           </Card>
 
           <Card className="p-5">
-            <h3 className="mb-2 flex items-center gap-2 font-semibold text-white">
+            <h3 className="mb-2 flex items-center gap-2 font-semibold text-ink">
               <Sparkles className="h-4 w-4 text-qx-violet" /> Your profile
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-ink-2">
               {currentUser
                 ? `Level ${currentUser.level} · mode ${learningMode}${learningProfile?.learningGoal ? ` · goal: ${learningProfile.learningGoal.replace(/-/g, " ")}` : ""}`
                 : "Log in and the tutor will adapt to your level and mastery."}
@@ -154,8 +154,8 @@ export default function Tutor() {
                   .slice(0, 4)
                   .map((m) => (
                     <div key={m.topicId} className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400">{topicName(m.topicId)}</span>
-                      <span className="font-mono text-slate-300">{m.mastery}%</span>
+                      <span className="text-ink-2">{topicName(m.topicId)}</span>
+                      <span className="font-mono text-ink-2">{m.mastery}%</span>
                     </div>
                   ))}
               </div>
@@ -164,7 +164,7 @@ export default function Tutor() {
 
           <Card className="border-qx-amber/20 bg-qx-amber/5 p-5">
             <h3 className="mb-2 text-sm font-semibold text-qx-amber">How this works</h3>
-            <p className="text-xs leading-relaxed text-slate-400">
+            <p className="text-xs leading-relaxed text-ink-2">
               Answers come from a curated, verified knowledge base plus your own learning data. For questions about your
               circuit, the tutor reads the real circuit and the simulator's real numbers — it never guesses. A production
               LLM could be dropped in behind the same interface (see <span className="font-mono">aiService.ts</span>).
@@ -174,7 +174,7 @@ export default function Tutor() {
 
           <button
             onClick={clear}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-slate-400 transition hover:border-rose-500/30 hover:text-rose-300"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-card2/50 px-4 py-2.5 text-sm text-ink-2 transition hover:border-rose-500/30 hover:text-rose-300"
           >
             <Trash2 className="h-4 w-4" /> Clear this conversation
           </button>

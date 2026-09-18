@@ -46,8 +46,8 @@ export function InterferenceViz() {
       <Card className="p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="font-semibold text-white">After the first H, apply H again</p>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="font-semibold text-ink">After the first H, apply H again</p>
+            <p className="mt-1 text-sm text-ink-2">
               Each final state is reached by <em>two</em> paths. When the paths have opposite signs they cancel —
               that's destructive interference. When they share a sign they reinforce — constructive.
             </p>
@@ -73,7 +73,7 @@ export function InterferenceViz() {
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {rows.map((r) => (
             <div key={r.label} className={`rounded-xl border p-4 ${Math.abs(r.result) > 0.01 ? "border-qx-mint/40 bg-qx-mint/5" : "border-rose-500/40 bg-rose-500/5"}`}>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-2">
                 {r.label} <span className="ml-1 font-mono normal-case">{r.formula}</span>
               </p>
               <div className="mt-3 space-y-1.5">
@@ -81,12 +81,12 @@ export function InterferenceViz() {
                   <div key={i} className="flex items-center gap-2">
                     <span className={`h-4 w-full max-w-[160px] rounded ${t >= 0 ? "bg-qx-cyan/70" : "bg-rose-500/70"}`}
                       style={{ width: `${(Math.abs(t) / maxTerm) * 100}%`, maxWidth: 160 }} />
-                    <span className="font-mono text-xs text-slate-400">{t >= 0 ? "+" : ""}{t.toFixed(2)}</span>
+                    <span className="font-mono text-xs text-ink-2">{t >= 0 ? "+" : ""}{t.toFixed(2)}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-3 flex items-center gap-2 border-t border-white/10 pt-3">
-                <span className="text-xs text-slate-500">=</span>
+              <div className="mt-3 flex items-center gap-2 border-t border-line pt-3">
+                <span className="text-xs text-ink-3">=</span>
                 <span className={`font-mono text-lg font-bold ${Math.abs(r.result) > 0.01 ? "text-qx-mint" : "text-rose-400"}`}>
                   {Math.abs(r.result).toFixed(2)}
                 </span>
@@ -99,14 +99,14 @@ export function InterferenceViz() {
         </div>
 
         <div className="mt-4 rounded-xl border border-qx-cyan/30 bg-qx-cyan/10 p-4">
-          <p className="text-sm text-slate-200">
+          <p className="text-sm text-ink">
             {surviving === 0 ? (
               <>The <Ket value={1} /> paths cancelled → measuring gives <span className="font-mono font-bold text-qx-mint">|0⟩</span> with 100% probability.</>
             ) : (
               <>The <Ket value={0} /> paths cancelled → measuring gives <span className="font-mono font-bold text-qx-mint">|1⟩</span> with 100% probability.</>
             )}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-ink-2">
             The only difference between the two inputs is a minus sign — the <em>phase</em>. Quantum algorithms set
             up phases so that wrong answers cancel and the answer you want survives measurement.
           </p>

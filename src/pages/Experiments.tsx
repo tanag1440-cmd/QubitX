@@ -142,18 +142,18 @@ export default function Experiments() {
       />
 
       <Card className="mb-6 p-5">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Start from a circuit</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-3">Start from a circuit</p>
         <div className="flex flex-wrap gap-2">
           {BASES.map((b) => (
             <button
               key={b.id}
               onClick={() => { setBaseId(b.id); setModId(null); }}
               className={`rounded-xl border px-3 py-2 text-left text-sm transition ${
-                baseId === b.id ? "border-qx-violet/60 bg-qx-violet/15 text-white" : "border-white/10 bg-white/[0.02] text-slate-300 hover:bg-white/[0.06]"
+                baseId === b.id ? "border-qx-violet/60 bg-qx-violet/15 text-ink" : "border-line bg-card2/50 text-ink-2 hover:bg-card2/60"
               }`}
             >
               <span className="block font-medium">{b.name}</span>
-              <span className="block text-xs text-slate-400">{b.description}</span>
+              <span className="block text-xs text-ink-2">{b.description}</span>
             </button>
           ))}
         </div>
@@ -161,10 +161,10 @@ export default function Experiments() {
 
       <div className="grid gap-5 lg:grid-cols-[300px_1fr]">
         <Card className="p-5">
-          <p className="mb-1 flex items-center gap-2 text-sm font-semibold text-white">
-            <Wand2 className="h-4 w-4 text-qx-cyan" /> Choose a modification
+          <p className="mb-1 flex items-center gap-2 text-sm font-semibold text-ink">
+            <Wand2 className="h-4 w-4 text-accent" /> Choose a modification
           </p>
-          <p className="mb-3 text-xs text-slate-400">
+          <p className="mb-3 text-xs text-ink-2">
             Each option duplicates the circuit and changes exactly one thing, so the effect is unambiguous.
           </p>
           <div className="space-y-1.5">
@@ -173,7 +173,7 @@ export default function Experiments() {
                 key={m.id}
                 onClick={() => { setModId(m.id); recordActivity(); }}
                 className={`w-full rounded-lg border px-3 py-2 text-left text-sm transition ${
-                  modId === m.id ? "border-qx-cyan/60 bg-qx-cyan/15 text-white" : "border-white/10 bg-white/[0.02] text-slate-300 hover:bg-white/[0.06]"
+                  modId === m.id ? "border-qx-cyan/60 bg-qx-cyan/15 text-ink" : "border-line bg-card2/50 text-ink-2 hover:bg-card2/60"
                 }`}
               >
                 {m.label}
@@ -185,7 +185,7 @@ export default function Experiments() {
         <div className="space-y-5">
           <div className="grid gap-4 md:grid-cols-2">
             <Card className="p-5">
-              <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
+              <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink">
                 <Beaker className="h-4 w-4 text-qx-violet" /> Original circuit
               </p>
               <CircuitStatic ops={base.ops} numQubits={base.numQubits} />
@@ -198,8 +198,8 @@ export default function Experiments() {
             </Card>
 
             <Card className="p-5">
-              <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
-                <GitCompare className="h-4 w-4 text-qx-cyan" /> Modified circuit
+              <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink">
+                <GitCompare className="h-4 w-4 text-accent" /> Modified circuit
               </p>
               {modifiedOps ? (
                 <>
@@ -209,7 +209,7 @@ export default function Experiments() {
                   </div>
                 </>
               ) : (
-                <div className="flex h-full min-h-[220px] items-center justify-center rounded-xl border border-dashed border-white/10 text-sm text-slate-500">
+                <div className="flex h-full min-h-[220px] items-center justify-center rounded-xl border border-dashed border-line text-sm text-ink-3">
                   Pick a modification on the left to run the comparison.
                 </div>
               )}
@@ -219,8 +219,8 @@ export default function Experiments() {
           {comparison && (
             <Card className="p-5">
               <div className="mb-2 flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-qx-cyan" />
-                <p className="text-sm font-semibold text-white">AI explanation</p>
+                <Sparkles className="h-4 w-4 text-accent" />
+                <p className="text-sm font-semibold text-ink">AI explanation</p>
                 <GroundedChip label="Computed from both simulations" />
                 <Button size="sm" variant="ghost" className="ml-auto" onClick={() => setModId(null)}>
                   <RefreshCw className="h-3.5 w-3.5" /> Clear
@@ -230,24 +230,24 @@ export default function Experiments() {
               {comparison.differences.length > 0 ? (
                 <ul className="mt-3 space-y-1.5">
                   {comparison.differences.map((d, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
+                    <li key={i} className="flex items-center gap-2 text-sm text-ink-2">
                       <Badge color="slate">Δ</Badge> {d}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="mt-3 text-sm text-slate-400">No measurable difference in the distribution.</p>
+                <p className="mt-3 text-sm text-ink-2">No measurable difference in the distribution.</p>
               )}
 
-              <p className="mt-4 rounded-xl border border-white/10 bg-ink-900/60 p-4 text-sm leading-relaxed text-slate-300">
+              <p className="mt-4 rounded-xl border border-line bg-card2/60 p-4 text-sm leading-relaxed text-ink-2">
                 {comparison.explanation}
               </p>
             </Card>
           )}
 
           <Card className="p-5">
-            <p className="text-sm font-semibold text-white">Where this counts</p>
-            <p className="mt-1.5 text-sm text-slate-400">
+            <p className="text-sm font-semibold text-ink">Where this counts</p>
+            <p className="mt-1.5 text-sm text-ink-2">
               Experiment Mode builds intuition and counts toward your streak and XP. Topic <em>mastery</em> is updated by
               quizzes and AI challenges, where the answer can be judged fairly — experiments are deliberately ungraded so
               you can break things on purpose.

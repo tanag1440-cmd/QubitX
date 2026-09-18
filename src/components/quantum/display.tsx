@@ -29,8 +29,8 @@ export function AmplitudeRow({ amp, value, n }: { amp: Complex; value: number; n
   else label = `${re.toFixed(3)}${im !== 0 ? (im > 0 ? "+" : "") + im.toFixed(3) + "i" : ""}`;
   return (
     <div className="flex items-center gap-2 font-mono text-sm">
-      <span className="text-slate-400">{label}</span>
-      <Ket value={value} n={n} className="text-white" />
+      <span className="text-ink-2">{label}</span>
+      <Ket value={value} n={n} className="text-ink" />
     </div>
   );
 }
@@ -42,7 +42,7 @@ export function ProbabilityBars({ probabilities, numQubits, measuredBits, highli
 }) {
   const shown = probabilities.map((p, i) => ({ i, p })).filter((x) => x.p > 0.0005);
   if (shown.length === 0) {
-    return <p className="text-sm text-slate-500">No measurable states.</p>;
+    return <p className="text-sm text-ink-3">No measurable states.</p>;
   }
   return (
     <div className="space-y-2">
@@ -52,18 +52,18 @@ export function ProbabilityBars({ probabilities, numQubits, measuredBits, highli
         const matched = measuredBits !== null && measuredBits !== undefined && i === bitsToValue(measuredBits);
         return (
           <div key={i} className="flex items-center gap-3">
-            <div className="w-20 shrink-0 text-right font-mono text-sm text-slate-300">
+            <div className="w-20 shrink-0 text-right font-mono text-sm text-ink-2">
               <Ket value={i} n={numQubits} />
             </div>
-            <div className="relative h-6 flex-1 overflow-hidden rounded-md bg-white/5">
+            <div className="relative h-6 flex-1 overflow-hidden rounded-md bg-card2">
               <div
-                className={`h-full rounded-md transition-all duration-500 ${isHighlighted ? "bg-gradient-to-r from-qx-cyan to-qx-mint" : "bg-gradient-to-r from-qx-violet/70 to-qx-indigo/70"}`}
+                className={`h-full rounded-md transition-all duration-500 ${isHighlighted ? "bg-qx-mint" : "bg-accent/80"}`}
                 style={{ width: `${Math.max(p * 100, p > 0 ? 3 : 0)}%` }}
               />
             </div>
             <div className="w-24 shrink-0 font-mono text-sm">
               {matched && <span className="mr-1 text-qx-mint">✓</span>}
-              <span className="text-white">{pct.toFixed(pct % 1 === 0 ? 0 : 1)}%</span>
+              <span className="text-ink">{pct.toFixed(pct % 1 === 0 ? 0 : 1)}%</span>
             </div>
           </div>
         );
@@ -84,8 +84,8 @@ export function StateVectorPanel({ state, numQubits, title = "State vector" }: {
   state: Complex[]; numQubits: number; title?: string;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-ink-900/60 p-4">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</p>
+    <div className="rounded-xl border border-line bg-card2/60 p-4">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-3">{title}</p>
       <div className="space-y-1">
         {state.map((amp, i) => (
           <AmplitudeRow key={i} amp={amp} value={i} n={numQubits} />

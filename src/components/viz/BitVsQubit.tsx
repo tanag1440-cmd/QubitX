@@ -11,13 +11,13 @@ export function BitVsQubit() {
     <div className="grid gap-6 md:grid-cols-2">
       <Card className="p-6">
         <div className="mb-3 flex items-center justify-between">
-          <h4 className="font-semibold text-white">Classical bit</h4>
-          <span className="font-mono text-xs text-slate-500">1 value at a time</span>
+          <h4 className="font-semibold text-ink">Classical bit</h4>
+          <span className="font-mono text-xs text-ink-3">1 value at a time</span>
         </div>
         <div className="flex flex-col items-center py-4">
           {/* physical switch */}
           <div
-            className="relative h-24 w-16 cursor-pointer rounded-full border border-white/20 bg-ink-900"
+            className="relative h-24 w-16 cursor-pointer rounded-full border border-line-strong bg-card2"
             onClick={() => setBit(bit === 0 ? 1 : 0)}
             role="switch"
             aria-label="Toggle bit"
@@ -29,10 +29,10 @@ export function BitVsQubit() {
               }`}
             />
           </div>
-          <p className="mt-4 font-mono text-3xl font-bold text-white">
+          <p className="mt-4 font-mono text-3xl font-bold text-ink">
             <Ket value={bit} />
           </p>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-ink-2">
             Click the switch — it's strictly 0 or 1, never anything between.
           </p>
         </div>
@@ -40,8 +40,8 @@ export function BitVsQubit() {
 
       <Card className="p-6">
         <div className="mb-3 flex items-center justify-between">
-          <h4 className="font-semibold text-white">Qubit</h4>
-          <span className="font-mono text-xs text-slate-500">a continuum of states</span>
+          <h4 className="font-semibold text-ink">Qubit</h4>
+          <span className="font-mono text-xs text-ink-3">a continuum of states</span>
         </div>
         <div className="flex flex-col items-center py-4">
           <input
@@ -57,7 +57,7 @@ export function BitVsQubit() {
             <div className="h-full bg-qx-violet transition-all" style={{ width: `${100 - dial}%` }} />
             <div className="h-full bg-qx-cyan transition-all" style={{ width: `${dial}%` }} />
           </div>
-          <p className="mt-4 font-mono text-3xl font-bold text-white">
+          <p className="mt-4 font-mono text-3xl font-bold text-ink">
             {dial === 0 ? <><Ket value={0} /></> : dial === 100 ? <><Ket value={1} /></> : (
               <span className="text-lg">
                 <span className="text-qx-violet">{Math.sqrt((100 - dial) / 100).toFixed(2)} </span>
@@ -66,7 +66,7 @@ export function BitVsQubit() {
               </span>
             )}
           </p>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-ink-2">
             Drag the slider — a qubit can live anywhere between |0⟩ and |1⟩.
           </p>
         </div>

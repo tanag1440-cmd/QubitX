@@ -90,8 +90,8 @@ export default function LessonPage() {
   if (!lesson || !module) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <h1 className="text-2xl font-bold text-white">Lesson not found</h1>
-        <p className="mt-2 text-slate-400">This lesson doesn't exist (or was removed).</p>
+        <h1 className="text-2xl font-bold text-ink">Lesson not found</h1>
+        <p className="mt-2 text-ink-2">This lesson doesn't exist (or was removed).</p>
         <Button className="mt-6" onClick={() => navigate("/learn")}><ArrowLeft className="h-4 w-4" /> Back to Learn</Button>
       </div>
     );
@@ -159,12 +159,12 @@ export default function LessonPage() {
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       {/* breadcrumb + progress */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link to="/learn" className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white">
+        <Link to="/learn" className="flex items-center gap-1.5 text-sm text-ink-2 hover:text-ink">
           <ArrowLeft className="h-4 w-4" /> All lessons
         </Link>
         <div className="flex items-center gap-3">
           <div className="w-32"><ProgressBar value={completed ? 100 : progress} /></div>
-          <span className="font-mono text-xs text-slate-400">{completed ? "100%" : `${progress}%`}</span>
+          <span className="font-mono text-xs text-ink-2">{completed ? "100%" : `${progress}%`}</span>
           {!completed && (
             <Button variant="success" size="sm" onClick={markComplete}>
               <CheckCircle2 className="h-4 w-4" /> Mark complete
@@ -177,11 +177,11 @@ export default function LessonPage() {
       <div className="mb-8">
         <div className="flex flex-wrap items-center gap-2">
           <Badge color="violet">Module {module.order} · {module.title}</Badge>
-          <span className="flex items-center gap-1 font-mono text-xs text-slate-500"><Clock className="h-3.5 w-3.5" /> {lesson.duration}</span>
+          <span className="flex items-center gap-1 font-mono text-xs text-ink-3"><Clock className="h-3.5 w-3.5" /> {lesson.duration}</span>
           <span className="flex items-center gap-1 font-mono text-xs text-qx-amber"><Zap className="h-3.5 w-3.5" /> {lesson.xp} XP on completion</span>
         </div>
-        <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{lesson.title}</h1>
-        <p className="mt-2 text-lg text-slate-400">{lesson.summary}</p>
+        <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">{lesson.title}</h1>
+        <p className="mt-2 text-lg text-ink-2">{lesson.summary}</p>
       </div>
 
       {/* sections */}
@@ -191,14 +191,14 @@ export default function LessonPage() {
             case "text":
               return (
                 <section key={i} className="prose-invert">
-                  {s.heading && <h2 className="mb-3 text-xl font-bold text-white">{s.heading}</h2>}
-                  {s.body && <p className="leading-relaxed text-slate-300">{s.body}</p>}
+                  {s.heading && <h2 className="mb-3 text-xl font-bold text-ink">{s.heading}</h2>}
+                  {s.body && <p className="leading-relaxed text-ink-2">{s.body}</p>}
                 </section>
               );
             case "demo":
               return (
                 <section key={i}>
-                  {s.heading && <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-white"><Sparkles className="h-5 w-5 text-qx-cyan" /> {s.heading}</h2>}
+                  {s.heading && <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-ink"><Sparkles className="h-5 w-5 text-accent" /> {s.heading}</h2>}
                   <LessonDemo id={s.demo ?? ""} />
                 </section>
               );
@@ -208,9 +208,9 @@ export default function LessonPage() {
                   <h3 className="flex items-center gap-2 font-semibold text-qx-amber">
                     <Lightbulb className="h-4.5 w-4.5" /> {s.example.title}
                   </h3>
-                  <p className="mt-2 leading-relaxed text-slate-300">{s.example.body}</p>
+                  <p className="mt-2 leading-relaxed text-ink-2">{s.example.body}</p>
                   {s.example.code && (
-                    <pre className="mt-3 overflow-x-auto rounded-xl bg-ink-950/80 p-4 font-mono text-sm text-qx-cyan">{s.example.code}</pre>
+                    <pre className="mt-3 overflow-x-auto rounded-xl bg-page/80 p-4 font-mono text-sm text-accent">{s.example.code}</pre>
                   )}
                 </section>
               ) : null;
@@ -220,7 +220,7 @@ export default function LessonPage() {
                   <h3 className="flex items-center gap-2 font-semibold text-qx-mint">
                     <CheckCircle2 className="h-5 w-5" /> {s.heading ?? "Key takeaway"}
                   </h3>
-                  <p className="mt-2 leading-relaxed text-slate-200">{s.body}</p>
+                  <p className="mt-2 leading-relaxed text-ink">{s.body}</p>
                 </section>
               );
             default:
@@ -236,8 +236,8 @@ export default function LessonPage() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-qx-violet/15">
               <Award className="h-7 w-7 text-qx-violet" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Quick quiz</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
+            <h2 className="text-2xl font-bold text-ink">Quick quiz</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-ink-2">
               {quiz.length} questions with instant feedback. Score 100% for the Quiz Ace achievement. XP earned: up to 40.
             </p>
             <Button className="mt-6" size="lg" onClick={startQuiz}>
@@ -247,17 +247,17 @@ export default function LessonPage() {
         ) : outcome ? (
           <Card className="p-8 text-center">
             <PartyPopper className="mx-auto mb-4 h-10 w-10 text-qx-amber" />
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="text-2xl font-bold text-ink">
               {outcome.perfect ? "Perfect score! 🎉" : outcome.score >= quiz.length / 2 ? "Nice work!" : "Good try!"}
             </h2>
-            <p className="mt-2 font-mono text-3xl font-extrabold text-qx-cyan">
+            <p className="mt-2 font-mono text-3xl font-extrabold text-accent">
               {outcome.score} / {outcome.total}
             </p>
             <div className="mx-auto mt-4 flex max-w-sm items-center justify-center gap-4">
               <div className="rounded-xl border border-qx-mint/30 bg-qx-mint/10 px-4 py-2 text-sm text-qx-mint">
                 +{outcome.xpEarned} XP
               </div>
-              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300">
+              <div className="rounded-xl border border-line bg-card2 px-4 py-2 text-sm text-ink-2">
                 {outcome.perfect ? "Quiz Ace unlocked!" : "Keep practicing"}
               </div>
             </div>
@@ -265,21 +265,21 @@ export default function LessonPage() {
               <Button variant="secondary" onClick={restartQuiz}>Retake quiz</Button>
               {!completed && <Button onClick={markComplete}><CheckCircle2 className="h-4 w-4" /> Complete lesson</Button>}
             </div>
-            <p className="mt-5 text-xs text-slate-500">
+            <p className="mt-5 text-xs text-ink-3">
               {lesson.keyTakeaway}
             </p>
           </Card>
         ) : (
           <Card className="p-6 sm:p-8">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="font-bold text-white">Quick quiz</h2>
-              <span className="font-mono text-sm text-slate-500">Question {quizIndex + 1} / {quiz.length}</span>
+              <h2 className="font-bold text-ink">Quick quiz</h2>
+              <span className="font-mono text-sm text-ink-3">Question {quizIndex + 1} / {quiz.length}</span>
             </div>
             <div className="mb-6 flex gap-1.5">
               {quiz.map((q, i) => (
                 <div
                   key={q.id}
-                  className={`h-1.5 flex-1 rounded-full ${i < quizIndex ? "bg-qx-violet" : i === quizIndex ? "bg-qx-violet/60 animate-pulse-soft" : "bg-white/10"}`}
+                  className={`h-1.5 flex-1 rounded-full ${i < quizIndex ? "bg-qx-violet" : i === quizIndex ? "bg-qx-violet/60 animate-pulse-soft" : "bg-card2"}`}
                 />
               ))}
             </div>
@@ -307,15 +307,15 @@ export default function LessonPage() {
       </div>
 
       {/* prev / next lesson */}
-      <div className="mt-10 flex items-center justify-between border-t border-white/5 pt-6">
+      <div className="mt-10 flex items-center justify-between border-t border-line pt-6">
         {prevLesson && !completedLessonIds.includes(prevLesson.id) ? (
-          <Link to={`/learn/${prevLesson.id}`} className="flex items-center gap-2 text-sm text-slate-400 hover:text-white">
-            <ChevronLeft className="h-4 w-4" /> <span><span className="block text-xs text-slate-600">Previous</span>{prevLesson.title}</span>
+          <Link to={`/learn/${prevLesson.id}`} className="flex items-center gap-2 text-sm text-ink-2 hover:text-ink">
+            <ChevronLeft className="h-4 w-4" /> <span><span className="block text-xs text-ink-3">Previous</span>{prevLesson.title}</span>
           </Link>
         ) : <span />}
         {nextLesson && (
-          <Link to={`/learn/${nextLesson.id}`} className="flex items-center gap-2 text-right text-sm text-qx-cyan hover:underline">
-            <span><span className="block text-xs text-slate-600">Next module</span>{nextLesson.title}</span>
+          <Link to={`/learn/${nextLesson.id}`} className="flex items-center gap-2 text-right text-sm text-accent hover:underline">
+            <span><span className="block text-xs text-ink-3">Next module</span>{nextLesson.title}</span>
             <ChevronRight className="h-4 w-4" />
           </Link>
         )}
@@ -332,7 +332,7 @@ function QuestionCard({ question, revealed, selected, onPick }: {
   const label = ["A", "B", "C", "D"];
   return (
     <div>
-      <h3 className="text-lg font-semibold text-white">{question.question}</h3>
+      <h3 className="text-lg font-semibold text-ink">{question.question}</h3>
       <div className="mt-4 grid gap-2.5">
         {question.options.map((opt, i) => {
           const isCorrect = revealed && i === question.correctIndex;
@@ -349,22 +349,22 @@ function QuestionCard({ question, revealed, selected, onPick }: {
                     ? "border-rose-500/60 bg-rose-500/10"
                     : selected === i
                       ? "border-qx-violet/60 bg-qx-violet/15"
-                      : "border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]"
+                      : "border-line bg-card2/50 hover:border-line-strong hover:bg-card2/60"
               }`}
             >
               <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg font-mono text-xs font-bold ${
-                isCorrect ? "bg-qx-mint/30 text-qx-mint" : isWrongPick ? "bg-rose-500/30 text-rose-300" : "bg-white/10 text-slate-400"
+                isCorrect ? "bg-qx-mint/30 text-qx-mint" : isWrongPick ? "bg-rose-500/30 text-rose-300" : "bg-card2 text-ink-2"
               }`}>
                 {isCorrect ? "✓" : isWrongPick ? "✗" : label[i]}
               </span>
-              <span className="text-sm text-slate-200">{opt}</span>
+              <span className="text-sm text-ink">{opt}</span>
             </button>
           );
         })}
       </div>
       {question.category === "circuit" && (
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-500">
-          <Ket value={0} /> Circuit question — try it in the <Link to="/lab" className="text-qx-cyan hover:underline">Quantum Lab</Link>.
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-ink-3">
+          <Ket value={0} /> Circuit question — try it in the <Link to="/lab" className="text-accent hover:underline">Quantum Lab</Link>.
         </p>
       )}
     </div>

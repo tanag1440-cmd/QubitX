@@ -34,7 +34,7 @@ export default function Login() {
       footer={
         <>
           New to QubitX?{" "}
-          <Link to="/signup" className="font-semibold text-qx-cyan hover:underline">Create an account</Link>
+          <Link to="/signup" className="font-semibold text-accent hover:underline">Create an account</Link>
         </>
       }
     >
@@ -65,17 +65,17 @@ export default function Login() {
           />
         </Field>
         <div className="flex justify-end">
-          <Link to="/forgot-password" className="text-xs font-medium text-slate-400 hover:text-qx-cyan">
+          <Link to="/forgot-password" className="text-xs font-medium text-ink-2 hover:text-accent">
             Forgot password?
           </Link>
         </div>
         <Button type="submit" className="w-full" size="lg">Log in</Button>
       </form>
-      <div className="my-4 flex items-center gap-3 text-xs text-slate-600">
-        <div className="h-px flex-1 bg-white/10" /> or <div className="h-px flex-1 bg-white/10" />
+      <div className="my-4 flex items-center gap-3 text-xs text-ink-3">
+        <div className="h-px flex-1 bg-card2" /> or <div className="h-px flex-1 bg-card2" />
       </div>
       <Button variant="secondary" onClick={demo} className="w-full">
-        <Compass className="h-4 w-4 text-qx-cyan" /> Explore the demo instead
+        <Compass className="h-4 w-4 text-accent" /> Explore the demo instead
       </Button>
     </AuthShell>
   );

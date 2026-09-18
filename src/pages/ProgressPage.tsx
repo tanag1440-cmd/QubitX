@@ -122,12 +122,12 @@ export default function ProgressPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-white sm:text-3xl">
-            <LineChartIcon className="h-6 w-6 text-qx-cyan" /> Your Progress
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-ink sm:text-3xl">
+            <LineChartIcon className="h-6 w-6 text-accent" /> Your Progress
           </h1>
-          <p className="mt-1 text-sm text-slate-400">Every lesson, quiz, and experiment — tracked.</p>
+          <p className="mt-1 text-sm text-ink-2">Every lesson, quiz, and experiment — tracked.</p>
         </div>
-        <Link to="/learn" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">
+        <Link to="/learn" className="rounded-xl border border-line bg-card2 px-4 py-2 text-sm font-semibold text-ink hover:bg-card2">
           Keep learning →
         </Link>
       </div>
@@ -141,20 +141,20 @@ export default function ProgressPage() {
       </div>
 
       {/* ── Adaptive learning analytics ── */}
-      <div className="mt-6 rounded-2xl border border-white/10 bg-ink-850/80 p-5">
+      <div className="mt-6 rounded-2xl border border-line bg-card/80 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="font-semibold text-white">Quantum knowledge</h2>
-            <p className="mt-1 text-xs text-slate-500">Topic-level mastery, computed from your attempts and circuits</p>
+            <h2 className="font-semibold text-ink">Quantum knowledge</h2>
+            <p className="mt-1 text-xs text-ink-3">Topic-level mastery, computed from your attempts and circuits</p>
           </div>
           <GroundedChip label="Updated automatically" />
         </div>
 
         <div className="mt-5 flex items-center gap-4">
-          <span className="font-mono text-4xl font-bold text-white">{overallMasteryValue}%</span>
+          <span className="font-mono text-4xl font-bold text-ink">{overallMasteryValue}%</span>
           <div className="flex-1">
             <ProgressBar value={overallMasteryValue} />
-            <p className="mt-1.5 text-xs text-slate-500">
+            <p className="mt-1.5 text-xs text-ink-3">
               {measuredTopics.length} topic{measuredTopics.length === 1 ? "" : "s"} measured · {challengeSuccess}/{circuitAttempts.length || 0} challenges passed
               {learningTimeMin > 0 ? ` · ${learningTimeMin} min of practice logged` : ""}
             </p>
@@ -162,8 +162,8 @@ export default function ProgressPage() {
         </div>
 
         {measuredTopics.length === 0 ? (
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-white/10 px-4 py-5">
-            <p className="text-sm text-slate-400">No topic evidence yet. Take the diagnostic to seed your profile.</p>
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-line px-4 py-5">
+            <p className="text-sm text-ink-2">No topic evidence yet. Take the diagnostic to seed your profile.</p>
             <LinkButton to="/diagnostic" size="sm">Run diagnostic</LinkButton>
           </div>
         ) : (
@@ -177,34 +177,34 @@ export default function ProgressPage() {
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           <div className="rounded-xl border border-qx-mint/25 bg-qx-mint/[0.06] p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-qx-mint">Strengths</p>
-            <p className="mt-2 text-sm text-slate-300">{summary.strengthsText}</p>
+            <p className="mt-2 text-sm text-ink-2">{summary.strengthsText}</p>
           </div>
           <div className="rounded-xl border border-qx-amber/25 bg-qx-amber/[0.06] p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-qx-amber">Areas to improve</p>
-            <p className="mt-2 text-sm text-slate-300">{summary.gapsText}</p>
+            <p className="mt-2 text-sm text-ink-2">{summary.gapsText}</p>
           </div>
           <div className="rounded-xl border border-qx-cyan/25 bg-qx-cyan/[0.06] p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-qx-cyan">Recommended next step</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-accent">Recommended next step</p>
             {suggestedNext[0] ? (
               <>
-                <p className="mt-2 text-sm font-semibold text-white">{suggestedNext[0].title}</p>
-                <p className="mt-1 text-xs text-slate-400">{suggestedNext[0].reason}</p>
+                <p className="mt-2 text-sm font-semibold text-ink">{suggestedNext[0].title}</p>
+                <p className="mt-1 text-xs text-ink-2">{suggestedNext[0].reason}</p>
                 <LinkButton to="/ai-challenges" size="sm" variant="secondary" className="mt-3">Practise it</LinkButton>
               </>
             ) : (
-              <p className="mt-2 text-sm text-slate-300">Nothing outstanding — pick an expert-level challenge or explore the Lab.</p>
+              <p className="mt-2 text-sm text-ink-2">Nothing outstanding — pick an expert-level challenge or explore the Lab.</p>
             )}
           </div>
         </div>
 
         {summary.activeMistakes.length > 0 && (
-          <div className="mt-5 rounded-xl border border-white/10 bg-ink-900/50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Recent recurring mistakes</p>
+          <div className="mt-5 rounded-xl border border-line bg-card2/50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-ink-3">Recent recurring mistakes</p>
             <ul className="mt-2 grid gap-2 sm:grid-cols-3">
               {summary.activeMistakes.slice(0, 3).map((mp) => (
-                <li key={mp.id} className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
-                  <p className="text-sm text-slate-200">{mp.label}</p>
-                  <p className="text-xs text-slate-500">{topicName(mp.topicId)} · {mp.frequency}×</p>
+                <li key={mp.id} className="rounded-lg border border-line bg-card2/50 px-3 py-2">
+                  <p className="text-sm text-ink">{mp.label}</p>
+                  <p className="text-xs text-ink-3">{topicName(mp.topicId)} · {mp.frequency}×</p>
                 </li>
               ))}
             </ul>
@@ -214,9 +214,9 @@ export default function ProgressPage() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* XP timeline */}
-        <div className="rounded-2xl border border-white/10 bg-ink-850/80 p-5">
-          <h2 className="mb-1 font-semibold text-white">XP earned over time</h2>
-          <p className="mb-4 text-xs text-slate-500">XP from lessons, quizzes, and achievements</p>
+        <div className="rounded-2xl border border-line bg-card/80 p-5">
+          <h2 className="mb-1 font-semibold text-ink">XP earned over time</h2>
+          <p className="mb-4 text-xs text-ink-3">XP from lessons, quizzes, and achievements</p>
           {xpTimeline.length === 0 ? (
             <EmptyChart text="Complete a lesson or quiz to see your XP curve." />
           ) : (
@@ -239,9 +239,9 @@ export default function ProgressPage() {
         </div>
 
         {/* quiz performance */}
-        <div className="rounded-2xl border border-white/10 bg-ink-850/80 p-5">
-          <h2 className="mb-1 font-semibold text-white">Quiz performance</h2>
-          <p className="mb-4 text-xs text-slate-500">Score per quiz attempt (%)</p>
+        <div className="rounded-2xl border border-line bg-card/80 p-5">
+          <h2 className="mb-1 font-semibold text-ink">Quiz performance</h2>
+          <p className="mb-4 text-xs text-ink-3">Score per quiz attempt (%)</p>
           {quizChart.length === 0 ? (
             <EmptyChart text="Take a quiz after a lesson to see your scores." />
           ) : (
@@ -263,15 +263,15 @@ export default function ProgressPage() {
       </div>
 
       {/* skill map */}
-      <div className="mt-6 rounded-2xl border border-white/10 bg-ink-850/80 p-5">
-        <h2 className="mb-1 font-semibold text-white">Concept mastery</h2>
-        <p className="mb-5 text-xs text-slate-500">Your skill map across the curriculum</p>
+      <div className="mt-6 rounded-2xl border border-line bg-card/80 p-5">
+        <h2 className="mb-1 font-semibold text-ink">Concept mastery</h2>
+        <p className="mb-5 text-xs text-ink-3">Your skill map across the curriculum</p>
         <div className="space-y-3.5">
           {skillData.map((s) => (
             <div key={s.name} className="flex items-center gap-4">
-              <span className="w-44 shrink-0 truncate text-sm text-slate-300">{s.name}</span>
+              <span className="w-44 shrink-0 truncate text-sm text-ink-2">{s.name}</span>
               <ProgressBar value={s.pct} className="flex-1" />
-              <span className="w-12 shrink-0 text-right font-mono text-xs text-slate-400">{s.pct}%</span>
+              <span className="w-12 shrink-0 text-right font-mono text-xs text-ink-2">{s.pct}%</span>
             </div>
           ))}
         </div>
@@ -282,7 +282,7 @@ export default function ProgressPage() {
 
 function EmptyChart({ text }: { text: string }) {
   return (
-    <div className="flex h-[220px] items-center justify-center rounded-xl border border-dashed border-white/10 text-sm text-slate-500">
+    <div className="flex h-[220px] items-center justify-center rounded-xl border border-dashed border-line text-sm text-ink-3">
       {text}
     </div>
   );

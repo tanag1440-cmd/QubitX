@@ -5,21 +5,44 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: {
-          950: "#070b16",
-          900: "#0b1120",
-          850: "#0e1526",
-          800: "#131c31",
-          700: "#1a2540",
-          600: "#243355",
+        // semantic surfaces & text (CSS variables, switched by .dark on <html>)
+        page: "var(--bg)",
+        card: "var(--surface)",
+        card2: "var(--surface-2)",
+        line: {
+          DEFAULT: "var(--border)",
+          strong: "var(--border-strong)",
         },
+        ink: {
+          DEFAULT: "var(--text-1)",
+          2: "var(--text-2)",
+          3: "var(--text-3)",
+          // legacy surface scale remapped onto themed surfaces
+          950: "var(--bg)",
+          900: "var(--surface-2)",
+          850: "var(--surface)",
+          800: "var(--surface)",
+          700: "var(--surface-2)",
+          600: "var(--border-strong)",
+        },
+        // single brand accent
+        accent: {
+          DEFAULT: "var(--accent)",
+          strong: "var(--accent-strong)",
+          soft: "var(--accent-soft)",
+        },
+        // semantic states (channel vars so /opacity works)
+        ok: "rgb(var(--ok) / <alpha-value>)",
+        warn: "rgb(var(--warn) / <alpha-value>)",
+        err: "rgb(var(--err) / <alpha-value>)",
+        // quantum accents — theme-aware via channel variables
         qx: {
-          violet: "#8b5cf6",
-          indigo: "#6366f1",
-          cyan: "#22d3ee",
-          mint: "#34d399",
-          amber: "#fbbf24",
-          rose: "#fb7185",
+          violet: "rgb(var(--qx-violet) / <alpha-value>)",
+          indigo: "rgb(var(--qx-indigo) / <alpha-value>)",
+          cyan: "rgb(var(--qx-cyan) / <alpha-value>)",
+          mint: "rgb(var(--qx-mint) / <alpha-value>)",
+          amber: "rgb(var(--qx-amber) / <alpha-value>)",
+          rose: "rgb(var(--qx-rose) / <alpha-value>)",
         },
       },
       fontFamily: {
@@ -27,8 +50,8 @@ export default {
         mono: ["JetBrains Mono", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
       },
       boxShadow: {
-        glow: "0 0 24px -6px rgba(139, 92, 246, 0.45)",
-        card: "0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5)",
+        card: "var(--shadow-card)",
+        panel: "var(--shadow-panel)",
       },
       keyframes: {
         floaty: {
@@ -41,7 +64,7 @@ export default {
         },
         fadeUp: {
           from: { opacity: "0", transform: "translateY(8px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
+          to: { opacity: "1", transform: "translateY(0px)" },
         },
       },
       animation: {

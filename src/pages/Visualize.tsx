@@ -73,26 +73,26 @@ export default function Visualize() {
 
       {/* Bloch sphere featured */}
       <Card className="mb-10 overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 bg-ink-950/60 px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-page/60 px-6 py-4">
           <div>
-            <h2 className="flex items-center gap-2 text-lg font-bold text-white">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-ink">
               <Orbit className="h-5 w-5 text-qx-cyan" /> 3D Bloch Sphere Explorer
             </h2>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-ink-2">
               Every possible single-qubit state is a point on this sphere. Gates rotate the state vector — try it.
             </p>
           </div>
           <Badge color="cyan"><Ket value={0} /> north pole · <Ket value={1} /> south pole</Badge>
         </div>
         <div className="p-6">
-          <Suspense fallback={<div className="flex h-72 items-center justify-center text-sm text-slate-500">Loading 3D view…</div>}>
+          <Suspense fallback={<div className="flex h-72 items-center justify-center text-sm text-ink-3">Loading 3D view…</div>}>
             <BlochSphere />
           </Suspense>
         </div>
       </Card>
 
       {/* concept cards */}
-      <h2 className="mb-4 text-lg font-bold text-white">Concept visualizers</h2>
+      <h2 className="mb-4 text-lg font-bold text-ink">Concept visualizers</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CONCEPTS.map((c) => (
           <button
@@ -100,18 +100,18 @@ export default function Visualize() {
             onClick={() => setSelected(selected === c.id ? null : c.id)}
             className={`rounded-2xl border p-5 text-left transition ${
               selected === c.id
-                ? `${COLOR_MAP[c.color]} shadow-glow`
-                : "border-white/10 bg-ink-850/80 hover:border-white/25 hover:bg-ink-800"
+                ? `${COLOR_MAP[c.color]}`
+                : "border-line bg-card/80 hover:border-line-strong hover:bg-card"
             }`}
           >
             <div className="flex items-center gap-3">
-              <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${selected === c.id ? "bg-white/15" : "bg-white/5 text-slate-300"}`}>
+              <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${selected === c.id ? "bg-card2" : "bg-card2 text-ink-2"}`}>
                 {c.icon}
               </span>
-              <h3 className="font-semibold text-white">{c.title}</h3>
+              <h3 className="font-semibold text-ink">{c.title}</h3>
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-slate-400">{c.blurb}</p>
-            <p className="mt-3 text-xs font-semibold text-slate-500">
+            <p className="mt-3 text-sm leading-relaxed text-ink-2">{c.blurb}</p>
+            <p className="mt-3 text-xs font-semibold text-ink-3">
               {selected === c.id ? "Close ▲" : "Open interactive demo ▼"}
             </p>
           </button>
@@ -119,13 +119,13 @@ export default function Visualize() {
       </div>
 
       {active && (
-        <div className="mt-8 animate-fade-up rounded-2xl border border-white/10 bg-ink-900/40 p-6">
+        <div className="mt-8 animate-fade-up rounded-2xl border border-line bg-card2/40 p-6">
           <div className="mb-5 flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-xl font-bold text-white">
+            <h3 className="flex items-center gap-2 text-xl font-bold text-ink">
               <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${COLOR_MAP[active.color]}`}>{active.icon}</span>
               {active.title}
             </h3>
-            <button onClick={() => setSelected(null)} className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white" aria-label="Close demo">
+            <button onClick={() => setSelected(null)} className="rounded-lg p-2 text-ink-2 hover:bg-card2 hover:text-ink" aria-label="Close demo">
               <X className="h-5 w-5" />
             </button>
           </div>

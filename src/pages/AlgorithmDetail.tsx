@@ -16,8 +16,8 @@ function StageBars({ state, n, title }: { state: Complex[]; n: number; title: st
   const probs = probabilities(state);
   const signed = (a: Complex) => (a.re < 0 ? "−" : a.im < 0 ? "−i" : a.re > 0 ? "+" : a.im > 0 ? "+i" : "");
   return (
-    <div className="rounded-xl border border-white/10 bg-ink-900/60 p-4">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</p>
+    <div className="rounded-xl border border-line bg-card2/60 p-4">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-3">{title}</p>
       <div className="space-y-1.5">
         {state.map((amp, i) => {
           const p = probs[i];
@@ -25,16 +25,16 @@ function StageBars({ state, n, title }: { state: Complex[]; n: number; title: st
           const neg = amp.re < -1e-9;
           return (
             <div key={i} className="flex items-center gap-2.5">
-              <span className="w-14 shrink-0 font-mono text-xs text-slate-300"><Ket value={i} n={n} /></span>
-              <div className="h-4 flex-1 overflow-hidden rounded bg-white/5">
+              <span className="w-14 shrink-0 font-mono text-xs text-ink-2"><Ket value={i} n={n} /></span>
+              <div className="h-4 flex-1 overflow-hidden rounded bg-card2">
                 <div
-                  className={`h-full rounded transition-all duration-500 ${neg ? "bg-rose-500/60" : "bg-gradient-to-r from-qx-violet/70 to-qx-indigo/70"}`}
+                  className={`h-full rounded transition-all duration-500 ${neg ? "bg-rose-500/60" : "bg-accent/80"}`}
                   style={{ width: `${Math.max(p * 100, 2)}%` }}
                 />
               </div>
               <span className="w-24 shrink-0 text-right font-mono text-[11px]">
                 <span className={neg ? "text-rose-400" : "text-qx-cyan"}>{signed(amp)}</span>{" "}
-                <span className="text-slate-400">{(p * 100).toFixed(1)}%</span>
+                <span className="text-ink-2">{(p * 100).toFixed(1)}%</span>
               </span>
             </div>
           );
@@ -84,10 +84,10 @@ function DeutschJozsaSim() {
   return (
     <Card className="p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-semibold text-white">Run it: 2-qubit Deutsch-Jozsa</h3>
+        <h3 className="font-semibold text-ink">Run it: 2-qubit Deutsch-Jozsa</h3>
         <SimulatedBadge />
       </div>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="mt-2 text-sm text-ink-2">
         Pick the hidden function, then run. The circuit queries it exactly once — and always answers correctly.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -96,7 +96,7 @@ function DeutschJozsaSim() {
             key={t}
             onClick={() => setFnType(t)}
             className={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${
-              fnType === t ? "border-qx-violet/60 bg-qx-violet/20 text-qx-violet" : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
+              fnType === t ? "border-qx-violet/60 bg-qx-violet/20 text-qx-violet" : "border-line bg-card2 text-ink-2 hover:bg-card2"
             }`}
           >
             {t === "constant-0" ? "Constant: f(x)=0" : t === "constant-1" ? "Constant: f(x)=1" : "Balanced: parity"}
@@ -113,11 +113,11 @@ function DeutschJozsaSim() {
       )}
       {verdict && (
         <div className={`mt-4 rounded-xl border p-4 ${verdict === "constant" ? "border-qx-mint/40 bg-qx-mint/10" : "border-qx-cyan/40 bg-qx-cyan/10"}`}>
-          <p className="font-semibold text-white">
+          <p className="font-semibold text-ink">
             Measured <span className="font-mono"><Ket value={resultBits!} n={2} /></span> → the function is{" "}
             <span className={verdict === "constant" ? "text-qx-mint" : "text-qx-cyan"}>{verdict}</span>.
           </p>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-ink-2">
             One function evaluation. A classical computer may need up to three.
           </p>
         </div>
@@ -159,10 +159,10 @@ function GroverSim() {
   return (
     <Card className="p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-semibold text-white">Run it: Grover on 4 items (2 qubits)</h3>
+        <h3 className="font-semibold text-ink">Run it: Grover on 4 items (2 qubits)</h3>
         <SimulatedBadge />
       </div>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="mt-2 text-sm text-ink-2">
         One item out of four is secretly marked. One oracle call + one diffusion, then measure. Found it in a single iteration.
       </p>
       <div className="mt-4">
@@ -176,12 +176,12 @@ function GroverSim() {
             <StageBars state={stages[2]} n={2} title="3 · Diffusion amplifies" />
           </div>
           <div className="mt-4 rounded-xl border border-qx-mint/40 bg-qx-mint/10 p-4">
-            <p className="font-semibold text-white">
+            <p className="font-semibold text-ink">
               Marked item: <span className="font-mono"><Ket value={marked!} n={2} /></span> ·
               Measured: <span className="font-mono"><Ket value={found!} n={2} /></span>
               {marked === found ? <span className="ml-2 text-qx-mint">✓ found</span> : <span className="ml-2 text-rose-400">✗ miss (run again)</span>}
             </p>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-2">
               For 4 items, one iteration gives the marked item with 100% probability. For N items you repeat ~√N times.
             </p>
           </div>
@@ -244,10 +244,10 @@ function TeleportSim() {
   return (
     <Card className="p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-semibold text-white">Run it: teleport a qubit to Bob</h3>
+        <h3 className="font-semibold text-ink">Run it: teleport a qubit to Bob</h3>
         <SimulatedBadge />
       </div>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="mt-2 text-sm text-ink-2">
         Choose the unknown state Alice wants to send. The protocol runs the full circuit — entanglement, measurement, and Bob's correction.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -256,7 +256,7 @@ function TeleportSim() {
             key={id}
             onClick={() => setChoice(id)}
             className={`rounded-xl border px-4 py-2 font-mono text-sm font-semibold transition ${
-              choice === id ? "border-qx-violet/60 bg-qx-violet/20 text-qx-violet" : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
+              choice === id ? "border-qx-violet/60 bg-qx-violet/20 text-qx-violet" : "border-line bg-card2 text-ink-2 hover:bg-card2"
             }`}
           >
             {label}
@@ -266,17 +266,17 @@ function TeleportSim() {
       </div>
       {log && (
         <div className="mt-5 rounded-xl border border-qx-mint/40 bg-qx-mint/10 p-4">
-          <p className="font-semibold text-white">
+          <p className="font-semibold text-ink">
             Alice measured <span className="font-mono">q0={log.m1}</span>, <span className="font-mono">q1={log.m2}</span> →
             Bob applied {log.m1 === 0 && log.m2 === 0 ? "nothing" : `${log.m1 === 1 ? "Z " : ""}${log.m2 === 1 ? "X" : ""}`.trim()}.
           </p>
           <p className="mt-2 font-mono text-sm text-qx-cyan">
             Bob's qubit: {describeStateWithPct(log.received, 1)}
           </p>
-          <p className="mt-1 text-sm text-slate-300">
+          <p className="mt-1 text-sm text-ink-2">
             Fidelity with the original: <span className="font-mono font-bold text-qx-mint">{(log.fidelity * 100).toFixed(1)}%</span>
           </p>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-ink-2">
             The original qubit was consumed — quantum teleportation copies nothing.
           </p>
         </div>
@@ -318,10 +318,10 @@ function SuperdenseSim() {
   return (
     <Card className="p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-semibold text-white">Run it: 2 bits in 1 qubit</h3>
+        <h3 className="font-semibold text-ink">Run it: 2 bits in 1 qubit</h3>
         <SimulatedBadge />
       </div>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="mt-2 text-sm text-ink-2">
         Alice encodes her 2-bit message onto her half of a shared Bell pair, sends one qubit — Bob decodes both bits.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -330,7 +330,7 @@ function SuperdenseSim() {
             key={b}
             onClick={() => setMsg(b)}
             className={`rounded-xl border px-4 py-2 font-mono text-sm font-semibold transition ${
-              msg === b ? "border-qx-violet/60 bg-qx-violet/20 text-qx-violet" : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
+              msg === b ? "border-qx-violet/60 bg-qx-violet/20 text-qx-violet" : "border-line bg-card2 text-ink-2 hover:bg-card2"
             }`}
           >
             {b}
@@ -340,22 +340,22 @@ function SuperdenseSim() {
       </div>
       {received !== null && (
         <div className="mt-5 rounded-xl border border-qx-mint/40 bg-qx-mint/10 p-4">
-          <p className="font-semibold text-white">
+          <p className="font-semibold text-ink">
             Alice sent <span className="font-mono">{msg}</span> ({SD_MAP.find((m) => m.bits === msg)?.label}) ·
             Bob received <span className="font-mono text-qx-mint">{received}</span>
             {msg === received ? <span className="ml-2 text-qx-mint">✓ perfect</span> : <span className="ml-2 text-rose-400">✗ mismatch</span>}
           </p>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-ink-2">
             Only one qubit travelled. Entanglement carried the second bit.
           </p>
         </div>
       )}
       <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {SD_MAP.map((m) => (
-          <div key={m.bits} className={`rounded-lg border p-2 text-center ${msg === m.bits ? "border-qx-violet/50 bg-qx-violet/10" : "border-white/10 bg-ink-900/60"}`}>
-            <p className="font-mono text-sm font-bold text-white">{m.bits}</p>
+          <div key={m.bits} className={`rounded-lg border p-2 text-center ${msg === m.bits ? "border-qx-violet/50 bg-qx-violet/10" : "border-line bg-card2/60"}`}>
+            <p className="font-mono text-sm font-bold text-ink">{m.bits}</p>
             <p className="font-mono text-[11px] text-qx-cyan">{m.op}</p>
-            <p className="text-[10px] text-slate-500">{m.label}</p>
+            <p className="text-[10px] text-ink-3">{m.label}</p>
           </div>
         ))}
       </div>
@@ -401,7 +401,7 @@ export default function AlgorithmDetail() {
   if (!algo) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <h1 className="text-2xl font-bold text-white">Algorithm not found</h1>
+        <h1 className="text-2xl font-bold text-ink">Algorithm not found</h1>
         <Button className="mt-6" onClick={() => navigate("/algorithms")}><ArrowLeft className="h-4 w-4" /> All algorithms</Button>
       </div>
     );
@@ -409,7 +409,7 @@ export default function AlgorithmDetail() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <Link to="/algorithms" className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white">
+      <Link to="/algorithms" className="mb-6 inline-flex items-center gap-1.5 text-sm text-ink-2 hover:text-ink">
         <ArrowLeft className="h-4 w-4" /> All algorithms
       </Link>
 
@@ -418,36 +418,36 @@ export default function AlgorithmDetail() {
           <Badge color="violet">{algo.title}</Badge>
           <Badge color={algo.level === "Beginner" ? "mint" : "amber"}>{algo.level}</Badge>
         </div>
-        <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{algo.title}</h1>
-        <p className="mt-2 text-lg text-slate-400">{algo.tagline}</p>
+        <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">{algo.title}</h1>
+        <p className="mt-2 text-lg text-ink-2">{algo.tagline}</p>
       </div>
 
       <div className="space-y-6">
         <Card className="p-6">
-          <h2 className="mb-2 flex items-center gap-2 font-bold text-white"><CheckCircle2 className="h-5 w-5 text-qx-rose" /> What problem does it solve?</h2>
-          <p className="leading-relaxed text-slate-300">{algo.problem}</p>
+          <h2 className="mb-2 flex items-center gap-2 font-bold text-ink"><CheckCircle2 className="h-5 w-5 text-qx-rose" /> What problem does it solve?</h2>
+          <p className="leading-relaxed text-ink-2">{algo.problem}</p>
         </Card>
 
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="p-6">
-            <h2 className="mb-2 font-bold text-white">Classical approach</h2>
-            <p className="text-sm leading-relaxed text-slate-400">{algo.classical}</p>
+            <h2 className="mb-2 font-bold text-ink">Classical approach</h2>
+            <p className="text-sm leading-relaxed text-ink-2">{algo.classical}</p>
           </Card>
           <Card className="p-6">
-            <h2 className="mb-2 font-bold text-white">Quantum approach</h2>
-            <p className="text-sm leading-relaxed text-slate-400">{algo.quantum}</p>
+            <h2 className="mb-2 font-bold text-ink">Quantum approach</h2>
+            <p className="text-sm leading-relaxed text-ink-2">{algo.quantum}</p>
           </Card>
         </div>
 
         <Card className="p-6">
-          <h2 className="mb-4 font-bold text-white">Circuit</h2>
-          <div className="overflow-x-auto rounded-xl border border-white/10 bg-ink-950/70 p-4">
+          <h2 className="mb-4 font-bold text-ink">Circuit</h2>
+          <div className="overflow-x-auto rounded-xl border border-line bg-page/70 p-4">
             {algo.circuit}
           </div>
         </Card>
 
         <Card className="p-6">
-          <h2 className="mb-4 font-bold text-white">Step by step</h2>
+          <h2 className="mb-4 font-bold text-ink">Step by step</h2>
           <div className="space-y-4">
             {algo.steps.map((s, i) => (
               <div key={i} className="flex gap-4">
@@ -455,8 +455,8 @@ export default function AlgorithmDetail() {
                   {i + 1}
                 </span>
                 <div>
-                  <p className="font-semibold text-white">{s.title}</p>
-                  <p className="mt-0.5 text-sm leading-relaxed text-slate-400">{s.body}</p>
+                  <p className="font-semibold text-ink">{s.title}</p>
+                  <p className="mt-0.5 text-sm leading-relaxed text-ink-2">{s.body}</p>
                 </div>
               </div>
             ))}
@@ -465,14 +465,14 @@ export default function AlgorithmDetail() {
 
         {sim && (
           <div>
-            <h2 className="mb-3 font-bold text-white">Run the simulation</h2>
+            <h2 className="mb-3 font-bold text-ink">Run the simulation</h2>
             {sim}
           </div>
         )}
 
         <Card className="border-qx-cyan/25 bg-qx-cyan/5 p-6">
-          <h2 className="mb-2 font-bold text-white">Real-world relevance</h2>
-          <p className="text-sm leading-relaxed text-slate-300">{algo.relevance}</p>
+          <h2 className="mb-2 font-bold text-ink">Real-world relevance</h2>
+          <p className="text-sm leading-relaxed text-ink-2">{algo.relevance}</p>
         </Card>
       </div>
     </div>

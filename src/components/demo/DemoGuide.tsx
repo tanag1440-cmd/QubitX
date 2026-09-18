@@ -18,20 +18,20 @@ export function DemoGuide() {
   const doneCount = STEPS.filter((s) => s.match(pathname)).length;
 
   return (
-    <Card className="overflow-hidden border-qx-cyan/30">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 bg-gradient-to-r from-qx-cyan/15 to-qx-violet/10 px-5 py-4">
+    <Card className="overflow-hidden border-accent/30">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-card2 px-5 py-4">
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-qx-cyan/20 text-qx-cyan">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-soft text-accent">
             <Compass className="h-5 w-5" />
           </span>
           <div>
-            <h2 className="font-bold text-white">You're in Demo Mode</h2>
-            <p className="text-sm text-slate-400">
+            <h2 className="font-bold text-ink">You're in Demo Mode</h2>
+            <p className="text-sm text-ink-2">
               Sample learner loaded with progress, circuits, and badges. Follow the tour to see the full journey.
             </p>
           </div>
         </div>
-        <span className="font-mono text-xs text-qx-cyan">{doneCount}/{STEPS.length} steps</span>
+        <span className="font-mono text-xs text-accent">{doneCount}/{STEPS.length} steps</span>
       </div>
 
       <div className="grid gap-2 p-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -42,21 +42,21 @@ export function DemoGuide() {
               key={i}
               to={s.to}
               className={`rounded-xl border p-3.5 transition ${
-                done ? "border-qx-mint/40 bg-qx-mint/10" : "border-white/10 bg-white/[0.03] hover:border-qx-cyan/50 hover:bg-qx-cyan/5"
+                done ? "border-qx-mint/40 bg-qx-mint/10" : "border-line bg-card2/50 hover:border-accent/50 hover:bg-accent-soft"
               }`}
             >
               <span className="flex items-center gap-2">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-950 font-mono text-[10px] font-bold text-qx-cyan">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-card font-mono text-[10px] font-bold text-accent">
                   {done ? <CheckCircle2 className="h-4 w-4 text-qx-mint" /> : i + 1}
                 </span>
-                <span className={`text-sm font-semibold ${done ? "text-qx-mint" : "text-white"}`}>{s.label}</span>
+                <span className={`text-sm font-semibold ${done ? "text-qx-mint" : "text-ink"}`}>{s.label}</span>
               </span>
-              <span className="mt-1.5 block text-xs leading-relaxed text-slate-500">{s.hint}</span>
+              <span className="mt-1.5 block text-xs leading-relaxed text-ink-3">{s.hint}</span>
             </Link>
           );
         })}
         <div className="flex flex-col justify-between rounded-xl border border-qx-violet/30 bg-qx-violet/10 p-4">
-          <p className="flex items-start gap-1.5 text-xs leading-relaxed text-slate-300">
+          <p className="flex items-start gap-1.5 text-xs leading-relaxed text-ink-2">
             <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-qx-violet" />
             Finish by checking Achievements, your Profile, and the Admin panel.
           </p>

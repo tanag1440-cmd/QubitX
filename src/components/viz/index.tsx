@@ -25,7 +25,7 @@ export function LessonDemo({ id }: { id: string }) {
   const Demo = DEMOS[id];
   if (!Demo) {
     return (
-      <div className="rounded-xl border border-dashed border-white/15 py-10 text-center text-sm text-slate-500">
+      <div className="rounded-xl border border-dashed border-line py-10 text-center text-sm text-ink-3">
         This interactive demo is coming soon.
       </div>
     );

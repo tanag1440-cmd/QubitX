@@ -43,13 +43,13 @@ export function GatePlayground() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <Card className="p-6">
-        <h4 className="font-semibold text-white">Apply gates to |0⟩</h4>
+        <h4 className="font-semibold text-ink">Apply gates to |0⟩</h4>
         <div className="mt-2 flex flex-wrap gap-2">
           {(["H", "X", "Y", "Z", "S", "T"] as GateType[]).map((g) => (
             <button
               key={g}
               onClick={() => apply(g)}
-              className="flex h-12 w-12 items-center justify-center rounded-xl border border-qx-violet/40 bg-qx-violet/10 font-mono text-lg font-bold text-qx-violet transition hover:bg-qx-violet/25 hover:shadow-glow"
+              className="flex h-12 w-12 items-center justify-center rounded-xl border border-qx-violet/40 bg-qx-violet/10 font-mono text-lg font-bold text-qx-violet transition hover:bg-qx-violet/25 "
               aria-label={`Apply ${g} gate`}
             >
               {g}
@@ -57,7 +57,7 @@ export function GatePlayground() {
           ))}
           <button
             onClick={reset}
-            className="ml-auto rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-slate-300 hover:bg-white/10"
+            className="ml-auto rounded-xl border border-line bg-card2 px-4 text-sm text-ink-2 hover:bg-card2"
           >
             Reset
           </button>
@@ -68,11 +68,11 @@ export function GatePlayground() {
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-5 font-mono text-sm">
-          <span className="text-slate-400"><Ket value={0} /> <span className="text-qx-violet">{Math.round(probs[0] * 100)}%</span></span>
-          <span className="text-slate-400"><Ket value={1} /> <span className="text-qx-cyan">{Math.round(probs[1] * 100)}%</span></span>
+          <span className="text-ink-2"><Ket value={0} /> <span className="text-qx-violet">{Math.round(probs[0] * 100)}%</span></span>
+          <span className="text-ink-2"><Ket value={1} /> <span className="text-qx-cyan">{Math.round(probs[1] * 100)}%</span></span>
         </div>
-        <p className="mt-2 text-center text-xs text-slate-500">
-          Gate sequence: <span className="font-mono text-slate-300">{ops.map((o) => o.gate).join(" → ") || "—"}</span>
+        <p className="mt-2 text-center text-xs text-ink-3">
+          Gate sequence: <span className="font-mono text-ink-2">{ops.map((o) => o.gate).join(" → ") || "—"}</span>
         </p>
         <p className="mt-2 text-center font-mono text-xs text-qx-cyan">
           {describeStateWithPct(state, 1)}
@@ -80,23 +80,23 @@ export function GatePlayground() {
       </Card>
 
       <Card className="p-6">
-        <h4 className="font-semibold text-white">What each gate just did</h4>
+        <h4 className="font-semibold text-ink">What each gate just did</h4>
         {history.length === 0 ? (
-          <p className="mt-4 rounded-lg border border-dashed border-white/10 py-8 text-center text-sm text-slate-500">
+          <p className="mt-4 rounded-lg border border-dashed border-line py-8 text-center text-sm text-ink-3">
             Click a gate to see its effect on the qubit.
           </p>
         ) : (
           <ul className="mt-2 space-y-2.5">
             {history.map((h, i) => (
-              <li key={i} className="rounded-xl border border-white/10 bg-ink-900/60 p-3 text-sm text-slate-300">
+              <li key={i} className="rounded-xl border border-line bg-card2/60 p-3 text-sm text-ink-2">
                 {h}
               </li>
             ))}
           </ul>
         )}
-        <div className="mt-5 rounded-xl border border-white/10 bg-ink-900/60 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Try this</p>
-          <p className="mt-2 text-sm text-slate-400">
+        <div className="mt-5 rounded-xl border border-line bg-card2/60 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-ink-3">Try this</p>
+          <p className="mt-2 text-sm text-ink-2">
             Apply <span className="font-mono text-qx-cyan">H</span> twice. The state returns to |0⟩ — H is its own
             inverse. Then try <span className="font-mono text-qx-cyan">H</span> + <span className="font-mono text-qx-cyan">X</span>:
             an X on a superposition still flips it perfectly.

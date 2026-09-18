@@ -26,20 +26,20 @@ export function QubitVisual() {
               key={st.id}
               onClick={() => setIdx(i)}
               className={`w-full rounded-xl border p-3 text-left transition ${
-                i === idx ? "border-qx-violet/60 bg-qx-violet/10" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
+                i === idx ? "border-qx-violet/60 bg-qx-violet/10" : "border-line bg-card2/50 hover:bg-card2/60"
               }`}
             >
-              <p className={`text-sm font-semibold ${i === idx ? "text-qx-violet" : "text-slate-300"}`}>{st.label}</p>
-              <p className="mt-1 text-xs text-slate-500">{st.note}</p>
+              <p className={`text-sm font-semibold ${i === idx ? "text-qx-violet" : "text-ink-2"}`}>{st.label}</p>
+              <p className="mt-1 text-xs text-ink-3">{st.note}</p>
             </button>
           ))}
-          <div className="rounded-xl border border-white/10 bg-ink-900/60 p-3 text-xs text-slate-400">
+          <div className="rounded-xl border border-line bg-card2/60 p-3 text-xs text-ink-2">
             The dial above is a simplified picture. A real qubit also carries a <em>phase</em> — the relative
             timing of its waves — which the Bloch sphere visualizer shows in 3D.
           </div>
         </div>
       </div>
-      <p className="mt-4 text-center text-xs text-slate-500">
+      <p className="mt-4 text-center text-xs text-ink-3">
         Tip: superposition isn't "we don't know which" — it's a real combination, exactly like a spinning coin isn't
         secretly heads.
       </p>

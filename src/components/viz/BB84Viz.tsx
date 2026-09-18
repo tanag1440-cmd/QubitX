@@ -75,13 +75,13 @@ export function BB84Viz() {
     <Card className="p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h4 className="font-semibold text-white">BB84 key exchange</h4>
-          <p className="mt-1 text-sm text-slate-400">
+          <h4 className="font-semibold text-ink">BB84 key exchange</h4>
+          <p className="mt-1 text-sm text-ink-2">
             Alice sends {N} random qubits; bases are compared publicly; matching positions form the key.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-ink-2">
             <input type="checkbox" checked={withEve} onChange={(e) => setWithEve(e.target.checked)} className="h-4 w-4 accent-rose-500" />
             Eavesdropper (Eve)
           </label>
@@ -92,7 +92,7 @@ export function BB84Viz() {
       </div>
 
       {result === null ? (
-        <p className="mt-5 rounded-xl border border-dashed border-white/10 py-8 text-center text-sm text-slate-500">
+        <p className="mt-5 rounded-xl border border-dashed border-line py-8 text-center text-sm text-ink-3">
           {running ? "Transmitting photons…" : "Run the protocol to see the key exchange step by step."}
         </p>
       ) : (
@@ -100,7 +100,7 @@ export function BB84Viz() {
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[560px] text-left text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-xs uppercase tracking-wider text-slate-500">
+                <tr className="border-b border-line text-xs uppercase tracking-wider text-ink-3">
                   <th className="py-2 pr-3">#</th>
                   <th className="py-2 pr-3">Alice bit</th>
                   <th className="py-2 pr-3">Alice basis</th>
@@ -112,15 +112,15 @@ export function BB84Viz() {
               </thead>
               <tbody>
                 {result.rounds.map((r) => (
-                  <tr key={r.index} className="border-b border-white/5">
-                    <td className="py-2 pr-3 font-mono text-slate-500">{r.index + 1}</td>
+                  <tr key={r.index} className="border-b border-line">
+                    <td className="py-2 pr-3 font-mono text-ink-3">{r.index + 1}</td>
                     <td className="py-2 pr-3 font-mono text-qx-violet"><Ket value={r.aliceBit} /></td>
                     <td className="py-2 pr-3 font-mono">{r.aliceBasis}</td>
                     <td className="py-2 pr-3 font-mono">{r.bobBasis}</td>
                     <td className="py-2 pr-3 font-mono text-qx-cyan"><Ket value={r.bobBit} /></td>
-                    <td className="py-2 pr-3">{r.match ? <span className="text-qx-mint">✓</span> : <span className="text-slate-600">✗</span>}</td>
+                    <td className="py-2 pr-3">{r.match ? <span className="text-qx-mint">✓</span> : <span className="text-ink-3">✗</span>}</td>
                     <td className="py-2 font-mono">
-                      {r.sifted ? <span className="font-bold text-qx-mint"><Ket value={r.aliceBit} /></span> : <span className="text-slate-700">—</span>}
+                      {r.sifted ? <span className="font-bold text-qx-mint"><Ket value={r.aliceBit} /></span> : <span className="text-ink-3">—</span>}
                     </td>
                   </tr>
                 ))}
@@ -129,28 +129,28 @@ export function BB84Viz() {
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-ink-900/60 p-4">
-              <p className="text-xs uppercase tracking-wider text-slate-500">Shared key</p>
+            <div className="rounded-xl border border-line bg-card2/60 p-4">
+              <p className="text-xs uppercase tracking-wider text-ink-3">Shared key</p>
               <p className="mt-1 font-mono text-lg font-bold text-qx-mint">
                 {result.key === "" ? "—" : result.key.split("").join(" ")}
               </p>
-              <p className="mt-1 text-xs text-slate-500">{result.key.length} bits (after sacrificing check bits)</p>
+              <p className="mt-1 text-xs text-ink-3">{result.key.length} bits (after sacrificing check bits)</p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-ink-900/60 p-4">
-              <p className="text-xs uppercase tracking-wider text-slate-500">Error check</p>
-              <p className="mt-1 font-mono text-lg font-bold text-white">
+            <div className="rounded-xl border border-line bg-card2/60 p-4">
+              <p className="text-xs uppercase tracking-wider text-ink-3">Error check</p>
+              <p className="mt-1 font-mono text-lg font-bold text-ink">
                 {result.errors}/{result.checked} mismatches
               </p>
             </div>
             <div className={`rounded-xl border p-4 ${detected ? "border-rose-500/40 bg-rose-500/10" : "border-qx-mint/40 bg-qx-mint/10"}`}>
-              <p className="text-xs uppercase tracking-wider text-slate-500">Verdict</p>
+              <p className="text-xs uppercase tracking-wider text-ink-3">Verdict</p>
               <p className={`mt-1 text-sm font-bold ${detected ? "text-rose-400" : "text-qx-mint"}`}>
                 {detected ? "⚠ EAVESDROPPER DETECTED" : "✓ Secure — no disturbance"}
               </p>
             </div>
           </div>
 
-          <p className="mt-4 text-xs text-slate-500">
+          <p className="mt-4 text-xs text-ink-3">
             Turn Eve on and rerun a few times: her interference shows up as mismatches in the sacrificed check bits.
             Any detectable disturbance means the key is aborted — that's what makes QKD provably secure.
           </p>

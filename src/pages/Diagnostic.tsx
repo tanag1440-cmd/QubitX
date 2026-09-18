@@ -104,8 +104,8 @@ export default function Diagnostic() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <ClipboardCheck className="mx-auto mb-4 h-12 w-12 text-qx-violet" />
-        <h1 className="text-2xl font-bold text-white">Quantum Knowledge Diagnostic</h1>
-        <p className="mx-auto mt-3 max-w-md text-slate-400">
+        <h1 className="text-2xl font-bold text-ink">Quantum Knowledge Diagnostic</h1>
+        <p className="mx-auto mt-3 max-w-md text-ink-2">
           A short 13-question check that maps your strengths and gaps across quantum topics — so your
           learning path is built for you, not for everyone.
         </p>
@@ -133,24 +133,24 @@ export default function Diagnostic() {
               { icon: <Target className="h-5 w-5" />, title: "Topic-level results", body: "Not just beginner/advanced — see strengths per topic." },
               { icon: <Compass className="h-5 w-5" />, title: "A path built for you", body: "Your roadmap adapts to what you already know." },
             ].map((f) => (
-              <div key={f.title} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+              <div key={f.title} className="rounded-xl border border-line bg-card2/50 p-4">
                 <span className="mb-2 inline-flex rounded-lg bg-qx-violet/15 p-2 text-qx-violet">{f.icon}</span>
-                <p className="text-sm font-semibold text-white">{f.title}</p>
-                <p className="mt-1 text-xs text-slate-400">{f.body}</p>
+                <p className="text-sm font-semibold text-ink">{f.title}</p>
+                <p className="mt-1 text-xs text-ink-2">{f.body}</p>
               </div>
             ))}
           </div>
 
           <div className="mt-6">
-            <p className="mb-2 text-sm font-semibold text-white">What's your goal?</p>
-            <p className="mb-3 text-xs text-slate-400">This shapes your recommendations — it's one signal among several, and you can change it anytime.</p>
+            <p className="mb-2 text-sm font-semibold text-ink">What's your goal?</p>
+            <p className="mb-3 text-xs text-ink-2">This shapes your recommendations — it's one signal among several, and you can change it anytime.</p>
             <div className="flex flex-wrap gap-2">
               {GOALS.map((g) => (
                 <button
                   key={g}
                   onClick={() => setGoal(g)}
                   className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
-                    goal === g ? "border-qx-violet/60 bg-qx-violet/15 text-white" : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
+                    goal === g ? "border-qx-violet/60 bg-qx-violet/15 text-ink" : "border-line bg-card2 text-ink-2 hover:bg-card2"
                   }`}
                 >
                   {GOAL_LABELS[g]}
@@ -174,7 +174,7 @@ export default function Diagnostic() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
         <div className="mb-6">
-          <div className="mb-2 flex items-center justify-between text-sm text-slate-400">
+          <div className="mb-2 flex items-center justify-between text-sm text-ink-2">
             <span>Question {index + 1} of {DIAGNOSTIC.length}</span>
             <span>{answeredCount} answered</span>
           </div>
@@ -183,7 +183,7 @@ export default function Diagnostic() {
 
         <Card className="p-6">
           <Badge color="violet">{topicName(q.topicId)}</Badge>
-          <h2 className="mt-3 text-lg font-semibold text-white">{q.prompt}</h2>
+          <h2 className="mt-3 text-lg font-semibold text-ink">{q.prompt}</h2>
 
           {q.circuit && q.numQubits && (
             <div className="mt-4">
@@ -198,12 +198,12 @@ export default function Diagnostic() {
                 onClick={() => choose(i)}
                 className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition ${
                   chosen === i
-                    ? "border-qx-violet/60 bg-qx-violet/15 text-white"
-                    : "border-white/10 bg-white/[0.02] text-slate-300 hover:bg-white/[0.06]"
+                    ? "border-qx-violet/60 bg-qx-violet/15 text-ink"
+                    : "border-line bg-card2/50 text-ink-2 hover:bg-card2/60"
                 }`}
               >
                 <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold ${
-                  chosen === i ? "bg-qx-violet text-white" : "bg-white/8 text-slate-400"
+                  chosen === i ? "bg-qx-violet text-white" : "bg-card2 text-ink-2"
                 }`}>
                   {String.fromCharCode(65 + i)}
                 </span>
@@ -226,7 +226,7 @@ export default function Diagnostic() {
               </Button>
             )}
           </div>
-          {chosen < 0 && <p className="mt-3 text-xs text-slate-500">Pick an answer to continue. Answering "I'm not sure" honestly gives better guidance — there's no penalty.</p>}
+          {chosen < 0 && <p className="mt-3 text-xs text-ink-3">Pick an answer to continue. Answering "I'm not sure" honestly gives better guidance — there's no penalty.</p>}
         </Card>
       </div>
     );
@@ -244,31 +244,31 @@ export default function Diagnostic() {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Overall</p>
-                <p className="mt-1 text-3xl font-bold text-white">{overall}%</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-ink-3">Overall</p>
+                <p className="mt-1 text-3xl font-bold text-ink">{overall}%</p>
               </div>
               <Badge color={band.tone}>{band.label}</Badge>
             </div>
             <ProgressBar className="mt-4" value={overall} />
-            <p className="mt-4 text-sm leading-relaxed text-slate-300">{summary}</p>
+            <p className="mt-4 text-sm leading-relaxed text-ink-2">{summary}</p>
           </Card>
 
           <Card className="p-6">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Topic breakdown</p>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-ink-3">Topic breakdown</p>
             <div className="space-y-3">
               {topicRows.map((row) => {
                 const t = topicById(row.topicId);
                 const tone = row.pct >= 80 ? "mint" : row.pct >= 50 ? "cyan" : "rose";
                 return (
                   <div key={row.topicId} className="flex items-center gap-3">
-                    <span className="w-40 shrink-0 truncate text-sm text-slate-300" title={t?.name}>{t?.name ?? row.topicId}</span>
-                    <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-white/8">
+                    <span className="w-40 shrink-0 truncate text-sm text-ink-2" title={t?.name}>{t?.name ?? row.topicId}</span>
+                    <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-card2">
                       <div
                         className={`h-full rounded-full bg-gradient-to-r ${tone === "mint" ? "from-qx-mint to-qx-cyan" : tone === "cyan" ? "from-qx-cyan to-qx-indigo" : "from-qx-rose to-rose-600"}`}
                         style={{ width: `${Math.max(row.pct, 3)}%` }}
                       />
                     </div>
-                    <span className="w-12 shrink-0 text-right font-mono text-sm text-white">{row.pct}%</span>
+                    <span className="w-12 shrink-0 text-right font-mono text-sm text-ink">{row.pct}%</span>
                   </div>
                 );
               })}
@@ -289,16 +289,16 @@ export default function Diagnostic() {
         <div className="space-y-5">
           <Card className="p-6">
             <div className="mb-2 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-qx-cyan" />
-              <p className="text-sm font-semibold text-white">AI recommendation</p>
+              <Sparkles className="h-4 w-4 text-accent" />
+              <p className="text-sm font-semibold text-ink">AI recommendation</p>
             </div>
             <GroundedChip />
-            <p className="mt-3 text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 text-sm leading-relaxed text-ink-2">
               {recommendation?.text ?? "Open your learning path to see where Qubit-X recommends you start."}
             </p>
             {recommendation && (
-              <p className="mt-3 text-xs text-slate-500">
-                Starting focus: <span className="font-semibold text-slate-300">{topicName(recommendation.topicId)}</span>
+              <p className="mt-3 text-xs text-ink-3">
+                Starting focus: <span className="font-semibold text-ink-2">{topicName(recommendation.topicId)}</span>
               </p>
             )}
             <div className="mt-4 flex flex-col gap-2">
@@ -310,28 +310,28 @@ export default function Diagnostic() {
           </Card>
 
           <Card className="p-6">
-            <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-white">
+            <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink">
               <RotateCcw className="h-4 w-4" /> Retake
             </p>
-            <p className="mb-3 text-xs text-slate-400">
+            <p className="mb-3 text-xs text-ink-2">
               Retaking re-seeds your starting estimate. Your practice history is kept — mastery never drops just because you retook a quiz.
             </p>
             <Button variant="secondary" size="sm" onClick={() => { setStage("intro"); setResult(null); }}>Retake diagnostic</Button>
           </Card>
 
           <Card className="p-6">
-            <p className="flex items-center gap-2 text-sm font-semibold text-white">
+            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
               <CheckCircle2 className="h-4 w-4 text-qx-mint" /> Prefer to explore first?
             </p>
-            <p className="mt-1.5 text-xs text-slate-400">
+            <p className="mt-1.5 text-xs text-ink-2">
               Everything stays available: lessons, the Quantum Lab, the Visualize demos and the AI Tutor.
             </p>
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <Link to="/learn" className="text-qx-cyan hover:underline">Lessons</Link>
-              <span className="text-slate-600">·</span>
-              <Link to="/lab" className="text-qx-cyan hover:underline">Quantum Lab</Link>
-              <span className="text-slate-600">·</span>
-              <Link to="/tutor" className="text-qx-cyan hover:underline">AI Tutor</Link>
+              <Link to="/learn" className="text-accent hover:underline">Lessons</Link>
+              <span className="text-ink-3">·</span>
+              <Link to="/lab" className="text-accent hover:underline">Quantum Lab</Link>
+              <span className="text-ink-3">·</span>
+              <Link to="/tutor" className="text-accent hover:underline">AI Tutor</Link>
             </div>
           </Card>
         </div>

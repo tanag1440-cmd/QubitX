@@ -99,8 +99,8 @@ export function CircuitAiPanel({
   return (
     <Card className="p-5">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 font-semibold text-white">
-          <Sparkles className="h-4 w-4 text-qx-cyan" /> AI circuit tools
+        <h3 className="flex items-center gap-2 font-semibold text-ink">
+          <Sparkles className="h-4 w-4 text-accent" /> AI circuit tools
         </h3>
         <GroundedChip label="Reads your actual circuit" />
       </div>
@@ -121,7 +121,7 @@ export function CircuitAiPanel({
       </div>
 
       {!hasCircuit && (
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-ink-3">
           Add at least one gate and these tools will analyse the real circuit — using the same simulator results you see above.
         </p>
       )}
@@ -129,43 +129,43 @@ export function CircuitAiPanel({
       {tab === "explain" && explanation && (
         <div className="mt-4 space-y-4">
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-ink-900/60 p-3">
-              <p className="text-[11px] uppercase tracking-wider text-slate-500">Initial state</p>
-              <p className="mt-1 font-mono text-sm text-white">{explanation.initialState}</p>
+            <div className="rounded-xl border border-line bg-card2/60 p-3">
+              <p className="text-[11px] uppercase tracking-wider text-ink-3">Initial state</p>
+              <p className="mt-1 font-mono text-sm text-ink">{explanation.initialState}</p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-ink-900/60 p-3">
-              <p className="text-[11px] uppercase tracking-wider text-slate-500">Final state</p>
-              <p className="mt-1 truncate font-mono text-sm text-white" title={explanation.finalState}>{explanation.finalState}</p>
+            <div className="rounded-xl border border-line bg-card2/60 p-3">
+              <p className="text-[11px] uppercase tracking-wider text-ink-3">Final state</p>
+              <p className="mt-1 truncate font-mono text-sm text-ink" title={explanation.finalState}>{explanation.finalState}</p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-ink-900/60 p-3">
-              <p className="text-[11px] uppercase tracking-wider text-slate-500">Entanglement</p>
-              <p className="mt-1 text-sm text-white">{explanation.entangled ? "Entangled" : "Not entangled"}</p>
+            <div className="rounded-xl border border-line bg-card2/60 p-3">
+              <p className="text-[11px] uppercase tracking-wider text-ink-3">Entanglement</p>
+              <p className="mt-1 text-sm text-ink">{explanation.entangled ? "Entangled" : "Not entangled"}</p>
             </div>
           </div>
 
           <ol className="space-y-2">
             {explanation.steps.map((s, i) => (
-              <li key={i} className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3">
+              <li key={i} className="flex gap-3 rounded-xl border border-line bg-card2/50 p-3">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-qx-violet/20 text-xs font-bold text-qx-violet">{i + 1}</span>
-                <span className="text-sm text-slate-300">
-                  <span className="font-mono font-semibold text-white">{s.gate}</span> {s.effect}.
+                <span className="text-sm text-ink-2">
+                  <span className="font-mono font-semibold text-ink">{s.gate}</span> {s.effect}.
                 </span>
               </li>
             ))}
           </ol>
 
           <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Expected measurement outcomes</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-3">Expected measurement outcomes</p>
             <DistributionBars probabilities={explanation.distribution.map((d) => d.probability)} numQubits={qubits} />
           </div>
 
-          <p className="rounded-xl border border-white/10 bg-ink-900/60 p-4 text-sm leading-relaxed text-slate-300">{explanation.text}</p>
+          <p className="rounded-xl border border-line bg-card2/60 p-4 text-sm leading-relaxed text-ink-2">{explanation.text}</p>
         </div>
       )}
 
       {tab === "debug" && debug && (
         <div className="mt-4 space-y-3">
-          <p className="text-sm text-slate-300">{debug.summary}</p>
+          <p className="text-sm text-ink-2">{debug.summary}</p>
           {debug.issues.length === 0 ? (
             <div className="rounded-xl border border-qx-mint/30 bg-qx-mint/10 p-4 text-sm text-qx-mint">
               No problems detected. {analysis.entangled ? "The circuit produces a genuinely entangled state." : "The circuit's behaviour matches its structure."}
@@ -173,12 +173,12 @@ export function CircuitAiPanel({
           ) : (
             debug.issues.map((issue, i) => (
               <IssueCard key={i} severity={issue.severity} title={issue.title}>
-                <p><span className="font-semibold text-slate-200">Why: </span>{issue.why}</p>
-                <p><span className="font-semibold text-slate-200">Hint: </span>{issue.hint}</p>
+                <p><span className="font-semibold text-ink">Why: </span>{issue.why}</p>
+                <p><span className="font-semibold text-ink">Hint: </span>{issue.hint}</p>
               </IssueCard>
             ))
           )}
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-ink-3">
             Debugging checks the circuit you actually built. It never invents gates or results — and it won't hand you the full
             solution unless you ask for it.
           </p>
@@ -193,17 +193,17 @@ export function CircuitAiPanel({
                 key={f}
                 onClick={() => setFwTab(f)}
                 className={`rounded-lg border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition ${
-                  fwTab === f ? "border-qx-violet/60 bg-qx-violet/15 text-white" : "border-white/10 bg-white/5 text-slate-400 hover:bg-white/10"
+                  fwTab === f ? "border-qx-violet/60 bg-qx-violet/15 text-ink" : "border-line bg-card2 text-ink-2 hover:bg-card2"
                 }`}
               >
                 {f}
               </button>
             ))}
           </div>
-          <pre className="overflow-x-auto rounded-xl border border-white/10 bg-ink-900/80 p-4 text-xs leading-relaxed text-slate-300">
+          <pre className="overflow-x-auto rounded-xl border border-line bg-card2/80 p-4 text-xs leading-relaxed text-ink-2">
             <code>{frameworks[fwTab]}</code>
           </pre>
-          <p className="rounded-xl border border-white/10 bg-ink-900/60 p-3 text-xs leading-relaxed text-slate-400">{frameworks.note}</p>
+          <p className="rounded-xl border border-line bg-card2/60 p-3 text-xs leading-relaxed text-ink-2">{frameworks.note}</p>
           <ComingSoon>
             Live execution on Qiskit Aer, Cirq and PennyLane backends. This prototype runs your circuit on the built-in
             state-vector simulator; the framework adapters are the next step.
@@ -214,7 +214,7 @@ export function CircuitAiPanel({
       {tab === "noise" && noise && (
         <div className="mt-4 space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <label className="text-xs font-semibold uppercase tracking-wider text-ink-3">
               Depolarizing error rate: {(noiseRate * 100).toFixed(0)}%
             </label>
             <input
@@ -227,22 +227,22 @@ export function CircuitAiPanel({
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink-3">
                 Ideal simulation <Badge color="cyan">{SHOTS} shots</Badge>
               </p>
               <DistributionBars probabilities={noise.ideal.map((n) => n / SHOTS)} numQubits={qubits} />
             </div>
             <div>
-              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink-3">
                 Noisy simulation <Badge color="rose">educational model</Badge>
               </p>
               <DistributionBars probabilities={noise.noisy.map((n) => n / SHOTS)} numQubits={qubits} />
             </div>
           </div>
 
-          <p className="rounded-xl border border-white/10 bg-ink-900/60 p-4 text-sm leading-relaxed text-slate-300">
+          <p className="rounded-xl border border-line bg-card2/60 p-4 text-sm leading-relaxed text-ink-2">
             The ideal simulation reproduces the exact quantum distribution. The noisy run uses a simplified
-            <span className="font-semibold text-slate-200"> depolarizing noise model</span>: after each gate a random Pauli error is
+            <span className="font-semibold text-ink"> depolarizing noise model</span>: after each gate a random Pauli error is
             applied with probability p, and measurement outcomes can flip. That's why probability mass leaks into outcomes the
             ideal circuit forbids. It illustrates the <em>kind</em> of deviation real hardware shows — it is not a calibration
             profile of any specific device.

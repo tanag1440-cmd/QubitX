@@ -24,15 +24,15 @@ export function MasteryBar({
   return (
     <div className={compact ? "" : "py-1"}>
       <div className="mb-1.5 flex items-center justify-between gap-3">
-        <span className="truncate text-sm font-medium text-slate-200">{topicName(topicId)}</span>
+        <span className="truncate text-sm font-medium text-ink">{topicName(topicId)}</span>
         <span className="flex shrink-0 items-center gap-2">
-          <span className="font-mono text-sm font-semibold text-white">{mastery}%</span>
+          <span className="font-mono text-sm font-semibold text-ink">{mastery}%</span>
           <Badge color={band.tone}>{band.label}</Badge>
         </span>
       </div>
       <ProgressBar value={mastery} barClassName={`bg-gradient-to-r ${toneBar[band.tone]}`} />
       {!compact && (
-        <p className="mt-1 text-[11px] text-slate-500">
+        <p className="mt-1 text-[11px] text-ink-3">
           {attempts} attempt{attempts === 1 ? "" : "s"}
           {typeof confidence === "number" ? ` · confidence ${Math.round(confidence * 100)}%` : ""}
         </p>
@@ -56,15 +56,15 @@ export function CircuitStatic({
   const wireY = (q: number) => 20 + q * WIRE_GAP;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-ink-900/70 p-3">
-      {title && <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</p>}
+    <div className="rounded-xl border border-line bg-card2/70 p-3">
+      {title && <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-3">{title}</p>}
       <div className="overflow-x-auto">
         <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[240px] w-full">
           {Array.from({ length: numQubits }).map((_, q) => (
-            <line key={`w${q}`} x1={10} y1={wireY(q)} x2={width - 10} y2={wireY(q)} stroke="rgba(255,255,255,0.22)" strokeWidth="1.5" />
+            <line key={`w${q}`} x1={10} y1={wireY(q)} x2={width - 10} y2={wireY(q)} stroke="var(--viz-wire)" strokeWidth="1.5" />
           ))}
           {Array.from({ length: numQubits }).map((_, q) => (
-            <text key={`l${q}`} x={8} y={wireY(q) + 4} fill="#a78bfa" fontSize="11" fontFamily="monospace" textAnchor="end">
+            <text key={`l${q}`} x={8} y={wireY(q) + 4} fill="var(--viz-gate-text)" fontSize="11" fontFamily="monospace" textAnchor="end">
               q{q}
             </text>
           ))}
@@ -76,11 +76,11 @@ export function CircuitStatic({
               const ty = wireY(tgt);
               return (
                 <g key={i}>
-                  <line x1={x} y1={Math.min(cy, ty)} x2={x} y2={Math.max(cy, ty)} stroke="rgba(255,255,255,0.45)" strokeWidth="1.5" />
-                  <circle cx={x} cy={cy} r={4} fill="#e2e8f0" />
-                  <circle cx={x} cy={ty} r={9} fill="rgba(34,211,238,0.2)" stroke="#22d3ee" strokeWidth="1.5" />
-                  <line x1={x - 6} y1={ty} x2={x + 6} y2={ty} stroke="#67e8f9" strokeWidth="1.5" />
-                  <line x1={x} y1={ty - 6} x2={x} y2={ty + 6} stroke="#67e8f9" strokeWidth="1.5" />
+                  <line x1={x} y1={Math.min(cy, ty)} x2={x} y2={Math.max(cy, ty)} stroke="var(--viz-wire-strong)" strokeWidth="1.5" />
+                  <circle cx={x} cy={cy} r={4} fill="var(--viz-dot)" />
+                  <circle cx={x} cy={ty} r={9} fill="var(--viz-measure-bg)" stroke="var(--viz-measure-ring)" strokeWidth="1.5" />
+                  <line x1={x - 6} y1={ty} x2={x + 6} y2={ty} stroke="var(--viz-measure-text)" strokeWidth="1.5" />
+                  <line x1={x} y1={ty - 6} x2={x} y2={ty + 6} stroke="var(--viz-measure-text)" strokeWidth="1.5" />
                 </g>
               );
             }
@@ -90,9 +90,9 @@ export function CircuitStatic({
               const by = wireY(b);
               return (
                 <g key={i}>
-                  <line x1={x} y1={Math.min(ay, by)} x2={x} y2={Math.max(ay, by)} stroke="rgba(255,255,255,0.45)" strokeWidth="1.5" />
-                  <text x={x} y={ay + 5} fill="#cbd5e1" fontSize="14" textAnchor="middle">×</text>
-                  <text x={x} y={by + 5} fill="#cbd5e1" fontSize="14" textAnchor="middle">×</text>
+                  <line x1={x} y1={Math.min(ay, by)} x2={x} y2={Math.max(ay, by)} stroke="var(--viz-wire-strong)" strokeWidth="1.5" />
+                  <text x={x} y={ay + 5} fill="var(--viz-chip-text)" fontSize="14" textAnchor="middle">×</text>
+                  <text x={x} y={by + 5} fill="var(--viz-chip-text)" fontSize="14" textAnchor="middle">×</text>
                 </g>
               );
             }
@@ -101,9 +101,9 @@ export function CircuitStatic({
             return (
               <g key={i}>
                 <rect x={x - 13} y={y} width={26} height={24} rx={4}
-                  fill={measured ? "rgba(255,255,255,0.08)" : "rgba(139,92,246,0.22)"}
-                  stroke={measured ? "rgba(255,255,255,0.3)" : "#8b5cf6"} />
-                <text x={x} y={y + 16} fill={measured ? "#cbd5e1" : "#c4b5fd"} fontSize="12" fontFamily="monospace" textAnchor="middle" fontWeight="700">
+                  fill={measured ? "var(--viz-chip-bg)" : "var(--viz-gate-bg)"}
+                  stroke={measured ? "var(--viz-chip-border)" : "var(--viz-gate-ring, #8b5cf6)"} />
+                <text x={x} y={y + 16} fill={measured ? "var(--viz-chip-text)" : "var(--viz-gate-text)"} fontSize="12" fontFamily="monospace" textAnchor="middle" fontWeight="700">
                   {op.gate}
                 </text>
               </g>
@@ -129,7 +129,7 @@ export function DistributionBars({
   const any = rows.some((r) => r.p > 0);
   if (!any) {
     return (
-      <div className="rounded-xl border border-dashed border-white/10 px-4 py-6 text-center text-sm text-slate-500">
+      <div className="rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-ink-3">
         {emptyLabel}
       </div>
     );
@@ -138,14 +138,14 @@ export function DistributionBars({
     <div className="space-y-2">
       {rows.map((r) => (
         <div key={r.label} className="flex items-center gap-3">
-          <span className="w-16 shrink-0 text-right font-mono text-sm text-slate-300">{r.label}</span>
-          <div className="h-6 flex-1 overflow-hidden rounded-md bg-white/5">
+          <span className="w-16 shrink-0 text-right font-mono text-sm text-ink-2">{r.label}</span>
+          <div className="h-6 flex-1 overflow-hidden rounded-md bg-card2">
             <div
-              className="h-full rounded-md bg-gradient-to-r from-qx-violet to-qx-cyan transition-all duration-500"
+              className="h-full rounded-md bg-accent transition-all duration-500"
               style={{ width: `${Math.max(r.p * 100, r.p > 0 ? 2 : 0)}%` }}
             />
           </div>
-          <span className="w-16 shrink-0 font-mono text-sm text-white">{(r.p * 100).toFixed(0)}%</span>
+          <span className="w-16 shrink-0 font-mono text-sm text-ink">{(r.p * 100).toFixed(0)}%</span>
         </div>
       ))}
     </div>
@@ -160,14 +160,14 @@ export function IssueCard({ severity, title, children }: {
   const map = {
     high: { icon: <XCircle className="h-4 w-4" />, tone: "border-rose-500/30 bg-rose-500/10 text-rose-300" },
     medium: { icon: <AlertTriangle className="h-4 w-4" />, tone: "border-qx-amber/30 bg-qx-amber/10 text-qx-amber" },
-    low: { icon: <Info className="h-4 w-4" />, tone: "border-white/15 bg-white/5 text-slate-300" },
+    low: { icon: <Info className="h-4 w-4" />, tone: "border-line bg-card2 text-ink-2" },
   }[severity];
   return (
     <div className={`rounded-xl border p-3.5 ${map.tone}`}>
       <p className="flex items-center gap-2 text-sm font-semibold">
         {map.icon}<span>{title}</span>
       </p>
-      <div className="mt-2 space-y-1.5 text-sm text-slate-300">{children}</div>
+      <div className="mt-2 space-y-1.5 text-sm text-ink-2">{children}</div>
     </div>
   );
 }
@@ -181,8 +181,8 @@ export function FeedbackBanner({ correct, headline, detail, hint }: {
         {correct ? <CheckCircle2 className="h-4.5 w-4.5" /> : <Sparkles className="h-4.5 w-4.5" />}
         {headline}
       </p>
-      <p className="mt-2 text-sm text-slate-300">{detail}</p>
-      {hint && <p className="mt-2 text-sm text-slate-400"><span className="font-semibold text-slate-300">Hint: </span>{hint}</p>}
+      <p className="mt-2 text-sm text-ink-2">{detail}</p>
+      {hint && <p className="mt-2 text-sm text-ink-2"><span className="font-semibold text-ink-2">Hint: </span>{hint}</p>}
     </div>
   );
 }
@@ -199,12 +199,12 @@ export function GroundedChip({ label = "Grounded in your data" }: { label?: stri
 
 export function ComingSoon({ children }: { children: React.ReactNode }) {
   return (
-    <Card className="border-dashed border-white/15 bg-white/[0.02] p-5">
+    <Card className="border-dashed border-line bg-card2/50 p-5">
       <div className="flex items-start gap-3">
-        <span className="rounded-lg bg-white/5 p-2 text-slate-400"><Info className="h-4 w-4" /></span>
+        <span className="rounded-lg bg-card2 p-2 text-ink-2"><Info className="h-4 w-4" /></span>
         <div>
-          <p className="text-sm font-semibold text-white">Coming soon</p>
-          <p className="mt-1 text-sm text-slate-400">{children}</p>
+          <p className="text-sm font-semibold text-ink">Coming soon</p>
+          <p className="mt-1 text-sm text-ink-2">{children}</p>
         </div>
       </div>
     </Card>

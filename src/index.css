@@ -2,8 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Theme tokens ─────────────────────────────────────────────────────────
+   Light is the designed default; .dark on <html> swaps the variables.
+   Surfaces are warm-neutral (not blue-tinted) so the violet accent reads
+   as a deliberate brand color rather than a neon effect.                 */
+
 :root {
+  color-scheme: light;
+
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #eef0f4;
+  --border: #e3e6ec;
+  --border-strong: #cfd4dd;
+
+  --text-1: #16181d;
+  --text-2: #4b5058;
+  --text-3: #838893;
+
+  --accent: #6d28d9;
+  --accent-strong: #5b21b6;
+  --accent-soft: #ede9fe;
+
+  --ok: 21 128 61;
+  --warn: 180 83 9;
+  --err: 220 38 38;
+
+  /* quantum viz accents: slightly deeper in light for contrast */
+  --qx-violet: 109 40 217;
+  --qx-indigo: 79 70 229;
+  --qx-cyan: 8 145 178;
+  --qx-mint: 5 150 105;
+  --qx-amber: 217 119 6;
+  --qx-rose: 225 29 72;
+
+  --viz-wire: rgba(22, 24, 29, 0.18);
+  --viz-wire-strong: rgba(22, 24, 29, 0.4);
+  --viz-gate-bg: rgba(109, 40, 217, 0.1);
+  --viz-gate-text: #6d28d9;
+  --viz-chip-bg: rgba(22, 24, 29, 0.06);
+  --viz-chip-text: #4b5058;
+  --viz-chip-border: rgba(22, 24, 29, 0.2);
+  --viz-dot: #16181d;
+  --viz-measure-bg: rgba(8, 145, 178, 0.1);
+  --viz-measure-ring: #0891b2;
+  --viz-measure-text: #0e7490;
+
+  --shadow-card: 0 1px 2px rgba(16, 18, 24, 0.05), 0 8px 24px -12px rgba(16, 18, 24, 0.12);
+  --shadow-panel: 0 12px 40px -12px rgba(16, 18, 24, 0.18);
+
+  --hero-grid-line: rgba(22, 24, 29, 0.045);
+  --hero-glow-1: rgba(109, 40, 217, 0.07);
+  --hero-glow-2: rgba(8, 145, 178, 0.05);
+
+  --scrollbar-track: #eef0f4;
+  --scrollbar-thumb: #cfd4dd;
+  --scrollbar-thumb-hover: #b6bcc8;
+}
+
+.dark {
   color-scheme: dark;
+
+  --bg: #0d0e13;
+  --surface: #15161d;
+  --surface-2: #1c1e27;
+  --border: #272a35;
+  --border-strong: #3a3e4d;
+
+  --text-1: #f0f1f4;
+  --text-2: #a6abb8;
+  --text-3: #6e7482;
+
+  --accent: #8b78f0;
+  --accent-strong: #a394f4;
+  --accent-soft: #221f38;
+
+  --ok: 74 222 128;
+  --warn: 251 191 36;
+  --err: 248 113 113;
+
+  --qx-violet: 167 139 250;
+  --qx-indigo: 129 140 248;
+  --qx-cyan: 34 211 238;
+  --qx-mint: 52 211 153;
+  --qx-amber: 251 191 36;
+  --qx-rose: 251 113 133;
+
+  --viz-wire: rgba(240, 241, 244, 0.2);
+  --viz-wire-strong: rgba(240, 241, 244, 0.45);
+  --viz-gate-bg: rgba(167, 139, 250, 0.14);
+  --viz-gate-text: #c4b5fd;
+  --viz-chip-bg: rgba(240, 241, 244, 0.06);
+  --viz-chip-text: #a6abb8;
+  --viz-chip-border: rgba(240, 241, 244, 0.25);
+  --viz-dot: #e2e8f0;
+  --viz-measure-bg: rgba(34, 211, 238, 0.12);
+  --viz-measure-ring: #22d3ee;
+  --viz-measure-text: #67e8f9;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  --shadow-panel: 0 12px 40px -12px rgba(0, 0, 0, 0.6);
+
+  --hero-grid-line: rgba(255, 255, 255, 0.03);
+  --hero-glow-1: rgba(139, 92, 246, 0.1);
+  --hero-glow-2: rgba(34, 211, 238, 0.06);
+
+  --scrollbar-track: var(--surface-2);
+  --scrollbar-thumb: var(--border-strong);
+  --scrollbar-thumb-hover: #4a4f60;
 }
 
 html {
@@ -12,22 +118,22 @@ html {
 
 body {
   margin: 0;
-  background-color: #070b16;
+  background-color: var(--bg);
+  color: var(--text-1);
 }
 
-/* Subtle quantum grid backdrop */
+/* Subtle quantum grid backdrop — themed */
 .quantum-bg {
   background-image:
-    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(139, 92, 246, 0.14), transparent),
-    radial-gradient(ellipse 40% 30% at 90% 20%, rgba(34, 211, 238, 0.08), transparent),
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    radial-gradient(ellipse 60% 40% at 50% -10%, var(--hero-glow-1), transparent),
+    radial-gradient(ellipse 40% 30% at 90% 20%, var(--hero-glow-2), transparent),
+    linear-gradient(var(--hero-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hero-grid-line) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
 }
 
 .quantum-bg-soft {
-  background-image:
-    radial-gradient(ellipse 50% 35% at 50% 0%, rgba(139, 92, 246, 0.07), transparent);
+  background-image: radial-gradient(ellipse 50% 35% at 50% 0%, var(--hero-glow-1), transparent);
 }
 
 /* Range slider polish */
@@ -41,15 +147,15 @@ input[type="range"] {
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b1120;
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #243355;
+  background: var(--scrollbar-thumb);
   border-radius: 6px;
-  border: 2px solid #0b1120;
+  border: 2px solid var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #33436b;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Ket rendering niceness */

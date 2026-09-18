@@ -58,8 +58,8 @@ export default function Challenges() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <Swords className="mx-auto mb-4 h-12 w-12 text-qx-violet" />
-        <h1 className="text-2xl font-bold text-white">Daily Quantum Challenges</h1>
-        <p className="mx-auto mt-3 max-w-md text-slate-400">
+        <h1 className="text-2xl font-bold text-ink">Daily Quantum Challenges</h1>
+        <p className="mx-auto mt-3 max-w-md text-ink-2">
           Build circuits that satisfy a goal, get them checked automatically, and earn XP.
           Log in or create a free account to take today's challenge.
         </p>
@@ -80,17 +80,17 @@ export default function Challenges() {
       />
 
       <Card className="overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 bg-gradient-to-r from-qx-violet/15 to-transparent px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-card2 px-6 py-4">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-qx-violet/20 text-qx-violet">
               <Swords className="h-5.5 w-5.5" />
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="font-bold text-white">{todays.title}</h2>
+                <h2 className="font-bold text-ink">{todays.title}</h2>
                 {alreadySolved && <Badge color="mint"><CheckCircle2 className="h-3 w-3" /> Solved</Badge>}
               </div>
-              <p className="text-sm text-slate-400">{todays.description}</p>
+              <p className="text-sm text-ink-2">{todays.description}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -112,7 +112,7 @@ export default function Challenges() {
 
       {/* upcoming */}
       <div className="mt-8">
-        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-ink-3">
           <CalendarDays className="h-4 w-4" /> More challenges coming up
         </h3>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -120,15 +120,15 @@ export default function Challenges() {
             const done = db.challengeAttempts.some((a) => a.userId === currentUser.id && a.challengeId === c.id && a.success);
             return (
               <Card key={c.id} className="flex items-center gap-4 p-5 opacity-80">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-slate-500">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-card2 text-ink-3">
                   {done ? <CheckCircle2 className="h-5 w-5 text-qx-mint" /> : <Lock className="h-5 w-5" />}
                 </span>
                 <div className="flex-1">
-                  <p className="font-semibold text-white">{c.title}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-semibold text-ink">{c.title}</p>
+                  <p className="text-xs text-ink-3">
                     {new Date(c.date + "T00:00:00").toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}
                   </p>
-                  <p className="mt-1 text-xs text-slate-400">{c.description}</p>
+                  <p className="mt-1 text-xs text-ink-2">{c.description}</p>
                 </div>
                 <Badge color={done ? "mint" : "amber"}><Trophy className="h-3 w-3" /> {c.xpReward} XP</Badge>
               </Card>

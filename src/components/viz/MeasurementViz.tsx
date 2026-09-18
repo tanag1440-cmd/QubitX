@@ -31,7 +31,7 @@ export function MeasurementViz() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <Card className="flex flex-col items-center p-6">
-        <h4 className="self-start font-semibold text-white">A qubit in 50/50 superposition</h4>
+        <h4 className="self-start font-semibold text-ink">A qubit in 50/50 superposition</h4>
         <div className="my-4 flex justify-center">
           <StateViz
             alpha={phase === "ready" ? alpha : outcome === 0 ? { re: 1, im: 0 } : { re: 0, im: 0 }}
@@ -39,7 +39,7 @@ export function MeasurementViz() {
             collapsedTo={phase === "collapsed" ? outcome : null}
           />
         </div>
-        <p className="text-center text-sm text-slate-400">
+        <p className="text-center text-sm text-ink-2">
           {phase === "ready" && "50% |0⟩ · 50% |1⟩ — genuinely both at once."}
           {phase === "collapsing" && "Collapsing… the blend is being replaced by one definite answer."}
           {phase === "collapsed" && outcome !== null && (
@@ -54,9 +54,9 @@ export function MeasurementViz() {
       </Card>
 
       <Card className="p-6">
-        <h4 className="font-semibold text-white">Measuring again: same answer, every time</h4>
-        <p className="mt-2 text-sm text-slate-400">
-          After collapse the qubit sits in the measured state. Hit <span className="font-semibold text-white">Measure</span> a
+        <h4 className="font-semibold text-ink">Measuring again: same answer, every time</h4>
+        <p className="mt-2 text-sm text-ink-2">
+          After collapse the qubit sits in the measured state. Hit <span className="font-semibold text-ink">Measure</span> a
           few times — the outcome locks in and never flips.
         </p>
         <div className="mt-4 flex flex-wrap gap-1.5">
@@ -66,7 +66,7 @@ export function MeasurementViz() {
             </span>
           ))}
           {repeats.length === 0 && (
-            <p className="rounded-lg border border-dashed border-white/10 px-4 py-6 text-xs text-slate-500">
+            <p className="rounded-lg border border-dashed border-line px-4 py-6 text-xs text-ink-3">
               Results appear here after the first measurement.
             </p>
           )}
@@ -76,9 +76,9 @@ export function MeasurementViz() {
             ✓ All {repeats.length} runs agree — measurement destroyed the superposition, not the value.
           </p>
         )}
-        <div className="mt-6 rounded-xl border border-white/10 bg-ink-900/60 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Why this matters</p>
-          <p className="mt-2 text-sm text-slate-400">
+        <div className="mt-6 rounded-xl border border-line bg-card2/60 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-ink-3">Why this matters</p>
+          <p className="mt-2 text-sm text-ink-2">
             Quantum algorithms must therefore engineer the probabilities <em>before</em> the final measurement —
             once you look, you can't change what you see.
           </p>

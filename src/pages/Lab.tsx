@@ -68,13 +68,13 @@ export default function Lab() {
 
       {!currentUser && (
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-qx-cyan/25 bg-qx-cyan/5 px-5 py-4">
-          <p className="flex items-center gap-2 text-sm text-slate-300">
-            <Info className="h-4 w-4 shrink-0 text-qx-cyan" />
+          <p className="flex items-center gap-2 text-sm text-ink-2">
+            <Info className="h-4 w-4 shrink-0 text-accent" />
             You're exploring as a guest — experiments won't be saved and no XP is earned.
           </p>
           <button
             onClick={() => navigate("/signup")}
-            className="rounded-xl bg-qx-cyan/15 px-4 py-2 text-sm font-semibold text-qx-cyan hover:bg-qx-cyan/25"
+            className="rounded-xl bg-qx-cyan/15 px-4 py-2 text-sm font-semibold text-accent hover:bg-qx-cyan/25"
           >
             Create free account
           </button>
@@ -91,9 +91,9 @@ export default function Lab() {
 
       {/* saved experiments */}
       <div className="mt-10">
-        <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
           <FlaskConical className="h-5 w-5 text-qx-violet" /> My experiments
-          <span className="text-sm font-normal text-slate-500">({myExperiments.length})</span>
+          <span className="text-sm font-normal text-ink-3">({myExperiments.length})</span>
         </h2>
         {myExperiments.length === 0 ? (
           <EmptyState
@@ -104,7 +104,7 @@ export default function Lab() {
               : "Sign in to save your circuits and track experiments."}
             action={
               !currentUser ? (
-                <button onClick={() => navigate("/signup")} className="text-sm font-semibold text-qx-cyan hover:underline">
+                <button onClick={() => navigate("/signup")} className="text-sm font-semibold text-accent hover:underline">
                   Create an account →
                 </button>
               ) : undefined
@@ -113,22 +113,22 @@ export default function Lab() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {myExperiments.map((exp) => (
-              <div key={exp.id} className="rounded-2xl border border-white/10 bg-ink-850/80 p-5 transition hover:border-qx-violet/40">
+              <div key={exp.id} className="rounded-2xl border border-line bg-card/80 p-5 transition hover:border-qx-violet/40">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-semibold text-white">{exp.name}</p>
-                    <p className="mt-0.5 font-mono text-xs text-slate-500">
+                    <p className="font-semibold text-ink">{exp.name}</p>
+                    <p className="mt-0.5 font-mono text-xs text-ink-3">
                       {exp.numQubits} qubit{exp.numQubits > 1 ? "s" : ""} · {exp.circuit.length} gates
                     </p>
                   </div>
-                  <span className="rounded-md bg-white/5 px-2 py-1 font-mono text-[10px] text-slate-400">
+                  <span className="rounded-md bg-card2 px-2 py-1 font-mono text-[10px] text-ink-2">
                     {new Date(exp.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                   </span>
                 </div>
                 {exp.resultSummary && (
-                  <p className="mt-2 font-mono text-xs text-qx-cyan">{exp.resultSummary}</p>
+                  <p className="mt-2 font-mono text-xs text-accent">{exp.resultSummary}</p>
                 )}
-                <p className="mt-2 truncate font-mono text-xs text-slate-600">
+                <p className="mt-2 truncate font-mono text-xs text-ink-3">
                   {exp.circuit.map((o) => (o.gate === "CNOT" ? "CNOT" : o.gate)).join(" · ")}
                 </p>
                 <button

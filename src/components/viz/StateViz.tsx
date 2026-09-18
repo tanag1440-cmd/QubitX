@@ -26,39 +26,39 @@ export function StateViz({ alpha, beta, size = 180, collapsedTo }: {
     <div className="flex flex-col items-center" style={{ width: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="select-none">
         {/* dial background */}
-        <circle cx={size / 2} cy={size / 2} r={size / 2 - 4} fill="#0b1120" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
+        <circle cx={size / 2} cy={size / 2} r={size / 2 - 4} fill="var(--surface-2)" stroke="var(--viz-wire-strong)" strokeWidth="1.5" />
         {/* |0⟩ half */}
         <path
           d={`M ${size / 2} ${size / 2} A ${size / 2 - 4} ${size / 2 - 4} 0 0 1 ${size - 4} ${size / 2} L ${size / 2} ${size / 2} Z`}
-          fill="#8b5cf6"
+          fill="var(--viz-gate-ring, #8b5cf6)"
           opacity={0.12 + p0 * 0.6}
         />
         {/* |1⟩ half */}
         <path
           d={`M ${size / 2} ${size / 2} A ${size / 2 - 4} ${size / 2 - 4} 0 0 1 4 ${size / 2} L ${size / 2} ${size / 2} Z`}
-          fill="#22d3ee"
+          fill="var(--viz-measure-ring)"
           opacity={0.12 + p1 * 0.6}
         />
         {/* divider */}
-        <line x1="4" y1={size / 2} x2={size - 4} y2={size / 2} stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+        <line x1="4" y1={size / 2} x2={size - 4} y2={size / 2} stroke="var(--viz-wire)" strokeWidth="1" />
         {/* ticks */}
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="3 5" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--viz-wire)" strokeWidth="1" strokeDasharray="3 5" />
         {/* labels */}
-        <text x={size / 2} y={18} textAnchor="middle" fill="#a78bfa" fontSize="13" fontWeight="700" fontFamily="monospace">|0⟩</text>
-        <text x={size / 2} y={size - 8} textAnchor="middle" fill="#67e8f9" fontSize="13" fontWeight="700" fontFamily="monospace">|1⟩</text>
+        <text x={size / 2} y={18} textAnchor="middle" fill="var(--viz-gate-text)" fontSize="13" fontWeight="700" fontFamily="monospace">|0⟩</text>
+        <text x={size / 2} y={size - 8} textAnchor="middle" fill="var(--viz-measure-text)" fontSize="13" fontWeight="700" fontFamily="monospace">|1⟩</text>
         {/* needle */}
         <g style={{ transition: "all 500ms ease" }}>
           <line
             x1={size / 2} y1={size / 2} x2={x} y2={y}
-            stroke={collapsedTo !== null && collapsedTo !== undefined ? (collapsedTo === 0 ? "#a78bfa" : "#67e8f9") : "#e2e8f0"}
+            stroke={collapsedTo !== null && collapsedTo !== undefined ? (collapsedTo === 0 ? "var(--viz-gate-text)" : "var(--viz-measure-text)") : "var(--viz-dot)"}
             strokeWidth="2.5"
             strokeLinecap="round"
             opacity="0.95"
           />
-          <circle cx={size / 2} cy={size / 2} r="4" fill="#e2e8f0" />
+          <circle cx={size / 2} cy={size / 2} r="4" fill="var(--viz-dot)" />
         </g>
       </svg>
-      <div className="mt-1 flex items-center gap-4 font-mono text-xs text-slate-400">
+      <div className="mt-1 flex items-center gap-4 font-mono text-xs text-ink-2">
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-qx-violet" />
           <Ket value={0} /> {(p0 * 100).toFixed(0)}%
         </span>

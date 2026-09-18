@@ -210,15 +210,15 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
     if (cnot) {
       return (
         <g onClick={rm(cnot.id)} className="cursor-pointer" role="button" aria-label="Remove CNOT">
-          <circle cx={0} cy={0} r={4.5} fill="#e2e8f0" />
-          <line x1={0} y1={0} x2={0} y2={(cnot.qubits[1] - cnot.qubits[0]) * ROW_H} stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+          <circle cx={0} cy={0} r={4.5} fill="var(--viz-dot)" />
+          <line x1={0} y1={0} x2={0} y2={(cnot.qubits[1] - cnot.qubits[0]) * ROW_H} stroke="var(--viz-wire-strong)" strokeWidth="1.5" />
         </g>
       );
     }
     if (cnotTarget) {
       const c = ops.find((o) => o.gate === "CNOT" && o.qubits[1] === qubit && o.col === col)!;
       return (
-        <circle cx={0} cy={0} r={10} fill="rgba(34,211,238,0.2)" stroke="#22d3ee" strokeWidth="1.5" className="cursor-pointer" onClick={rm(c.id)} role="button" aria-label="Remove CNOT" />
+        <circle cx={0} cy={0} r={10} fill="var(--viz-measure-bg)" stroke="var(--viz-measure-ring)" strokeWidth="1.5" className="cursor-pointer" onClick={rm(c.id)} role="button" aria-label="Remove CNOT" />
       );
     }
     if (swap) {
@@ -226,25 +226,25 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
       const other = swap.qubits[isFirst ? 1 : 0];
       return (
         <g onClick={rm(swap.id)} className="cursor-pointer" role="button" aria-label="Remove SWAP">
-          {isFirst && <line x1={0} y1={0} x2={0} y2={(other - qubit) * ROW_H} stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />}
-          <circle cx={0} cy={0} r={9} fill="rgba(34,211,238,0.15)" stroke="#22d3ee" strokeWidth="1.5" />
-          <text x={0} y={4} textAnchor="middle" fill="#67e8f9" fontSize="11" fontFamily="monospace" fontWeight="700">×</text>
+          {isFirst && <line x1={0} y1={0} x2={0} y2={(other - qubit) * ROW_H} stroke="var(--viz-wire-strong)" strokeWidth="1.5" />}
+          <circle cx={0} cy={0} r={9} fill="var(--viz-measure-bg)" stroke="var(--viz-measure-ring)" strokeWidth="1.5" />
+          <text x={0} y={4} textAnchor="middle" fill="var(--viz-measure-text)" fontSize="11" fontFamily="monospace" fontWeight="700">×</text>
         </g>
       );
     }
     if (m) {
       return (
         <g onClick={rm(m.id)} className="cursor-pointer" role="button" aria-label="Remove measurement">
-          <rect x={-13} y={-12} width={26} height={24} rx={4} fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.4)" />
-          <text x={0} y={5} textAnchor="middle" fill="#cbd5e1" fontSize="12" fontFamily="monospace" fontWeight="700">M</text>
+          <rect x={-13} y={-12} width={26} height={24} rx={4} fill="var(--viz-chip-bg)" stroke="var(--viz-wire-strong)" />
+          <text x={0} y={5} textAnchor="middle" fill="var(--viz-chip-text)" fontSize="12" fontFamily="monospace" fontWeight="700">M</text>
         </g>
       );
     }
     if (single) {
       return (
         <g onClick={rm(single.id)} className="cursor-pointer" role="button" aria-label={`Remove ${single.gate} gate`}>
-          <rect x={-13} y={-12} width={26} height={24} rx={4} fill="rgba(139,92,246,0.25)" stroke="#8b5cf6" />
-          <text x={0} y={5} textAnchor="middle" fill="#c4b5fd" fontSize="13" fontFamily="monospace" fontWeight="700">{single.gate}</text>
+          <rect x={-13} y={-12} width={26} height={24} rx={4} fill="var(--viz-gate-bg)" stroke="var(--viz-gate-ring, #8b5cf6)" />
+          <text x={0} y={5} textAnchor="middle" fill="var(--viz-gate-text)" fontSize="13" fontFamily="monospace" fontWeight="700">{single.gate}</text>
         </g>
       );
     }
@@ -257,8 +257,8 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
     <div className={`grid gap-5 ${embedded ? "" : "xl:grid-cols-[1fr_340px]"}`}>
       {/* palette */}
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-ink-850 p-3">
-          <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Gates</span>
+        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-card p-3">
+          <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-ink-3">Gates</span>
           {PALETTE.map((g) => (
             <button
               key={g.gate}
@@ -266,7 +266,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
               title={g.hint}
               className={`flex h-10 w-10 items-center justify-center rounded-xl border font-mono text-base font-bold transition ${
                 armed === g.gate
-                  ? "border-qx-cyan bg-qx-cyan/20 text-qx-cyan shadow-glow"
+                  ? "border-qx-cyan bg-qx-cyan/20 text-qx-cyan"
                   : "border-qx-violet/40 bg-qx-violet/10 text-qx-violet hover:bg-qx-violet/25"
               }`}
             >
@@ -277,16 +277,16 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
             <button
               onClick={() => setQubits((q) => Math.max(1, q - 1))}
               disabled={qubits <= 1}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 disabled:opacity-30"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-card2 text-ink-2 hover:bg-card2 disabled:opacity-30"
               aria-label="Fewer qubits"
             >
               <Minus className="h-3.5 w-3.5" />
             </button>
-            <span className="px-2 font-mono text-sm text-slate-300">{qubits} qubit{qubits > 1 ? "s" : ""}</span>
+            <span className="px-2 font-mono text-sm text-ink-2">{qubits} qubit{qubits > 1 ? "s" : ""}</span>
             <button
               onClick={() => setQubits((q) => Math.min(maxQubits, q + 1))}
               disabled={qubits >= maxQubits}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 disabled:opacity-30"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-card2 text-ink-2 hover:bg-card2 disabled:opacity-30"
               aria-label="More qubits"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -296,9 +296,9 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
 
         {/* presets */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Load</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-ink-3">Load</span>
           <select
-            className="rounded-lg border border-white/10 bg-ink-850 px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus:border-qx-violet/60"
+            className="rounded-lg border border-line bg-card px-3 py-1.5 text-sm text-ink-2 focus:outline-none focus:border-qx-violet/60"
             onChange={(e) => {
               const p = PRESETS.find((x) => x.name === e.target.value);
               if (p) {
@@ -314,7 +314,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
           >
             {PRESETS.map((p) => <option key={p.name}>{p.name}</option>)}
           </select>
-          <span className="text-xs text-slate-600">· click a gate, then click a wire cell to place · click a placed gate to remove</span>
+          <span className="text-xs text-ink-3">· click a gate, then click a wire cell to place · click a placed gate to remove</span>
         </div>
 
         {/* canvas */}
@@ -330,8 +330,8 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
             {/* wires */}
             {Array.from({ length: qubits }).map((_, q) => (
               <g key={q}>
-                <line x1={44} y1={q * ROW_H + ROW_H / 2} x2={(MAX_COLS + 1) * COL_W + LABEL_W} y2={q * ROW_H + ROW_H / 2} stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
-                <text x={34} y={q * ROW_H + ROW_H / 2 + 4} textAnchor="end" fill={q === 0 ? "#a78bfa" : "#67e8f9"} fontSize="12" fontFamily="monospace">q{q}</text>
+                <line x1={44} y1={q * ROW_H + ROW_H / 2} x2={(MAX_COLS + 1) * COL_W + LABEL_W} y2={q * ROW_H + ROW_H / 2} stroke="var(--viz-wire)" strokeWidth="1.5" />
+                <text x={34} y={q * ROW_H + ROW_H / 2 + 4} textAnchor="end" fill={q === 0 ? "var(--viz-gate-text)" : "var(--viz-measure-text)"} fontSize="12" fontFamily="monospace">q{q}</text>
               </g>
             ))}
             {/* cells */}
@@ -347,8 +347,8 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
                     width={40}
                     height={36}
                     rx={6}
-                    fill={armed ? "rgba(34,211,238,0.05)" : "transparent"}
-                    stroke={armed ? "rgba(34,211,238,0.25)" : "transparent"}
+                    fill={armed ? "var(--viz-measure-bg)" : "transparent"}
+                    stroke={armed ? "var(--viz-measure-bg)" : "transparent"}
                     strokeDasharray="3 3"
                     className="cursor-pointer"
                     onClick={() => place(q, c)}
@@ -359,7 +359,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
             )}
             {/* column guides */}
             {Array.from({ length: MAX_COLS + 1 }).map((_, c) => (
-              <text key={c} x={c * COL_W + COL_W / 2 + LABEL_W} y={qubits * ROW_H + 2} textAnchor="middle" fill="rgba(255,255,255,0.15)" fontSize="9" fontFamily="monospace">
+              <text key={c} x={c * COL_W + COL_W / 2 + LABEL_W} y={qubits * ROW_H + 2} textAnchor="middle" fill="var(--viz-wire)" fontSize="9" fontFamily="monospace">
                 {c + 1}
               </text>
             ))}
@@ -377,7 +377,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
             <p className={`font-semibold ${evalResult.pass ? "text-qx-mint" : "text-rose-300"}`}>
               {evalResult.pass ? "✓ Challenge complete!" : "✗ Not quite yet"}
             </p>
-            <p className="mt-1 text-sm text-slate-300">{evalResult.message}</p>
+            <p className="mt-1 text-sm text-ink-2">{evalResult.message}</p>
           </div>
         )}
 
@@ -398,7 +398,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
                 value={expName}
                 onChange={(e) => setExpName(e.target.value)}
                 placeholder="Experiment name"
-                className="w-44 rounded-xl border border-white/10 bg-ink-900 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-qx-violet/60 focus:outline-none"
+                className="w-44 rounded-xl border border-line bg-card2 px-3 py-2 text-sm text-ink placeholder:text-ink-3 focus:border-qx-violet/60 focus:outline-none"
               />
               <Button variant={saved ? "success" : "secondary"} onClick={save}>
                 {saved ? "Saved ✓" : <><Save className="h-4 w-4" /> Save (+10 XP)</>}
@@ -406,7 +406,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
             </>
           )}
           {ops.length > 0 && (
-            <button onClick={() => setOps([])} className="ml-auto flex items-center gap-1 text-xs text-slate-500 hover:text-rose-400">
+            <button onClick={() => setOps([])} className="ml-auto flex items-center gap-1 text-xs text-ink-3 hover:text-rose-400">
               <Trash2 className="h-3.5 w-3.5" /> remove all
             </button>
           )}
@@ -418,19 +418,19 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
         <div className="space-y-4">
           <Card className="p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="font-semibold text-white">Circuit info</h3>
+              <h3 className="font-semibold text-ink">Circuit info</h3>
             </div>
             <div className="grid grid-cols-2 gap-3 text-center">
-              <div className="rounded-xl border border-white/10 bg-ink-900/60 p-3">
+              <div className="rounded-xl border border-line bg-card2/60 p-3">
                 <p className="font-mono text-2xl font-bold text-qx-violet">{qubits}</p>
-                <p className="text-xs text-slate-500">qubits</p>
+                <p className="text-xs text-ink-3">qubits</p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-ink-900/60 p-3">
+              <div className="rounded-xl border border-line bg-card2/60 p-3">
                 <p className="font-mono text-2xl font-bold text-qx-cyan">{ops.length}</p>
-                <p className="text-xs text-slate-500">gates</p>
+                <p className="text-xs text-ink-3">gates</p>
               </div>
             </div>
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 text-xs text-ink-3">
               {ops.length === 0
                 ? "Build a circuit to see its info here."
                 : `Column depth: ${maxCol + 1}. ${ops.filter((o) => o.gate === "M").length} measurement${ops.filter((o) => o.gate === "M").length === 1 ? "" : "s"}.`}
@@ -439,11 +439,11 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
 
           <Card className="p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="font-semibold text-white">Results</h3>
+              <h3 className="font-semibold text-ink">Results</h3>
               {results && <SimulatedBadge />}
             </div>
             {!results ? (
-              <p className="rounded-xl border border-dashed border-white/10 py-8 text-center text-sm text-slate-500">
+              <p className="rounded-xl border border-dashed border-line py-8 text-center text-sm text-ink-3">
                 Run the circuit to see the probability distribution.
               </p>
             ) : (
@@ -452,13 +452,13 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
                   if (p < 0.0005) return null;
                   return (
                     <div key={i} className="flex items-center gap-2.5">
-                      <span className="w-16 shrink-0 text-right font-mono text-sm text-slate-300">{ket(i, qubits)}</span>
-                      <div className="h-6 flex-1 overflow-hidden rounded-md bg-white/5">
-                        <div className="h-full rounded-md bg-gradient-to-r from-qx-violet/70 to-qx-indigo/70 transition-all duration-500" style={{ width: `${p * 100}%` }} />
+                      <span className="w-16 shrink-0 text-right font-mono text-sm text-ink-2">{ket(i, qubits)}</span>
+                      <div className="h-6 flex-1 overflow-hidden rounded-md bg-card2">
+                        <div className="h-full rounded-md bg-accent/80 transition-all duration-500" style={{ width: `${p * 100}%` }} />
                       </div>
                       <span className="w-24 shrink-0 font-mono text-sm">
-                        {shots && shots[i] > 0 && <span className="mr-1 text-slate-500">{shots[i]}</span>}
-                        <span className="text-white">{(p * 100).toFixed(0)}%</span>
+                        {shots && shots[i] > 0 && <span className="mr-1 text-ink-3">{shots[i]}</span>}
+                        <span className="text-ink">{(p * 100).toFixed(0)}%</span>
                       </span>
                     </div>
                   );
@@ -473,8 +473,8 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
           </Card>
 
           <Card className="p-5">
-            <h3 className="mb-2 font-semibold text-white">What happened?</h3>
-            <p className="text-sm leading-relaxed text-slate-400">
+            <h3 className="mb-2 font-semibold text-ink">What happened?</h3>
+            <p className="text-sm leading-relaxed text-ink-2">
               {results ? explainCircuit(ops, qubits) : "Run the circuit and we'll explain each step in plain language."}
             </p>
           </Card>

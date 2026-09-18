@@ -98,8 +98,8 @@ export default function AiChallenges() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <Swords className="mx-auto mb-4 h-12 w-12 text-qx-violet" />
-        <h1 className="text-2xl font-bold text-white">AI Challenges</h1>
-        <p className="mx-auto mt-3 max-w-md text-slate-400">
+        <h1 className="text-2xl font-bold text-ink">AI Challenges</h1>
+        <p className="mx-auto mt-3 max-w-md text-ink-2">
           Challenges generated from your weakest topics, validated by simulating your circuit's behaviour —
           not by matching a fixed answer. Log in to get yours.
         </p>
@@ -177,7 +177,7 @@ export default function AiChallenges() {
       {!selected ? (
         <div className="space-y-4">
           {challenges.length === 0 && (
-            <Card className="p-6 text-sm text-slate-400">
+            <Card className="p-6 text-sm text-ink-2">
               Take the diagnostic first so I can target your weak topics.
               <LinkButton to="/diagnostic" size="sm" className="ml-3">Run diagnostic</LinkButton>
             </Card>
@@ -193,9 +193,9 @@ export default function AiChallenges() {
                       {ch.difficulty}
                     </Badge>
                   </div>
-                  <p className="font-semibold text-white">{ch.title}</p>
-                  <p className="mt-1.5 flex-1 text-sm text-slate-400">{ch.prompt}</p>
-                  <p className="mt-3 text-xs text-slate-500">{ch.numQubits} qubit{ch.numQubits > 1 ? "s" : ""} · validated by behaviour</p>
+                  <p className="font-semibold text-ink">{ch.title}</p>
+                  <p className="mt-1.5 flex-1 text-sm text-ink-2">{ch.prompt}</p>
+                  <p className="mt-3 text-xs text-ink-3">{ch.numQubits} qubit{ch.numQubits > 1 ? "s" : ""} · validated by behaviour</p>
                   <Button size="sm" className="mt-4" onClick={() => pick(ch)}>
                     Start challenge <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -206,8 +206,8 @@ export default function AiChallenges() {
 
           <Card className="flex flex-wrap items-center justify-between gap-3 p-5">
             <div className="flex items-center gap-3">
-              <RefreshCw className="h-4 w-4 text-slate-400" />
-              <p className="text-sm text-slate-400">Want a fresh set targeted at your current weak spots?</p>
+              <RefreshCw className="h-4 w-4 text-ink-2" />
+              <p className="text-sm text-ink-2">Want a fresh set targeted at your current weak spots?</p>
             </div>
             <Button variant="secondary" size="sm" onClick={() => setRound((r) => r + 1)}>Regenerate challenges</Button>
           </Card>
@@ -223,9 +223,9 @@ export default function AiChallenges() {
                     <Badge color="slate">{selected.difficulty}</Badge>
                     <GroundedChip label="Generated from your profile" />
                   </div>
-                  <h2 className="text-lg font-bold text-white">{selected.title}</h2>
-                  <p className="mt-1 text-sm text-slate-300">{selected.prompt}</p>
-                  <p className="mt-2 text-sm text-slate-400"><span className="font-semibold text-slate-300">Success criteria: </span>{selected.requirement}</p>
+                  <h2 className="text-lg font-bold text-ink">{selected.title}</h2>
+                  <p className="mt-1 text-sm text-ink-2">{selected.prompt}</p>
+                  <p className="mt-2 text-sm text-ink-2"><span className="font-semibold text-ink-2">Success criteria: </span>{selected.requirement}</p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setSelected(null)}>Back</Button>
               </div>
@@ -258,8 +258,8 @@ export default function AiChallenges() {
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="h-5 w-5 text-qx-mint" />
                   <div>
-                    <p className="text-sm font-semibold text-white">{selected.explanation}</p>
-                    <p className="text-xs text-slate-400">Mastery for {topicName(selected.topicId)} updated automatically.</p>
+                    <p className="text-sm font-semibold text-ink">{selected.explanation}</p>
+                    <p className="text-xs text-ink-2">Mastery for {topicName(selected.topicId)} updated automatically.</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -271,7 +271,7 @@ export default function AiChallenges() {
 
             {result && !result.success && (
               <Card className="flex flex-wrap items-center justify-between gap-3 p-5">
-                <p className="text-sm text-slate-300">Want to step back to an easier variant, then return to this one?</p>
+                <p className="text-sm text-ink-2">Want to step back to an easier variant, then return to this one?</p>
                 <div className="flex gap-2">
                   <Button size="sm" variant="secondary" onClick={easier}>Easier variant</Button>
                   <Button size="sm" variant="ghost" onClick={() => { setResult(null); setStartedAt(Date.now()); }}>Retry this one</Button>
@@ -282,14 +282,14 @@ export default function AiChallenges() {
 
           <div className="space-y-4">
             <Card className="p-5">
-              <p className="flex items-center gap-2 text-sm font-semibold text-white">
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
                 <Lightbulb className="h-4 w-4 text-qx-amber" /> Hints ({revealed}/{selected.hints.length})
               </p>
               <div className="mt-3 space-y-2">
                 {selected.hints.slice(0, revealed).map((h, i) => (
-                  <p key={i} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-300">{h}</p>
+                  <p key={i} className="rounded-lg border border-line bg-card2/50 px-3 py-2 text-sm text-ink-2">{h}</p>
                 ))}
-                {revealed === 0 && <p className="text-xs text-slate-500">No hints used yet. Hints don't block the challenge — they just change how much you earned from it.</p>}
+                {revealed === 0 && <p className="text-xs text-ink-3">No hints used yet. Hints don't block the challenge — they just change how much you earned from it.</p>}
               </div>
               {revealed < selected.hints.length && (
                 <Button size="sm" variant="secondary" className="mt-3" onClick={() => setRevealed((r) => r + 1)}>
@@ -299,46 +299,46 @@ export default function AiChallenges() {
             </Card>
 
             <Card className="p-5">
-              <p className="flex items-center gap-2 text-sm font-semibold text-white">
-                <Target className="h-4 w-4 text-qx-cyan" /> Adaptive difficulty
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <Target className="h-4 w-4 text-accent" /> Adaptive difficulty
               </p>
-              <p className="mt-1 text-xs text-slate-400">Adjusted gradually from your recent results — one step at a time.</p>
+              <p className="mt-1 text-xs text-ink-2">Adjusted gradually from your recent results — one step at a time.</p>
               {topicState ? (
                 <>
-                  <p className="mt-3 text-sm text-slate-300">
-                    {topicName(selected.topicId)}: <span className="font-semibold text-white">{topicState.mastery}%</span> mastery,
-                    working difficulty <span className="font-semibold text-white">{topicState.difficulty}</span>.
+                  <p className="mt-3 text-sm text-ink-2">
+                    {topicName(selected.topicId)}: <span className="font-semibold text-ink">{topicState.mastery}%</span> mastery,
+                    working difficulty <span className="font-semibold text-ink">{topicState.difficulty}</span>.
                   </p>
                   <div className="mt-3 space-y-1.5">
                     {topicState.recentScores.map((s, i) => (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="w-14 text-xs text-slate-500">try {i + 1}</span>
-                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/8">
-                          <div className="h-full rounded-full bg-gradient-to-r from-qx-violet to-qx-cyan" style={{ width: `${s * 100}%` }} />
+                        <span className="w-14 text-xs text-ink-3">try {i + 1}</span>
+                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-card2">
+                          <div className="h-full rounded-full bg-accent" style={{ width: `${s * 100}%` }} />
                         </div>
-                        <span className="w-10 text-right font-mono text-xs text-slate-400">{Math.round(s * 100)}%</span>
+                        <span className="w-10 text-right font-mono text-xs text-ink-2">{Math.round(s * 100)}%</span>
                       </div>
                     ))}
                   </div>
                 </>
               ) : (
-                <p className="mt-3 text-sm text-slate-400">Starting difficulty: {selected.difficulty}. Two strong results will move you up a level.</p>
+                <p className="mt-3 text-sm text-ink-2">Starting difficulty: {selected.difficulty}. Two strong results will move you up a level.</p>
               )}
             </Card>
 
             <Card className="p-5">
-              <p className="flex items-center gap-2 text-sm font-semibold text-white">
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
                 <FlaskConical className="h-4 w-4 text-qx-mint" /> How validation works
               </p>
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-2 text-sm text-ink-2">
                 We simulate your circuit and compare the resulting distribution and entanglement against the required
                 behaviour. A different circuit that does the same thing passes — because understanding is the goal, not gate order.
               </p>
             </Card>
 
             <Card className="p-5">
-              <p className="text-sm font-semibold text-white">Mode: <span className="text-qx-cyan capitalize">{learningMode}</span></p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="text-sm font-semibold text-ink">Mode: <span className="text-accent capitalize">{learningMode}</span></p>
+              <p className="mt-1 text-xs text-ink-2">
                 Switch modes on your learning path — Challenge mode hides hints, Exam mode removes them entirely.
               </p>
               <LinkButton to="/learning-path" size="sm" variant="ghost" className="mt-2">Change mode</LinkButton>
@@ -350,10 +350,10 @@ export default function AiChallenges() {
       {suggestedNext[0] && !selected && (
         <Card className="mt-6 flex flex-wrap items-center justify-between gap-3 p-5">
           <div className="flex items-start gap-3">
-            <Sparkles className="mt-0.5 h-4 w-4 text-qx-cyan" />
+            <Sparkles className="mt-0.5 h-4 w-4 text-accent" />
             <div>
-              <p className="text-sm font-semibold text-white">{suggestedNext[0].title}</p>
-              <p className="mt-1 text-sm text-slate-400">{suggestedNext[0].reason}</p>
+              <p className="text-sm font-semibold text-ink">{suggestedNext[0].title}</p>
+              <p className="mt-1 text-sm text-ink-2">{suggestedNext[0].reason}</p>
             </div>
           </div>
           <Button size="sm" onClick={() => setRound((r) => r + 1)}>Adapt challenges to this</Button>

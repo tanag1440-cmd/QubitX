@@ -27,7 +27,7 @@ export default function ForgotPassword() {
       title="Reset your password"
       sub="Enter your email and we'll send you a reset link."
       footer={
-        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-qx-cyan hover:underline">
+        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-accent hover:underline">
           <ArrowLeft className="h-3.5 w-3.5" /> Back to login
         </Link>
       }
@@ -37,11 +37,11 @@ export default function ForgotPassword() {
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-qx-mint/20">
             <MailCheck className="h-6 w-6 text-qx-mint" />
           </div>
-          <h3 className="font-semibold text-white">Reset link sent</h3>
-          <p className="mt-2 text-sm text-slate-400">
+          <h3 className="font-semibold text-ink">Reset link sent</h3>
+          <p className="mt-2 text-sm text-ink-2">
             {error ?? `If an account exists for ${email}, a reset link would be sent here. (Prototype: no email is actually delivered.)`}
           </p>
-          <Link to="/login" className="mt-4 inline-block text-sm font-semibold text-qx-cyan hover:underline">
+          <Link to="/login" className="mt-4 inline-block text-sm font-semibold text-accent hover:underline">
             Return to login
           </Link>
         </Card>
@@ -59,7 +59,7 @@ export default function ForgotPassword() {
             />
           </Field>
           <Button type="submit" className="w-full" size="lg">Send reset link</Button>
-          <p className="text-center text-xs text-slate-500">
+          <p className="text-center text-xs text-ink-3">
             For this SIH prototype, password reset is simulated — no emails are sent.
           </p>
         </form>

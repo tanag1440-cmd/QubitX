@@ -61,7 +61,7 @@ function AppShell() {
   const railOpen = open && dockVisible;
 
   return (
-    <div className="flex min-h-screen flex-col bg-ink-950 text-slate-200 antialiased">
+    <div className="flex min-h-screen flex-col bg-page text-ink antialiased">
       <Navbar />
       <div className={`flex flex-1 flex-col transition-[padding] duration-300 ${railOpen ? "lg:pr-[380px]" : ""}`}>
       <main className="flex-1">

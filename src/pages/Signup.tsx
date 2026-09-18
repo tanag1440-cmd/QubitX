@@ -43,7 +43,7 @@ export default function Signup() {
       footer={
         <>
           Already have an account?{" "}
-          <Link to="/login" className="font-semibold text-qx-cyan hover:underline">Log in</Link>
+          <Link to="/login" className="font-semibold text-accent hover:underline">Log in</Link>
         </>
       }
     >
@@ -92,12 +92,12 @@ export default function Signup() {
                 className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-left transition ${
                   level === l.id
                     ? "border-qx-violet/60 bg-qx-violet/10"
-                    : "border-white/10 bg-ink-900/50 hover:bg-white/5"
+                    : "border-line bg-card2/50 hover:bg-card2"
                 }`}
               >
                 <span>
-                  <span className={`block text-sm font-semibold ${level === l.id ? "text-qx-violet" : "text-white"}`}>{l.label}</span>
-                  <span className="block text-xs text-slate-500">{l.hint}</span>
+                  <span className={`block text-sm font-semibold ${level === l.id ? "text-qx-violet" : "text-ink"}`}>{l.label}</span>
+                  <span className="block text-xs text-ink-3">{l.hint}</span>
                 </span>
                 <span className={`h-4 w-4 rounded-full border-2 ${level === l.id ? "border-qx-violet bg-qx-violet" : "border-slate-600"}`} />
               </button>
@@ -106,11 +106,11 @@ export default function Signup() {
         </Field>
         <Button type="submit" className="w-full" size="lg">Create Free Account</Button>
       </form>
-      <div className="my-4 flex items-center gap-3 text-xs text-slate-600">
-        <div className="h-px flex-1 bg-white/10" /> or <div className="h-px flex-1 bg-white/10" />
+      <div className="my-4 flex items-center gap-3 text-xs text-ink-3">
+        <div className="h-px flex-1 bg-card2" /> or <div className="h-px flex-1 bg-card2" />
       </div>
       <Button variant="secondary" onClick={demo} className="w-full">
-        <Compass className="h-4 w-4 text-qx-cyan" /> Explore the demo instead
+        <Compass className="h-4 w-4 text-accent" /> Explore the demo instead
       </Button>
     </AuthShell>
   );

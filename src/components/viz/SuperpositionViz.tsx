@@ -36,7 +36,7 @@ export function SuperpositionViz() {
     <div className="grid gap-6 lg:grid-cols-2">
       <Card className="p-6">
         <div className="flex items-center justify-between">
-          <h4 className="font-semibold text-white">Adjust the qubit</h4>
+          <h4 className="font-semibold text-ink">Adjust the qubit</h4>
           <span className="font-mono text-sm text-qx-cyan">{p0}%</span>
         </div>
 
@@ -45,7 +45,7 @@ export function SuperpositionViz() {
         </div>
 
         <div className="mt-6">
-          <div className="mb-1 flex justify-between text-xs font-medium text-slate-400">
+          <div className="mb-1 flex justify-between text-xs font-medium text-ink-2">
             <span className="text-qx-violet">More |0⟩</span>
             <span className="text-qx-cyan">More |1⟩</span>
           </div>
@@ -59,7 +59,7 @@ export function SuperpositionViz() {
             className="w-full accent-violet-500"
             aria-label="Probability of measuring |0⟩"
           />
-          <p className="mt-2 text-center text-xs text-slate-500">
+          <p className="mt-2 text-center text-xs text-ink-3">
             <Ket value={0} /> probability: <span className="font-mono text-qx-violet">{p0}%</span> &nbsp;·&nbsp;{" "}
             <Ket value={1} /> probability: <span className="font-mono text-qx-cyan">{100 - p0}%</span>
           </p>
@@ -73,26 +73,26 @@ export function SuperpositionViz() {
             Reset
           </Button>
         </div>
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-ink-3">
           While the slider is free, the qubit is genuinely in a blend of both states — not secretly one of them.
         </p>
       </Card>
 
       <Card className="p-6">
-        <h4 className="font-semibold text-white">Measurement results</h4>
+        <h4 className="font-semibold text-ink">Measurement results</h4>
 
         {measured === null ? (
-          <p className="mt-4 text-sm text-slate-400">
-            Press <span className="font-semibold text-white">Measure Qubit</span> to sample from the distribution.
+          <p className="mt-4 text-sm text-ink-2">
+            Press <span className="font-semibold text-ink">Measure Qubit</span> to sample from the distribution.
             Each run is random, but the pattern follows the slider.
           </p>
         ) : (
           <div className="mt-4 rounded-xl border border-qx-mint/30 bg-qx-mint/10 p-4">
-            <p className="text-sm text-slate-300">This run measured:</p>
+            <p className="text-sm text-ink-2">This run measured:</p>
             <p className="mt-1 font-mono text-4xl font-bold text-qx-mint">
               <Ket value={measured} />
             </p>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-ink-2">
               The superposition collapsed. Measure again and it stays{" "}
               <span className="font-mono text-qx-mint"><Ket value={measured} /></span> — 100% of the time.
             </p>
@@ -101,11 +101,11 @@ export function SuperpositionViz() {
 
         <div className="mt-6">
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Run history</p>
-            <p className="text-xs text-slate-500">{zeros} × |0⟩ · {history.length - zeros} × |1⟩</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-ink-3">Run history</p>
+            <p className="text-xs text-ink-3">{zeros} × |0⟩ · {history.length - zeros} × |1⟩</p>
           </div>
           {history.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-white/10 py-6 text-center text-xs text-slate-500">
+            <p className="rounded-lg border border-dashed border-line py-6 text-center text-xs text-ink-3">
               No measurements yet.
             </p>
           ) : (
@@ -123,7 +123,7 @@ export function SuperpositionViz() {
             </div>
           )}
           {history.length > 3 && (
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 text-xs text-ink-3">
               The mix of chips tracks the slider: more |0⟩ → more violet chips.
             </p>
           )}

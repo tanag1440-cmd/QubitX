@@ -54,8 +54,8 @@ export default function LearningPath() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <Target className="mx-auto mb-4 h-12 w-12 text-qx-violet" />
-        <h1 className="text-2xl font-bold text-white">My Learning Path</h1>
-        <p className="mx-auto mt-3 max-w-md text-slate-400">
+        <h1 className="text-2xl font-bold text-ink">My Learning Path</h1>
+        <p className="mx-auto mt-3 max-w-md text-ink-2">
           Qubit-X builds a personal roadmap from your actual performance — what to learn next, what to revise,
           and what you can safely skip. Log in to see yours.
         </p>
@@ -78,10 +78,10 @@ export default function LearningPath() {
       {!diagnostic && (
         <Card className="mb-6 flex flex-wrap items-center justify-between gap-4 border-qx-cyan/30 bg-qx-cyan/[0.06] p-5">
           <div className="flex items-start gap-3">
-            <ClipboardCheck className="mt-0.5 h-5 w-5 text-qx-cyan" />
+            <ClipboardCheck className="mt-0.5 h-5 w-5 text-accent" />
             <div>
-              <p className="text-sm font-semibold text-white">Take the 3-minute diagnostic</p>
-              <p className="mt-1 text-sm text-slate-400">It sharpens your starting point so the path isn't guesswork.</p>
+              <p className="text-sm font-semibold text-ink">Take the 3-minute diagnostic</p>
+              <p className="mt-1 text-sm text-ink-2">It sharpens your starting point so the path isn't guesswork.</p>
             </div>
           </div>
           <LinkButton to="/diagnostic" size="sm">Run diagnostic <ArrowRight className="h-4 w-4" /></LinkButton>
@@ -105,21 +105,21 @@ export default function LearningPath() {
             return (
               <Card
                 key={t.id}
-                className={`p-4 ${status === "focus" ? "border-qx-violet/50 shadow-glow" : status === "locked" ? "opacity-60" : ""}`}
+                className={`p-4 ${status === "focus" ? "border-qx-violet/50" : status === "locked" ? "opacity-60" : ""}`}
               >
                 <div className="flex items-start gap-3">
                   <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
                     status === "mastered" ? "bg-qx-mint/15 text-qx-mint"
                       : status === "focus" ? "bg-qx-violet/20 text-qx-violet"
-                      : status === "locked" ? "bg-white/5 text-slate-500"
-                      : "bg-white/8 text-slate-300"
+                      : status === "locked" ? "bg-card2 text-ink-3"
+                      : "bg-card2 text-ink-2"
                   }`}>
                     {status === "mastered" ? <CheckCircle2 className="h-4 w-4" /> : status === "locked" ? <Lock className="h-3.5 w-3.5" /> : t.category === "Gates" ? <Binary className="h-4 w-4" /> : t.category === "Algorithms" ? <Sparkles className="h-4 w-4" /> : <Waves className="h-4 w-4" />}
                   </span>
 
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-semibold text-white">{t.name}</p>
+                      <p className="font-semibold text-ink">{t.name}</p>
                       {status === "mastered" && <Badge color="mint">Mastered · can skip</Badge>}
                       {status === "focus" && <Badge color="violet">Current focus</Badge>}
                       {status === "locked" && (
@@ -129,7 +129,7 @@ export default function LearningPath() {
                       <Badge color="slate">{t.category}</Badge>
                     </div>
 
-                    <p className="mt-1 text-sm text-slate-400">{t.blurb}</p>
+                    <p className="mt-1 text-sm text-ink-2">{t.blurb}</p>
 
                     {m && m.attempts > 0 && (
                       <div className="mt-3 max-w-sm">
@@ -146,19 +146,19 @@ export default function LearningPath() {
                     {status === "focus" && (
                       <div className="mt-4 grid gap-2 sm:grid-cols-2">
                         {t.lessonId && (
-                          <Link to={`/learn/${t.lessonId}`} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-200 hover:bg-white/[0.07]">
+                          <Link to={`/learn/${t.lessonId}`} className="flex items-center gap-2 rounded-lg border border-line bg-card2/50 px-3 py-2 text-sm text-ink hover:bg-card2/60">
                             <BookOpen className="h-4 w-4 text-qx-violet" /> Concept + lesson
                           </Link>
                         )}
                         {t.demoId && (
-                          <Link to="/visualize" className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-200 hover:bg-white/[0.07]">
-                            <Play className="h-4 w-4 text-qx-cyan" /> Visualization
+                          <Link to="/visualize" className="flex items-center gap-2 rounded-lg border border-line bg-card2/50 px-3 py-2 text-sm text-ink hover:bg-card2/60">
+                            <Play className="h-4 w-4 text-accent" /> Visualization
                           </Link>
                         )}
-                        <Link to="/ai-challenges" className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-200 hover:bg-white/[0.07]">
+                        <Link to="/ai-challenges" className="flex items-center gap-2 rounded-lg border border-line bg-card2/50 px-3 py-2 text-sm text-ink hover:bg-card2/60">
                           <FlaskConical className="h-4 w-4 text-qx-mint" /> Guided circuit
                         </Link>
-                        <Link to="/ai-challenges" className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-200 hover:bg-white/[0.07]">
+                        <Link to="/ai-challenges" className="flex items-center gap-2 rounded-lg border border-line bg-card2/50 px-3 py-2 text-sm text-ink hover:bg-card2/60">
                           <Swords className="h-4 w-4 text-qx-amber" /> Challenge
                         </Link>
                       </div>
@@ -187,24 +187,24 @@ export default function LearningPath() {
         <div className="space-y-5">
           <Card className="p-6">
             <div className="mb-2 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-qx-cyan" />
-              <p className="text-sm font-semibold text-white">Why this order?</p>
+              <Sparkles className="h-4 w-4 text-accent" />
+              <p className="text-sm font-semibold text-ink">Why this order?</p>
             </div>
             <GroundedChip />
             {focusRec ? (
               <>
-                <p className="mt-3 text-sm font-semibold text-white">{focusRec.title}</p>
-                <p className="mt-1.5 text-sm leading-relaxed text-slate-300">{focusRec.reason}</p>
+                <p className="mt-3 text-sm font-semibold text-ink">{focusRec.title}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-ink-2">{focusRec.reason}</p>
                 <LinkButton to="/ai-challenges" size="sm" className="mt-4">Act on it <ArrowRight className="h-4 w-4" /></LinkButton>
               </>
             ) : (
-              <p className="mt-3 text-sm text-slate-300">Everything you're ready for is mastered. Try an expert-level challenge or explore the Lab.</p>
+              <p className="mt-3 text-sm text-ink-2">Everything you're ready for is mastered. Try an expert-level challenge or explore the Lab.</p>
             )}
           </Card>
 
           <Card className="p-6">
-            <p className="text-sm font-semibold text-white">Learning goal</p>
-            <p className="mt-1 text-xs text-slate-400">One input to the engine — never the only one.</p>
+            <p className="text-sm font-semibold text-ink">Learning goal</p>
+            <p className="mt-1 text-xs text-ink-2">One input to the engine — never the only one.</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {(Object.keys(GOAL_LABELS) as LearningGoal[]).map((g) => (
                 <button
@@ -212,8 +212,8 @@ export default function LearningPath() {
                   onClick={() => setLearningGoal(g)}
                   className={`rounded-lg border px-2.5 py-1.5 text-xs font-medium transition ${
                     learningProfile?.learningGoal === g
-                      ? "border-qx-violet/60 bg-qx-violet/15 text-white"
-                      : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
+                      ? "border-qx-violet/60 bg-qx-violet/15 text-ink"
+                      : "border-line bg-card2 text-ink-2 hover:bg-card2"
                   }`}
                 >
                   {GOAL_LABELS[g]}
@@ -223,21 +223,21 @@ export default function LearningPath() {
           </Card>
 
           <Card className="p-6">
-            <p className="text-sm font-semibold text-white">Learning mode</p>
-            <p className="mt-1 text-xs text-slate-400">Changes how much help you get and how hard the practice is.</p>
+            <p className="text-sm font-semibold text-ink">Learning mode</p>
+            <p className="mt-1 text-xs text-ink-2">Changes how much help you get and how hard the practice is.</p>
             <div className="mt-3 space-y-2">
               {MODES.map((mo) => (
                 <button
                   key={mo.id}
                   onClick={() => setLearningMode(mo.id)}
                   className={`flex w-full items-start gap-3 rounded-xl border px-3 py-2.5 text-left transition ${
-                    learningMode === mo.id ? "border-qx-violet/60 bg-qx-violet/15" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.06]"
+                    learningMode === mo.id ? "border-qx-violet/60 bg-qx-violet/15" : "border-line bg-card2/50 hover:bg-card2/60"
                   }`}
                 >
-                  <span className={`mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 ${learningMode === mo.id ? "border-qx-violet bg-qx-violet" : "border-white/25"}`} />
+                  <span className={`mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 ${learningMode === mo.id ? "border-qx-violet bg-qx-violet" : "border-line-strong"}`} />
                   <span>
-                    <span className="block text-sm font-medium text-white">{mo.label}</span>
-                    <span className="block text-xs text-slate-400">{mo.body}</span>
+                    <span className="block text-sm font-medium text-ink">{mo.label}</span>
+                    <span className="block text-xs text-ink-2">{mo.body}</span>
                   </span>
                 </button>
               ))}
@@ -246,15 +246,15 @@ export default function LearningPath() {
 
           {active.length > 0 && (
             <Card className="p-6">
-              <p className="flex items-center gap-2 text-sm font-semibold text-white">
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
                 <RefreshCw className="h-4 w-4 text-qx-amber" /> Mistake memory
               </p>
-              <p className="mt-1 text-xs text-slate-400">Recurring misconceptions get targeted practice automatically.</p>
+              <p className="mt-1 text-xs text-ink-2">Recurring misconceptions get targeted practice automatically.</p>
               <ul className="mt-3 space-y-2">
                 {active.slice(0, 4).map((mp) => (
-                  <li key={mp.id} className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
-                    <p className="text-sm text-slate-200">{mp.label}</p>
-                    <p className="text-xs text-slate-500">{topicName(mp.topicId)} · {mp.frequency}× · {mp.severity} severity</p>
+                  <li key={mp.id} className="rounded-lg border border-line bg-card2/50 px-3 py-2">
+                    <p className="text-sm text-ink">{mp.label}</p>
+                    <p className="text-xs text-ink-3">{topicName(mp.topicId)} · {mp.frequency}× · {mp.severity} severity</p>
                   </li>
                 ))}
               </ul>
@@ -263,7 +263,7 @@ export default function LearningPath() {
           )}
 
           <Card className="p-6">
-            <p className="text-sm font-semibold text-white">Mastery snapshot</p>
+            <p className="text-sm font-semibold text-ink">Mastery snapshot</p>
             <div className="mt-3 space-y-3">
               {ordered
                 .filter((t) => (mastery.get(t.id)?.attempts ?? 0) > 0)
@@ -275,7 +275,7 @@ export default function LearningPath() {
                 })}
             </div>
             {overallMastery(topicMasteryList) === 0 && (
-              <p className="mt-3 text-xs text-slate-500">No evidence yet — take the diagnostic or complete a lesson to start the profile.</p>
+              <p className="mt-3 text-xs text-ink-3">No evidence yet — take the diagnostic or complete a lesson to start the profile.</p>
             )}
           </Card>
         </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Atom, ChevronDown, LogOut, Menu, X } from "lucide-react";
 import { useStore } from "../../lib/store";
+import { ThemeToggle } from "../../lib/theme";
 import { Avatar } from "./Avatar";
 
 const GUEST_PRIMARY = [
@@ -36,11 +37,11 @@ const SECONDARY = [
 function Brand() {
   return (
     <Link to="/" className="flex items-center gap-2.5">
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-qx-violet to-qx-cyan shadow-glow">
+      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent">
         <Atom className="h-5 w-5 text-white" />
       </span>
-      <span className="text-lg font-bold tracking-tight text-white">
-        Qubit<span className="text-qx-cyan">X</span>
+      <span className="text-lg font-bold tracking-tight text-ink">
+        Qubit<span className="text-accent">X</span>
       </span>
     </Link>
   );
@@ -72,16 +73,16 @@ export function Navbar() {
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-      isActive ? "bg-white/10 text-white" : "text-slate-400 hover:text-white hover:bg-white/5"
+      isActive ? "bg-card2 text-ink" : "text-ink-2 hover:text-ink hover:bg-card2"
     }`;
 
   const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
     `rounded-lg px-3 py-2 text-sm font-medium transition ${
-      isActive ? "bg-white/10 text-white" : "text-slate-400 hover:text-white hover:bg-white/5"
+      isActive ? "bg-card2 text-ink" : "text-ink-2 hover:text-ink hover:bg-card2"
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/5 bg-ink-950/85 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-line bg-page/85 ">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Brand />
 
@@ -96,7 +97,7 @@ export function Navbar() {
             <button
               onClick={() => setMoreOpen((v) => !v)}
               className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-                moreOpen ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"
+                moreOpen ? "bg-card2 text-ink" : "text-ink-2 hover:bg-card2 hover:text-ink"
               }`}
               aria-haspopup="menu"
               aria-expanded={moreOpen}
@@ -106,7 +107,7 @@ export function Navbar() {
             {moreOpen && (
               <div
                 role="menu"
-                className="absolute right-0 mt-2 w-56 animate-fade-up rounded-2xl border border-white/10 bg-ink-850/95 p-2 shadow-card backdrop-blur-md"
+                className="absolute right-0 mt-2 w-56 animate-fade-up rounded-2xl border border-line bg-card/95 p-2 shadow-card "
               >
                 {secondary.map((l) => (
                   <NavLink
@@ -114,7 +115,7 @@ export function Navbar() {
                     to={l.to}
                     className={({ isActive }) =>
                       `block rounded-lg px-3 py-2 text-sm font-medium transition ${
-                        isActive ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"
+                        isActive ? "bg-card2 text-ink" : "text-ink-2 hover:bg-card2 hover:text-ink"
                       }`
                     }
                     onClick={() => setMoreOpen(false)}
@@ -127,7 +128,7 @@ export function Navbar() {
                     to="/admin"
                     className={({ isActive }) =>
                       `block rounded-lg px-3 py-2 text-sm font-medium transition ${
-                        isActive ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"
+                        isActive ? "bg-card2 text-ink" : "text-ink-2 hover:bg-card2 hover:text-ink"
                       }`
                     }
                     onClick={() => setMoreOpen(false)}
@@ -141,6 +142,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <ThemeToggle />
           {currentUser ? (
             <>
               <span className="rounded-lg border border-qx-amber/30 bg-qx-amber/10 px-2.5 py-1 font-mono text-xs font-bold text-qx-amber">
@@ -149,18 +151,18 @@ export function Navbar() {
               <Link to="/profile" title={currentUser.name}>
                 <Avatar name={currentUser.name} color={currentUser.avatarColor} size={34} />
               </Link>
-              <button onClick={doLogout} title="Log out" className="rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white">
+              <button onClick={doLogout} title="Log out" className="rounded-lg p-2 text-ink-2 hover:bg-card2 hover:text-ink">
                 <LogOut className="h-4.5 w-4.5" />
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-white">
+              <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-2 hover:text-ink">
                 Log in
               </Link>
               <Link
                 to="/signup"
-                className="rounded-xl bg-gradient-to-r from-qx-violet to-qx-indigo px-4 py-2 text-sm font-semibold text-white shadow-glow hover:opacity-90"
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
               >
                 Create account
               </Link>
@@ -168,20 +170,23 @@ export function Navbar() {
           )}
         </div>
 
-        <button className="rounded-lg p-2 text-slate-300 hover:bg-white/5 lg:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
+          <button className="rounded-lg p-2 text-ink-2 hover:bg-card2" onClick={() => setOpen(!open)} aria-label="Menu">
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (
-        <div className="border-t border-white/5 bg-ink-900 px-4 pb-4 pt-2 lg:hidden">
+        <div className="border-t border-line bg-card2 px-4 pb-4 pt-2 lg:hidden">
           <nav className="flex flex-col gap-1">
             {primary.map((l) => (
               <NavLink key={l.to} to={l.to} className={mobileLinkClass} onClick={() => setOpen(false)} end={l.to === "/"}>
                 {l.label}
               </NavLink>
             ))}
-            <p className="mt-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-600">More</p>
+            <p className="mt-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-3">More</p>
             {secondary.map((l) => (
               <NavLink key={l.to} to={l.to} className={mobileLinkClass} onClick={() => setOpen(false)}>
                 {l.label}
@@ -193,20 +198,20 @@ export function Navbar() {
               </NavLink>
             )}
           </nav>
-          <div className="mt-3 flex items-center gap-3 border-t border-white/5 pt-3">
+          <div className="mt-3 flex items-center gap-3 border-t border-line pt-3">
             {currentUser ? (
               <>
                 <Avatar name={currentUser.name} color={currentUser.avatarColor} size={32} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-white">{currentUser.name}</p>
-                  <p className="text-xs text-slate-500">{totalXp} XP</p>
+                  <p className="truncate text-sm font-semibold text-ink">{currentUser.name}</p>
+                  <p className="text-xs text-ink-3">{totalXp} XP</p>
                 </div>
-                <button onClick={doLogout} className="rounded-lg p-2 text-slate-400 hover:bg-white/5">
+                <button onClick={doLogout} className="rounded-lg p-2 text-ink-2 hover:bg-card2">
                   <LogOut className="h-4 w-4" />
                 </button>
               </>
             ) : (
-              <Link to="/login" className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-center text-sm font-medium text-white">
+              <Link to="/login" className="flex-1 rounded-xl border border-line bg-card2 px-4 py-2 text-center text-sm font-medium text-ink">
                 Log in
               </Link>
             )}

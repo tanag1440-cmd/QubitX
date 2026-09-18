@@ -41,7 +41,7 @@ export default function Achievements() {
           <Trophy className="h-3.5 w-3.5" /> {earned.length}/{ACHIEVEMENTS.length} unlocked
         </Badge>
         <Badge color="amber">Total: {totalXp} XP</Badge>
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-ink-3">
           Next:{" "}
           {ACHIEVEMENTS.filter((a) => !earnedIds.has(a.id)).slice(0, 1).map((a) => a.name)[0] ?? "everything earned! 🎉"}
         </span>
@@ -54,19 +54,19 @@ export default function Achievements() {
           return (
             <Card
               key={a.id}
-              className={`relative p-5 transition ${isEarned ? "border-qx-amber/40 bg-gradient-to-br from-qx-amber/10 to-transparent" : "opacity-80"}`}
+              className={`relative p-5 transition ${isEarned ? "border-qx-amber/40 bg-qx-amber/10" : "opacity-80"}`}
             >
               <div className="flex items-start gap-4">
                 <span
                   className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
-                    isEarned ? "bg-gradient-to-br from-qx-amber/30 to-qx-violet/20 text-qx-amber shadow-glow" : "bg-white/5 text-slate-600"
+                    isEarned ? "bg-qx-amber/20 text-qx-amber" : "bg-card2 text-ink-3"
                   }`}
                 >
                   {isEarned ? (ICONS[a.icon] ?? <Trophy className="h-5 w-5" />) : <Lock className="h-5 w-5" />}
                 </span>
                 <div className="min-w-0">
-                  <h3 className={`font-semibold ${isEarned ? "text-white" : "text-slate-400"}`}>{a.name}</h3>
-                  <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{a.description}</p>
+                  <h3 className={`font-semibold ${isEarned ? "text-ink" : "text-ink-2"}`}>{a.name}</h3>
+                  <p className="mt-0.5 text-xs leading-relaxed text-ink-3">{a.description}</p>
                   <div className="mt-2">
                     {isEarned ? (
                       <Badge color="amber">
