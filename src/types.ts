@@ -1,6 +1,7 @@
 // ── Core domain types for QubitX ────────────────────────────────────────────
 
 export type Level = "Beginner" | "Intermediate" | "Advanced";
+export type Language = "en" | "hi" | "fr" | "de";
 
 export interface User {
   id: string;
@@ -9,6 +10,7 @@ export interface User {
   password: string; // prototype only — would be hashed server-side in production
   avatarColor: string;
   level: Level;
+  preferredLanguage?: Language;
   joinedAt: string;
   isAdmin?: boolean;
 }

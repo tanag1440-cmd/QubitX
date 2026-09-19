@@ -9,10 +9,12 @@ import { QUICK_PROMPTS } from "../lib/aiTutor";
 import { TUTOR_MODES } from "../lib/learning/aiService";
 import { topicName } from "../data/learningTopics";
 import { useStore } from "../lib/store";
+import { useI18n } from "../lib/i18n";
 import { useTutor } from "../lib/tutorContext";
 
 export default function Tutor() {
   const { currentUser, topicMasteryList, db, learningProfile, learningMode } = useStore();
+  const { t, tutorLang, setTutorLang, languages } = useI18n();
   const { messages, typing, ask, rephrase, mode, setMode, clear, askCount, pageContext } = useTutor();
 
   const activeMode = TUTOR_MODES.find((t) => t.id === mode)!;
@@ -80,6 +82,23 @@ export default function Tutor() {
             <h3 className="mb-1 font-semibold text-ink">Tutor mode</h3>
             <p className="mb-3 text-xs text-ink-2">How should I answer? “{activeMode.hint}”</p>
             <TutorModeChips mode={mode} onSelect={setMode} />
+          </Card>
+
+          <Card className="p-5">
+            <h3 className="mb-2 font-semibold text-ink">🌐 {t("responseLanguage")}</h3>
+            <select
+              value={tutorLang}
+              onChange={(e) => setTutorLang(e.target.value as typeof tutorLang)}
+              aria-label={t("responseLanguage")}
+              className="w-full rounded-xl border border-line bg-card2 px-3 py-2 text-sm text-ink focus:border-qx-violet/60 focus:outline-none"
+            >
+              {languages.map((l) => (
+                <option key={l.code} value={l.code}>{l.nativeLabel}</option>
+              ))}
+            </select>
+            <p className="mt-2 text-xs text-ink-3">
+              Defaults to your site language. Technical terms, gates and notation stay in standard form.
+            </p>
           </Card>
 
           <Card className="p-5">

@@ -8,6 +8,7 @@ import {
   type CircuitExplanation, type DebugReport, type FrameworkSnippets,
 } from "../../lib/learning/aiService";
 import type { ChallengeSpec, CircuitOp, TopicId } from "../../types";
+import { useI18n } from "../../lib/i18n";
 
 const SHOTS = 1000;
 
@@ -18,6 +19,7 @@ export function CircuitAiPanel({
 }: {
   ops: CircuitOp[]; qubits: number; topicId?: TopicId; spec?: ChallengeSpec;
 }) {
+  const { language, t } = useI18n();
   const [tab, setTab] = useState<Tab>("none");
   const [explanation, setExplanation] = useState<CircuitExplanation | null>(null);
   const [debug, setDebug] = useState<DebugReport | null>(null);
@@ -43,7 +45,7 @@ export function CircuitAiPanel({
   const doExplain = () => {
     setBusy(true);
     setTimeout(() => {
-      setExplanation(explainCircuitStructured(ops, qubits));
+      setExplanation(explainCircuitStructured(ops, qubits, language));
       setDebug(null);
       setFrameworks(null);
       setNoise(null);
@@ -55,7 +57,7 @@ export function CircuitAiPanel({
   const doDebug = () => {
     setBusy(true);
     setTimeout(() => {
-      setDebug(debugReport(ops, qubits, spec));
+      setDebug(debugReport(ops, qubits, spec, language));
       setExplanation(null);
       setFrameworks(null);
       setNoise(null);
@@ -107,16 +109,16 @@ export function CircuitAiPanel({
 
       <div className="flex flex-wrap gap-2">
         <Button size="sm" onClick={doExplain} disabled={!hasCircuit || busy}>
-          <Wand2 className="h-4 w-4" /> Explain My Circuit
+          <Wand2 className="h-4 w-4" /> {t("explainCircuit")}
         </Button>
         <Button size="sm" variant="secondary" onClick={doDebug} disabled={!hasCircuit || busy}>
-          <Bug className="h-4 w-4" /> Debug My Circuit
+          <Bug className="h-4 w-4" /> {t("debugCircuit")}
         </Button>
         <Button size="sm" variant="secondary" onClick={doFrameworks} disabled={!hasCircuit}>
-          <Code2 className="h-4 w-4" /> Compare Frameworks
+          <Code2 className="h-4 w-4" /> {t("compareFrameworks")}
         </Button>
         <Button size="sm" variant="secondary" onClick={doNoise} disabled={!hasCircuit || busy}>
-          <FlaskConical className="h-4 w-4" /> Ideal vs Noisy
+          <FlaskConical className="h-4 w-4" /> {t("idealVsNoisy")}
         </Button>
       </div>
 
@@ -130,16 +132,16 @@ export function CircuitAiPanel({
         <div className="mt-4 space-y-4">
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-xl border border-line bg-card2/60 p-3">
-              <p className="text-[11px] uppercase tracking-wider text-ink-3">Initial state</p>
+              <p className="text-[11px] uppercase tracking-wider text-ink-3">{t("initialState")}</p>
               <p className="mt-1 font-mono text-sm text-ink">{explanation.initialState}</p>
             </div>
             <div className="rounded-xl border border-line bg-card2/60 p-3">
-              <p className="text-[11px] uppercase tracking-wider text-ink-3">Final state</p>
+              <p className="text-[11px] uppercase tracking-wider text-ink-3">{t("finalState")}</p>
               <p className="mt-1 truncate font-mono text-sm text-ink" title={explanation.finalState}>{explanation.finalState}</p>
             </div>
             <div className="rounded-xl border border-line bg-card2/60 p-3">
-              <p className="text-[11px] uppercase tracking-wider text-ink-3">Entanglement</p>
-              <p className="mt-1 text-sm text-ink">{explanation.entangled ? "Entangled" : "Not entangled"}</p>
+              <p className="text-[11px] uppercase tracking-wider text-ink-3">{t("entanglement")}</p>
+              <p className="mt-1 text-sm text-ink">{explanation.entangled ? t("entangled") : t("notEntangled")}</p>
             </div>
           </div>
 
@@ -168,13 +170,13 @@ export function CircuitAiPanel({
           <p className="text-sm text-ink-2">{debug.summary}</p>
           {debug.issues.length === 0 ? (
             <div className="rounded-xl border border-qx-mint/30 bg-qx-mint/10 p-4 text-sm text-qx-mint">
-              No problems detected. {analysis.entangled ? "The circuit produces a genuinely entangled state." : "The circuit's behaviour matches its structure."}
+              {t("noProblems")} {analysis.entangled ? t("debugNoEntangled") : t("debugNoSimple")}
             </div>
           ) : (
             debug.issues.map((issue, i) => (
               <IssueCard key={i} severity={issue.severity} title={issue.title}>
-                <p><span className="font-semibold text-ink">Why: </span>{issue.why}</p>
-                <p><span className="font-semibold text-ink">Hint: </span>{issue.hint}</p>
+                <p><span className="font-semibold text-ink">{t("why")} </span>{issue.why}</p>
+                <p><span className="font-semibold text-ink">{t("hint")} </span>{issue.hint}</p>
               </IssueCard>
             ))
           )}

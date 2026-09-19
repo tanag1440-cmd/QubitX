@@ -6,12 +6,14 @@ import { Ket } from "../components/quantum/display";
 import { Badge, Button, Card, ProgressBar } from "../components/ui";
 import { ACHIEVEMENTS, LESSONS } from "../data/content";
 import { levelFromXp, overallProgress, useStore } from "../lib/store";
-import type { Level } from "../types";
+import { LANGUAGES, useI18n } from "../lib/i18n";
+import type { Language, Level } from "../types";
 
 const LEVELS: Level[] = ["Beginner", "Intermediate", "Advanced"];
 
 export default function Profile() {
   const { currentUser, db, logout, updateProfile, completedLessonIds, totalXp } = useStore();
+  const { language, setLanguage, languages } = useI18n();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(currentUser?.name ?? "");
@@ -80,6 +82,16 @@ export default function Profile() {
                   {LEVELS.map((l) => <option key={l}>{l}</option>)}
                 </select>
               </label>
+              <label className="block text-sm">
+                <span className="mb-1 block text-ink-2">🌐 Preferred language</span>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as Language)}
+                  className="w-full rounded-xl border border-line bg-card2 px-3 py-2 text-sm text-ink focus:border-qx-violet/60 focus:outline-none"
+                >
+                  {languages.map((l) => <option key={l.code} value={l.code}>{l.nativeLabel}</option>)}
+                </select>
+              </label>
               <div className="flex gap-2">
                 <Button size="sm" onClick={save}><Check className="h-4 w-4" /> {saved ? "Saved!" : "Save"}</Button>
                 <Button size="sm" variant="secondary" onClick={() => setEditing(false)}>Cancel</Button>
@@ -91,6 +103,7 @@ export default function Profile() {
                 <Badge color={currentUser.level === "Beginner" ? "mint" : currentUser.level === "Intermediate" ? "amber" : "rose"}>
                   {currentUser.level}
                 </Badge>
+                <Badge color="slate">🌐 {languages.find((l) => l.code === language)?.nativeLabel ?? language}</Badge>
                 <Badge color="slate"><Calendar className="h-3 w-3" /> Joined {new Date(currentUser.joinedAt).toLocaleDateString(undefined, { month: "long", year: "numeric" })}</Badge>
                 <button onClick={() => { setName(currentUser.name); setLevel(currentUser.level); setEditing(true); }} className="ml-auto flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline">
                   <Pencil className="h-3 w-3" /> Edit

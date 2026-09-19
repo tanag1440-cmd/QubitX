@@ -7,14 +7,16 @@ import { Bot, Send, User as UserIcon, Wand2 } from "lucide-react";
 import { GroundedChip } from "../learning";
 import { TUTOR_MODES, type AiTutorMode } from "../../lib/learning/aiService";
 import type { TutorMessage } from "../../lib/tutorContext";
+import { useI18n } from "../../lib/i18n";
 
 /** A small badge naming which page context the tutor is reading from. */
 export function ContextChip({ title, kind, hasCircuit }: { title: string; kind: string; hasCircuit: boolean }) {
+  const { t } = useI18n();
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <span className="inline-flex items-center gap-1.5 rounded-md border border-accent/25 bg-accent-soft px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent">
         <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse-soft" />
-        The page sends: {title}
+        {t("relevantNow")}: {title}
       </span>
       {hasCircuit && (
         <span className="rounded-md border border-qx-violet/25 bg-qx-violet/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-qx-violet">
@@ -43,6 +45,7 @@ export function TutorMessageList({
   compact?: boolean;
   className?: string;
 }) {
+  const { t } = useI18n();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -140,20 +143,21 @@ export function TutorModeChips({
   onSelect: (id: AiTutorMode) => void;
   className?: string;
 }) {
+  const { t } = useI18n();
   return (
     <div className={`flex flex-wrap gap-1.5 ${className}`}>
-      {TUTOR_MODES.map((t) => (
+      {TUTOR_MODES.map((modeDef) => (
         <button
-          key={t.id}
-          onClick={() => onSelect(t.id)}
-          title={t.hint}
+          key={modeDef.id}
+          onClick={() => onSelect(modeDef.id)}
+          title={modeDef.hint}
           className={`rounded-lg border px-2 py-1 text-[11px] font-semibold transition ${
-            mode === t.id
+            mode === modeDef.id
               ? "border-qx-violet/60 bg-qx-violet/15 text-ink"
               : "border-line bg-card2 text-ink-2 hover:bg-card2"
           }`}
         >
-          {t.label}
+          {t(modeDef.id === "step" ? "stepByStep" : modeDef.id)}
         </button>
       ))}
     </div>
@@ -195,11 +199,12 @@ export function TutorRephraseRow({
   onRephrase: (mode: "simple" | "analogy" | "math" | "deeper", label: string) => void;
   disabled?: boolean;
 }) {
+  const { t } = useI18n();
   const options: [("simple" | "analogy" | "math" | "deeper"), string][] = [
-    ["simple", "Explain simply"],
-    ["analogy", "Give an analogy"],
-    ["math", "Show the math"],
-    ["deeper", "Go deeper"],
+    ["simple", t("explainSimply")],
+    ["analogy", t("analogy")],
+    ["math", t("showMath")],
+    ["deeper", t("goDeeper")],
   ];
   return (
     <div className="flex flex-wrap items-center gap-1.5 border-t border-line bg-page/50 px-3 py-2">

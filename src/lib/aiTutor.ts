@@ -248,6 +248,79 @@ function normalize(q: string): string {
   return q.toLowerCase().replace(/[^a-z0-9\s-]/g, " ").replace(/\s+/g, " ").trim();
 }
 
+// ── Localized core-topic answers ────────────────────────────────────────────
+// Language → topic key → localized simple/example. Topics and modes not listed
+// here fall back to the English source (the platform-wide fallback rule).
+// Technical tokens (|0⟩, H, CNOT, α, β, percentages) pass through untouched.
+const KB_LOCALIZED: Record<string, Record<string, { simple: string; example?: string }>> = {
+  hi: {
+    qubit: {
+      simple: "qubit, quantum information की सबसे छोटी इकाई है — यह bit का quantum रूप है। Classical bit सख़्ती से 0 या 1 होता है, जबकि qubit measure किए जाने तक |0⟩ और |1⟩ के मिश्रण (superposition) में रह सकता है।",
+      example: "घूमते हुए सिक्के की तरह सोचें। जब तक वह घूम रहा है, वह heads या tails नहीं है — दोनों का मिश्रण है। पकड़ना (measure करना) उसे किसी एक पर आने के लिए मजबूर करता है। qubit भी यही है, बस वास्तविक रूप में।",
+    },
+    superposition: {
+      simple: "Superposition, qubit की यह क्षमता है कि वह एक ही समय पर |0⟩ और |1⟩ का weighted मिश्रण रहे — 'शायद 0 या शायद 1' नहीं, बल्कि measure किए जाने तक वास्तव में दोनों।",
+      example: "70/30 का qubit भारी-सिक्के जैसा है: एक बार flip करने पर परिणाम random है, पर 100 बार flip करने पर लगभग 70 बार heads आएगा। weights वास्तविक होती हैं और हर measurement की संभावना तय करती हैं।",
+    },
+    measurement: {
+      simple: "Measurement यानी qubit को पढ़ना। यह superposition को एक निश्चित परिणाम — 0 या 1 — में बदल देता है, जो संभावनाओं के अनुसार आता है। measurement के बाद superposition समाप्त हो जाता है।",
+      example: "घूमते सिक्के को पकड़ने जैसा: जब तक घूम रहा है तब तक मिश्रण है, पर पकड़ते ही heads या tails तय हो जाता है — और मिश्रण हमेशा के लिए चला जाता है।",
+    },
+    hadamard: {
+      simple: "Hadamard gate (H) 'superposition बनाने वाला' gate है। |0⟩ या |1⟩ पर लगाने पर यह दोनों का परफेक्ट 50/50 मिश्रण बनाता है। Quantum computing का सबसे अधिक उपयोग होने वाला gate यही है।",
+      example: "H, |0⟩ (निश्चित heads) को ऐसे घूमते सिक्के में बदल देता है जो बराबर संभावना से heads या tails देता है। दो बार H लगाने पर वापस निश्चित heads — H अपना ही inverse है।",
+    },
+    entanglement: {
+      simple: "Entanglement, qubits के बीच एक ऐसा संबंध है जो किसी भी classical correlation से मजबूत है: एक entangled qubit को measure करते ही दूसरा तुरंत सहमत हो जाता है — चाहे दोनों कितने भी दूर हों। दोनों की अवस्था एक मानी जाती है।",
+      example: "दो सिक्कों को जादुई रूप से जोड़ें: एक को पकड़ते ही heads आए, तो दूसरा भी तुरंत heads ही देगा — हर बार। पर यह जोड़ बनाने के लिए दोनों को पहले एक साथ तैयार करना पड़ता है (H + CNOT)।",
+    },
+  },
+  fr: {
+    qubit: {
+      simple: "Un qubit est la version quantique du bit — la plus petite unité d'information quantique. Là où un bit classique vaut strictement 0 ou 1, un qubit peut aussi être une combinaison des deux à la fois, appelée superposition, jusqu'à la mesure.",
+      example: "Pensez à une pièce qui tourne. Tant qu'elle tourne, elle n'est ni pile ni face — c'est un mélange des deux. L'attraper (mesurer) la force à retomber sur l'un ou l'autre. Un qubit, c'est cette idée rendue réelle.",
+    },
+    superposition: {
+      simple: "La superposition est la capacité d'un qubit à être une combinaison pondérée de |0⟩ et |1⟩ en même temps — pas « peut-être 0 ou peut-être 1 », mais réellement les deux, jusqu'à la mesure.",
+      example: "Un qubit 70/30 ressemble à une pièce pondérée : un lancer est aléatoire, mais après 100 lancers, environ 70 donneront pile. Les poids sont réels et contrôlent les probabilités de chaque mesure.",
+    },
+    measurement: {
+      simple: "La mesure, c'est lire un qubit. Elle force la superposition à se réduire à un seul résultat défini — 0 ou 1 — tiré selon les probabilités. Après la mesure, la superposition a disparu.",
+      example: "Comme attraper une pièce qui tourne : tant qu'elle tourne c'est un mélange, mais l'attraper force pile ou face, et le mélange disparaît pour toujours.",
+    },
+    hadamard: {
+      simple: "La porte Hadamard (H) est la « fabrique de superposition ». Appliquée à |0⟩ ou |1⟩, elle crée un mélange parfait 50/50 des deux. C'est la porte la plus utilisée en informatique quantique.",
+      example: "H transforme une pièce qui est définitivement pile (|0⟩) en une pièce qui tourne et tombe sur pile ou face avec la même probabilité. Appliquez H deux fois et vous revenez à pile — H est son propre inverse.",
+    },
+    entanglement: {
+      simple: "L'intrication est un lien entre qubits plus fort que toute corrélation classique : mesurez un qubit intriqué et l'autre est instantanément d'accord, même à des années-lumière. Leurs états ne font qu'un.",
+      example: "Imaginez deux pièces liées magiquement : si la première tombe sur pile, la seconde donne pile aussi — à chaque fois. Mais ce lien doit être préparé ensemble au préalable (H + CNOT).",
+    },
+  },
+  de: {
+    qubit: {
+      simple: "Ein Qubit ist die Quantenversion eines Bits — die kleinste Einheit der Quanteninformation. Wo ein klassisches Bit strikt 0 oder 1 ist, kann ein Qubit auch eine Kombination aus beiden sein, einer Superposition, bis zur Messung.",
+      example: "Denken Sie an eine Münze, die sich dreht. Während sie dreht, ist sie weder Zahl noch Kopf — sie ist eine Mischung aus beiden. Sie zu fangen (messen) zwingt sie zu einem Ergebnis. Ein Qubit ist genau diese Idee, real gemacht.",
+    },
+    superposition: {
+      simple: "Superposition ist die Fähigkeit eines Qubits, eine gewichtete Kombination von |0⟩ und |1⟩ gleichzeitig zu sein — nicht „vielleicht 0 oder vielleicht 1“, sondern wirklich beides, bis zur Messung.",
+      example: "Ein 70/30-Qubit ist wie eine beschwerte Münze: Ein einzelner Wurf ist zufällig, aber bei 100 Würfen kommen etwa 70 mal Kopf heraus. Die Gewichte sind real und bestimmen die Wahrscheinlichkeit jeder Messung.",
+    },
+    measurement: {
+      simple: "Messung heißt, ein Qubit zu lesen. Sie zwingt die Superposition, auf ein bestimmtes Ergebnis — 0 oder 1 — zusammenzubrechen, gezogen nach den Wahrscheinlichkeiten. Nach der Messung ist die Superposition weg.",
+      example: "Wie eine drehende Münze fangen: Während sie dreht, ist sie eine Mischung, doch der Griff zwingt zu Zahl oder Kopf — und die Mischung ist für immer weg.",
+    },
+    hadamard: {
+      simple: "Das Hadamard-Gatter (H) ist der „Superpositions-Macher“. Auf |0⟩ oder |1⟩ angewendet, erzeugt es eine perfekte 50/50-Mischung beider. Es ist das am häufigsten verwendete Gatter im Quantencomputing.",
+      example: "H verwandelt eine Münze, die sicher Kopf ist (|0⟩), in eine drehende Münze, die mit gleicher Wahrscheinlichkeit Kopf oder Zahl zeigt. Zweimal H angewendet — und wieder sicher Kopf. H ist sein eigenes Inverses.",
+    },
+    entanglement: {
+      simple: "Verschränkung ist eine Verbindung zwischen Qubits, stärker als jede klassische Korrelation: Misst man ein verschränktes Qubit, stimmt das andere augenblicklich überein — egal wie weit entfernt. Ihre Zustände sind eins.",
+      example: "Zwei magisch verbundene Münzen: Fällt die eine auf Kopf, zeigt auch die andere sofort Kopf — jedes Mal. Dieser Link muss zuvor gemeinsam hergestellt werden (H + CNOT).",
+    },
+  },
+};
+
 /** Score a topic against a query by keyword overlap. */
 function scoreTopic(topic: Topic, words: string[]): number {
   let score = 0;
@@ -274,8 +347,8 @@ const MODE_KEYWORDS: Record<string, string[]> = {
 
 export type TutorMode = "simple" | "analogy" | "math" | "deeper";
 
-/** Answer a question with the requested style. */
-export function answerQuery(rawQuery: string, mode: TutorMode = "simple"): TutorResponse {
+/** Answer a question with the requested style. `lang` localizes core topics. */
+export function answerQuery(rawQuery: string, mode: TutorMode = "simple", lang = "en"): TutorResponse {
   const q = normalize(rawQuery);
   const words = q.split(" ").filter((w) => w.length > 1);
   const fullText = rawQuery.toLowerCase();
@@ -298,10 +371,23 @@ export function answerQuery(rawQuery: string, mode: TutorMode = "simple"): Tutor
   );
 
   const effectiveMode = wantMode ?? mode;
-  if (effectiveMode === "analogy") return { ...r, simple: r.example };
   if (effectiveMode === "math") return { ...r, simple: r.math };
   if (effectiveMode === "deeper") return { ...r, simple: r.deeper };
+  if (effectiveMode === "analogy") {
+    // Analogy mode stays English unless a localized example exists.
+    const loc = KB_LOCALIZED[lang]?.[bestTopicKey(best)];
+    if (loc?.example) return { ...r, simple: loc.example };
+    return { ...r, simple: r.example };
+  }
+  // simple mode: localized answer when available, English otherwise.
+  const loc = KB_LOCALIZED[lang]?.[bestTopicKey(best)];
+  if (loc?.simple) return { ...r, simple: loc.simple };
   return r;
+}
+
+/** Stable key for a matched topic, aligned with KB_LOCALIZED entries. */
+function bestTopicKey(t: Topic): string {
+  return t.keywords[0];
 }
 
 /** Topics the user might want to explore next, from the best match. */

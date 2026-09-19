@@ -21,6 +21,7 @@ import {
   isAdviceQuestion, matchTopic, tutorRespond, type AiTutorMode, type TutorContext as ServiceContext,
 } from "./learning/aiService";
 import { useStore } from "./store";
+import { useI18n } from "./i18n";
 
 export type PageKind =
   | "lesson" | "learn" | "lab" | "visualize" | "algorithms" | "algorithm"
@@ -151,6 +152,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
   const {
     currentUser, topicMasteryList, mistakePatterns, db, askTutor, suggestedNext, overallMasteryValue,
   } = useStore();
+  const { tutorLang: language } = useI18n();
 
   const persisted = useMemo(() => loadPersisted(), []);
   const sameUser = persisted?.userId === (currentUser?.id ?? null);
@@ -238,6 +240,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
     // Prefer the circuit actually on screen; fall back to the last saved one.
     const onScreenCircuit = pageContext.circuit ?? null;
     const serviceContext: ServiceContext = {
+      language,
       level: currentUser?.level ?? "Beginner",
       topicMastery: mastery,
       topicId,
@@ -292,7 +295,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
     }, 380 + Math.random() * 320);
   }, [
     mode, askCount, askTutor, pageContext, topicMasteryList, mistakePatterns,
-    currentUser, latestSavedCircuit, suggestedNext, overallMasteryValue,
+    currentUser, latestSavedCircuit, suggestedNext, overallMasteryValue, language,
   ]);
 
   const rephrase = useCallback((knowledgeMode: KnowledgeMode, label: string) => {
@@ -306,7 +309,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
     setMessages((m) => [...m, {
       id: crypto.randomUUID(), role: "bot", text: field, rephraseLabel: label,
     }]);
-  }, [messages]);
+  }, [messages, language]);
 
   const clear = useCallback(() => {
     setMessages([WELCOME_MESSAGE]);

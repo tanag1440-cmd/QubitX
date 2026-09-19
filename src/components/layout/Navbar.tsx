@@ -4,34 +4,22 @@ import { Atom, ChevronDown, LogOut, Menu, X } from "lucide-react";
 import { useStore } from "../../lib/store";
 import { ThemeToggle } from "../../lib/theme";
 import { Avatar } from "./Avatar";
+import { LANGUAGES, useI18n } from "../../lib/i18n";
 
 const GUEST_PRIMARY = [
-  { to: "/", label: "Home" },
-  { to: "/learn", label: "Learn" },
-  { to: "/lab", label: "Quantum Lab" },
-  { to: "/tutor", label: "AI Tutor" },
-  { to: "/ai-challenges", label: "AI Challenges" },
+  { to: "/", key: "home" }, { to: "/learn", key: "learn" }, { to: "/lab", key: "quantumLab" },
+  { to: "/tutor", key: "aiTutor" }, { to: "/ai-challenges", key: "aiChallenges" },
 ];
 
 const USER_PRIMARY = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/learn", label: "Learn" },
-  { to: "/learning-path", label: "Learning Path" },
-  { to: "/lab", label: "Quantum Lab" },
-  { to: "/tutor", label: "AI Tutor" },
-  { to: "/ai-challenges", label: "AI Challenges" },
+  { to: "/dashboard", key: "dashboard" }, { to: "/learn", key: "learn" }, { to: "/learning-path", key: "learningPath" },
+  { to: "/lab", key: "quantumLab" }, { to: "/tutor", key: "aiTutor" }, { to: "/ai-challenges", key: "aiChallenges" },
 ];
 
 const SECONDARY = [
-  { to: "/visualize", label: "Visualize" },
-  { to: "/algorithms", label: "Algorithms" },
-  { to: "/experiments", label: "Experiments" },
-  { to: "/challenges", label: "Daily Challenges" },
-  { to: "/diagnostic", label: "Diagnostic" },
-  { to: "/progress", label: "Progress" },
-  { to: "/achievements", label: "Achievements" },
-  { to: "/profile", label: "Profile" },
-  { to: "/resources", label: "Resources" },
+  { to: "/visualize", key: "visualize" }, { to: "/algorithms", key: "algorithms" }, { to: "/experiments", key: "experiments" },
+  { to: "/challenges", key: "dailyChallenges" }, { to: "/diagnostic", key: "diagnostic" }, { to: "/progress", key: "progress" },
+  { to: "/achievements", key: "achievements" }, { to: "/profile", key: "profile" }, { to: "/resources", key: "resources" },
 ];
 
 function Brand() {
@@ -49,6 +37,7 @@ function Brand() {
 
 export function Navbar() {
   const { currentUser, logout, totalXp } = useStore();
+  const { language, setLanguage, t } = useI18n();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
@@ -89,7 +78,7 @@ export function Navbar() {
         <nav className="hidden items-center gap-0.5 lg:flex">
           {primary.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass} end={l.to === "/"}>
-              {l.label}
+              {t(l.key)}
             </NavLink>
           ))}
 
@@ -102,7 +91,7 @@ export function Navbar() {
               aria-haspopup="menu"
               aria-expanded={moreOpen}
             >
-              More <ChevronDown className={`h-3.5 w-3.5 transition ${moreOpen ? "rotate-180" : ""}`} />
+              {t("more")} <ChevronDown className={`h-3.5 w-3.5 transition ${moreOpen ? "rotate-180" : ""}`} />
             </button>
             {moreOpen && (
               <div
@@ -120,7 +109,7 @@ export function Navbar() {
                     }
                     onClick={() => setMoreOpen(false)}
                   >
-                    {l.label}
+                    {t(l.key)}
                   </NavLink>
                 ))}
                 {currentUser?.isAdmin && (
@@ -133,7 +122,7 @@ export function Navbar() {
                     }
                     onClick={() => setMoreOpen(false)}
                   >
-                    Admin Panel
+                    {t("admin")}
                   </NavLink>
                 )}
               </div>
@@ -143,6 +132,9 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <ThemeToggle />
+          <select value={language} onChange={(e) => setLanguage(e.target.value as typeof language)} aria-label={t("language")} className="rounded-lg border border-line bg-card2 px-2 py-1.5 text-xs text-ink-2">
+            {LANGUAGES.map((item) => <option key={item.code} value={item.code}>{item.nativeLabel}</option>)}
+          </select>
           {currentUser ? (
             <>
               <span className="rounded-lg border border-qx-amber/30 bg-qx-amber/10 px-2.5 py-1 font-mono text-xs font-bold text-qx-amber">
@@ -158,13 +150,13 @@ export function Navbar() {
           ) : (
             <>
               <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-2 hover:text-ink">
-                Log in
+                {t("login")}
               </Link>
               <Link
                 to="/signup"
                 className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
               >
-                Create account
+                {t("createAccount")}
               </Link>
             </>
           )}
@@ -172,6 +164,9 @@ export function Navbar() {
 
         <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
+          <select value={language} onChange={(e) => setLanguage(e.target.value as typeof language)} aria-label={t("language")} className="rounded-lg border border-line bg-card2 px-1.5 py-1 text-xs text-ink-2">
+            {LANGUAGES.map((item) => <option key={item.code} value={item.code}>{item.nativeLabel}</option>)}
+          </select>
           <button className="rounded-lg p-2 text-ink-2 hover:bg-card2" onClick={() => setOpen(!open)} aria-label="Menu">
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -183,18 +178,18 @@ export function Navbar() {
           <nav className="flex flex-col gap-1">
             {primary.map((l) => (
               <NavLink key={l.to} to={l.to} className={mobileLinkClass} onClick={() => setOpen(false)} end={l.to === "/"}>
-                {l.label}
+                {t(l.key)}
               </NavLink>
             ))}
-            <p className="mt-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-3">More</p>
+            <p className="mt-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-3">{t("more")}</p>
             {secondary.map((l) => (
               <NavLink key={l.to} to={l.to} className={mobileLinkClass} onClick={() => setOpen(false)}>
-                {l.label}
+                {t(l.key)}
               </NavLink>
             ))}
             {currentUser?.isAdmin && (
               <NavLink to="/admin" className={mobileLinkClass} onClick={() => setOpen(false)}>
-                Admin Panel
+                {t("admin")}
               </NavLink>
             )}
           </nav>
@@ -212,7 +207,7 @@ export function Navbar() {
               </>
             ) : (
               <Link to="/login" className="flex-1 rounded-xl border border-line bg-card2 px-4 py-2 text-center text-sm font-medium text-ink">
-                Log in
+                {t("login")}
               </Link>
             )}
           </div>

@@ -8,6 +8,7 @@ import { CircuitAiPanel } from "./CircuitAiPanel";
 import { SimulatedBadge } from "../quantum/display";
 import { Button, Card } from "../ui";
 import { useStore } from "../../lib/store";
+import { useI18n, localizeGenerated } from "../../lib/i18n";
 
 const PALETTE: { gate: GateType; label: string; hint: string }[] = [
   { gate: "H", label: "H", hint: "Superposition" },
@@ -78,6 +79,8 @@ interface Props {
 
 export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, embedded, onSave, onRun, evaluator, evaluatorLabel, onCircuitChange, showAiTools, aiTopicId, aiSpec }: Props) {
   const { currentUser, addExperiment, recordActivity } = useStore();
+  const { language } = useI18n();
+  const explainCircuitLocal = (o: typeof ops, n: number) => localizeGenerated(explainCircuit(o, n), language);
   const [qubits, setQubits] = useState(Math.min(initialQubits, maxQubits));
   const [ops, setOps] = useState<CircuitOp[]>(initialOps ?? []);
   const [armed, setArmed] = useState<GateType | null>(null);
@@ -475,7 +478,7 @@ export function CircuitBuilder({ maxQubits = 4, initialOps, initialQubits = 2, e
           <Card className="p-5">
             <h3 className="mb-2 font-semibold text-ink">What happened?</h3>
             <p className="text-sm leading-relaxed text-ink-2">
-              {results ? explainCircuit(ops, qubits) : "Run the circuit and we'll explain each step in plain language."}
+              {results ? explainCircuitLocal(ops, qubits) : "Run the circuit and we'll explain each step in plain language."}
             </p>
           </Card>
         </div>

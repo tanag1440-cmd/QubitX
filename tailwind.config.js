@@ -46,7 +46,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
+        sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Noto Sans Devanagari", "Noto Sans", "sans-serif"],
         mono: ["JetBrains Mono", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
       },
       boxShadow: {

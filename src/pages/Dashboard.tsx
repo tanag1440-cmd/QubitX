@@ -14,6 +14,7 @@ import { MODULES, moduleById, LESSONS } from "../data/content";
 import { nextLesson, overallProgress, useStore } from "../lib/store";
 import { MISTAKE_LABELS, learningSummary } from "../lib/learning/engine";
 import { useRegisterPageContext } from "../lib/tutorContext";
+import { useI18n } from "../lib/i18n";
 
 const MODULE_ICONS: Record<string, React.ReactNode> = {
   Cpu: <Cpu className="h-4 w-4" />, CircleDot: <CircleDot className="h-4 w-4" />, Waves: <Waves className="h-4 w-4" />,
@@ -26,6 +27,7 @@ export default function Dashboard() {
     currentUser, completedLessonIds, completedCount, totalXp, level, streakDays, db, setLessonProgress,
     topicMasteryList, mistakePatterns, suggestedNext, overallMasteryValue, learningProfile, diagnostic,
   } = useStore();
+  const { t, tr } = useI18n();
   const navigate = useNavigate();
 
   // The dashboard's numbers are already computed here, so publish them verbatim
@@ -84,15 +86,15 @@ export default function Dashboard() {
           <Avatar name={currentUser.name} color={currentUser.avatarColor} size={48} />
           <div>
             <h1 className="text-2xl font-bold text-ink">
-              Welcome back, <span className="text-accent">{currentUser.name.split(" ")[0]}</span> 👋
+              {t("welcomeBack")}, <span className="text-accent">{currentUser.name.split(" ")[0]}</span> 👋
             </h1>
             <p className="mt-0.5 text-sm text-ink-3">
-              {currentUser.level} level · {completedCount}/10 lessons · {quizAverage !== null ? `${quizAverage}% avg quiz score` : "no quizzes yet"}
+              {currentUser.level} {t("level")} · {completedCount}/10 {t("lessons")} · {quizAverage !== null ? `${quizAverage}% ${t("avgQuiz")}` : t("noQuizzes")}
             </p>
           </div>
         </div>
         <LinkButton to="/learn" variant="secondary">
-          <BookOpen className="h-4 w-4" /> Browse all lessons
+          <BookOpen className="h-4 w-4" /> {t("browseLessons")}
         </LinkButton>
       </div>
 
@@ -105,12 +107,12 @@ export default function Dashboard() {
       {/* stats */}
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
-          icon={<Target className="h-5 w-5" />} label="Overall progress" value={`${overall}%`}
-          sub={`${completedCount} of 10 modules`} accent="violet"
+          icon={<Target className="h-5 w-5" />} label={t("overallProgress")} value={`${overall}%`}
+          sub={`${completedCount} ${t("ofModules")}`} accent="violet"
         />
-        <StatCard icon={<Zap className="h-5 w-5" />} label="Level" value={level} sub={`${totalXp} XP total`} accent="amber" />
-        <StatCard icon={<Flame className="h-5 w-5" />} label="Current streak" value={`${streakDays} day${streakDays === 1 ? "" : "s"}`} sub="Keep it burning 🔥" accent="rose" />
-        <StatCard icon={<Award className="h-5 w-5" />} label="Achievements" value={db.userAchievements.filter((a) => a.userId === currentUser.id).length} sub="Badges earned" accent="mint" />
+        <StatCard icon={<Zap className="h-5 w-5" />} label={t("level")} value={level} sub={`${totalXp} ${t("xpTotal")}`} accent="amber" />
+        <StatCard icon={<Flame className="h-5 w-5" />} label={t("currentStreak")} value={`${streakDays} ${streakDays === 1 ? t("day") : t("days")}`} sub={t("keepBurning")} accent="rose" />
+        <StatCard icon={<Award className="h-5 w-5" />} label={t("achievements")} value={db.userAchievements.filter((a) => a.userId === currentUser.id).length} sub={t("badgesEarned")} accent="mint" />
       </div>
 
       {/* ── Adaptive learning recommendations ── */}
@@ -118,7 +120,7 @@ export default function Dashboard() {
         <Card className="p-6">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="flex items-center gap-2 font-semibold text-ink">
-              <Sparkles className="h-4.5 w-4.5 text-accent" /> What should I learn next?
+              <Sparkles className="h-4.5 w-4.5 text-accent" /> {t("whatLearnNext")}
             </h2>
             <GroundedChip />
           </div>
@@ -134,20 +136,20 @@ export default function Dashboard() {
             <div className="rounded-2xl border border-qx-cyan/25 bg-qx-cyan/5 p-5">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge color="cyan">{suggestedNext[0].recommendationType}</Badge>
-                <span className="text-xs uppercase tracking-wider text-ink-3">Recommended next</span>
+                <span className="text-xs uppercase tracking-wider text-ink-3">{t("recommendedNext")}</span>
               </div>
               <h3 className="mt-2 text-lg font-bold text-ink">{suggestedNext[0].title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-ink-2">
-                <span className="font-semibold text-ink-2">Reason: </span>{suggestedNext[0].reason}
+                <span className="font-semibold text-ink-2">{t("reason")}: </span>{tr(suggestedNext[0].reason)}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <LinkButton to="/ai-challenges" size="sm">Start adapted challenge <ChevronRight className="h-4 w-4" /></LinkButton>
-                <LinkButton to="/learning-path" size="sm" variant="secondary">View full path</LinkButton>
+                <LinkButton to="/ai-challenges" size="sm">{t("startChallenge")} <ChevronRight className="h-4 w-4" /></LinkButton>
+                <LinkButton to="/learning-path" size="sm" variant="secondary">{t("viewFullPath")}</LinkButton>
               </div>
             </div>
           ) : (
             <p className="rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-ink-2">
-              Complete a lesson, quiz or circuit and I'll recommend the next step here.
+              {t("noRecYet")}
             </p>
           )}
 
@@ -214,16 +216,16 @@ export default function Dashboard() {
         <Card className="p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 font-semibold text-ink">
-              <PlayCircle className="h-4.5 w-4.5 text-accent" /> Continue Learning
+              <PlayCircle className="h-4.5 w-4.5 text-accent" /> {t("continueLearning")}
             </h2>
-            <Badge color="violet">Next up</Badge>
+            <Badge color="violet">{t("nextUp")}</Badge>
           </div>
           {continueLesson ? (
             <div className="rounded-2xl border border-qx-violet/25 bg-accent-soft p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-xs uppercase tracking-wider text-ink-3">
-                    Module {moduleById(continueLesson.moduleId)?.order} · {moduleById(continueLesson.moduleId)?.title}
+                    {t("module")} {moduleById(continueLesson.moduleId)?.order} · {moduleById(continueLesson.moduleId)?.title}
                   </p>
                   <h3 className="mt-1 text-lg font-bold text-ink">{continueLesson.title}</h3>
                   <p className="mt-1 text-sm text-ink-2">{continueLesson.summary}</p>
@@ -238,7 +240,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button onClick={startLesson}>
-                  {continuePct > 0 && continuePct < 100 ? "Continue lesson" : "Start lesson"} <ChevronRight className="h-4 w-4" />
+                  {continuePct > 0 && continuePct < 100 ? t("continueLesson") : t("startLesson")} <ChevronRight className="h-4 w-4" />
                 </Button>
                 <LinkButton to="/lab" variant="secondary">Quantum Lab</LinkButton>
               </div>
@@ -246,8 +248,8 @@ export default function Dashboard() {
           ) : (
             <div className="rounded-2xl border border-dashed border-line p-8 text-center">
               <p className="text-2xl">🎉</p>
-              <p className="mt-2 font-semibold text-ink">You've completed every lesson!</p>
-              <p className="mt-1 text-sm text-ink-2">Visit the Quantum Lab or try today's challenge.</p>
+              <p className="mt-2 font-semibold text-ink">{t("allDone")}</p>
+              <p className="mt-1 text-sm text-ink-2">{t("allDoneSub")}</p>
               <div className="mt-4 flex justify-center gap-2">
                 <LinkButton to="/lab">Quantum Lab</LinkButton>
                 <LinkButton to="/challenges" variant="secondary">Challenges</LinkButton>

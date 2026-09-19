@@ -6,11 +6,13 @@
 import React, { Suspense, lazy, useEffect } from "react";
 import { Bot } from "lucide-react";
 import { useTutor } from "../../lib/tutorContext";
+import { useI18n } from "../../lib/i18n";
 
 const TutorPanel = lazy(() => import("./TutorPanel"));
 
 export function TutorDock() {
   const { open, toggle, setOpen, dockVisible, unread, hasActionableContext } = useTutor();
+  const { t } = useI18n();
 
   // ⌘/Ctrl+I toggles; Esc closes.
   useEffect(() => {
@@ -38,8 +40,8 @@ export function TutorDock() {
       {!open && (
         <button
           onClick={toggle}
-          aria-label="Open the AI Tutor"
-          title="Ask the AI Tutor (Ctrl+I)"
+          aria-label={t("askAiTutor")}
+          title={`${t("askAiTutor")} (Ctrl+I)`}
           className="group fixed bottom-5 right-5 z-40 flex items-center gap-2.5 rounded-full border border-line bg-card2/90 px-4 py-3 text-sm font-semibold text-ink  transition hover:border-qx-violet/50 hover:bg-card sm:bottom-6 sm:right-6"
         >
           <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-accent">
@@ -48,7 +50,7 @@ export function TutorDock() {
               <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent ring-2 ring-page" />
             )}
           </span>
-          <span className="hidden sm:inline">Ask AI Tutor</span>
+          <span className="hidden sm:inline">{t("askAiTutor")}</span>
           <kbd className="hidden rounded border border-line bg-card2 px-1.5 py-0.5 font-mono text-[10px] text-ink-2 lg:inline">
             Ctrl I
           </kbd>

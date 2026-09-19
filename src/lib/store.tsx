@@ -22,6 +22,7 @@ import type {
   TopicMastery,
   User,
   UserAchievement,
+  Language,
 } from "../types";
 import { ACHIEVEMENTS, LESSONS, lessonById, LESSON_ORDER } from "../data/content";
 import { topicById } from "../data/learningTopics";
@@ -276,6 +277,7 @@ interface StoreValue {
   resetPassword: (email: string) => boolean;
   enterDemo: () => void;
   updateProfile: (name: string, level: User["level"]) => void;
+  setPreferredLanguage: (language: Language) => void;
   addResource: (r: Omit<ResourceItem, "id">) => void;
   deleteResource: (id: string) => void;
   deleteUser: (id: string) => void;
@@ -448,6 +450,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       return {
         ...d,
         users: d.users.map((u) => (u.id === uid ? { ...u, name: name.trim() || u.name, level } : u)),
+      };
+    });
+  }, [mutate]);
+
+  const setPreferredLanguage = useCallback((language: Language) => {
+    mutate((d) => {
+      const uid = d.sessionUserId;
+      if (!uid) return d;
+      return {
+        ...d,
+        users: d.users.map((u) => (u.id === uid ? { ...u, preferredLanguage: language } : u)),
       };
     });
   }, [mutate]);
@@ -931,6 +944,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       resetPassword,
       enterDemo,
       updateProfile,
+      setPreferredLanguage,
       addResource,
       deleteResource,
       deleteUser,
@@ -964,7 +978,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       earnedAchievements: uid ? db.userAchievements.filter((a) => a.userId === uid) : [],
     };
   }, [
-    db, currentUser, signup, login, logout, resetPassword, enterDemo, updateProfile,
+    db, currentUser, signup, login, logout, resetPassword, enterDemo, updateProfile, setPreferredLanguage,
     addResource, deleteResource, deleteUser, recordActivity,
     completeLesson, setLessonProgress, submitQuiz, addExperiment, askTutor, solveChallenge,
     setLearningGoal, setLearningMode, saveDiagnostic, recordAttempt, recordCircuitAttempt,

@@ -3,12 +3,13 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Bot, Eraser, ShieldCheck, X } from "lucide-react";
+import { Bot, Eraser, Globe, ShieldCheck, X } from "lucide-react";
 import {
   ContextChip, TutorComposer, TutorMessageList, TutorModeChips, TutorQuickPrompts, TutorRephraseRow,
 } from "./chat";
 import { useTutor } from "../../lib/tutorContext";
 import { TUTOR_MODES } from "../../lib/learning/aiService";
+import { useI18n } from "../../lib/i18n";
 
 export default function TutorPanel() {
   const {
@@ -16,6 +17,7 @@ export default function TutorPanel() {
   } = useTutor();
 
   const activeMode = TUTOR_MODES.find((t) => t.id === mode);
+  const { t, tutorLang, setTutorLang, languages } = useI18n();
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -33,18 +35,33 @@ export default function TutorPanel() {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
+          {/* Response language override — defaults to the UI language */}
+          <span className="relative flex items-center text-ink-3">
+            <Globe className="pointer-events-none absolute left-2 h-3.5 w-3.5" />
+            <select
+              value={tutorLang}
+              onChange={(e) => setTutorLang(e.target.value as typeof tutorLang)}
+              title={t("responseLanguage")}
+              aria-label={t("responseLanguage")}
+              className="h-8 appearance-none rounded-lg border border-line bg-card py-0 pl-7 pr-2 text-xs text-ink-2 focus:outline-none focus:ring-2 focus:ring-accent/30"
+            >
+              {languages.map((l) => (
+                <option key={l.code} value={l.code}>{l.nativeLabel}</option>
+              ))}
+            </select>
+          </span>
           <button
             onClick={clear}
-            title="Clear conversation"
-            aria-label="Clear conversation"
+            title={t("clearConversation")}
+            aria-label={t("clearConversation")}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-3 transition hover:bg-card2 hover:text-ink-2"
           >
             <Eraser className="h-4 w-4" />
           </button>
           <button
             onClick={() => setOpen(false)}
-            title="Close (Esc)"
-            aria-label="Close tutor"
+            title={t("closeTutor")}
+            aria-label={t("closeTutor")}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-3 transition hover:bg-card2 hover:text-ink-2"
           >
             <X className="h-4 w-4" />
@@ -80,7 +97,7 @@ export default function TutorPanel() {
       {pageContext.prompts && pageContext.prompts.length > 0 && (
         <div className="border-t border-line px-3.5 py-2.5">
           <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-3">
-            Relevant right now
+            {t("relevantNow")}
           </p>
           <TutorQuickPrompts prompts={pageContext.prompts} onPick={(p) => ask(p)} disabled={typing} />
         </div>
@@ -97,9 +114,9 @@ export default function TutorPanel() {
       <div className="flex items-center justify-between gap-2 border-t border-line px-3.5 py-2 text-[10px] text-ink-3">
         <span className="flex items-center gap-1.5">
           <ShieldCheck className="h-3 w-3 text-accent" />
-          Grounded — never invents quantum facts
+          {t("grounded")}
         </span>
-        <Link to="/tutor" className="text-accent hover:underline">Full tutor →</Link>
+        <Link to="/tutor" className="text-accent hover:underline">{t("fullTutor")} →</Link>
       </div>
       {askCount === 0 && (
         <p className="border-t border-line px-3.5 py-2 text-[10px] text-ink-3">

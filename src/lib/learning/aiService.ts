@@ -11,6 +11,8 @@ import {
   applyOp, c, describeState, formatAmplitude, ket, probabilities, runCircuit, zeroState,
 } from "../simulator";
 import type { Complex, CircuitOp, GateType, TopicId } from "../../types";
+import type { Language } from "../../types";
+import { localizeGenerated } from "../i18n";
 import { answerQuery, type TutorMode as KnowledgeMode } from "../aiTutor";
 import { CHALLENGE_TEMPLATES, DIAGNOSTIC, topicById, topicName } from "../../data/learningTopics";
 import {
@@ -104,7 +106,7 @@ function bitsLabel(i: number, n: number): string {
  * Produce a step-by-step, factually grounded explanation of a circuit. All
  * numbers come straight from `runCircuit` on the learner's actual circuit.
  */
-export function explainCircuitStructured(ops: CircuitOp[], numQubits: number): CircuitExplanation {
+export function explainCircuitStructured(ops: CircuitOp[], numQubits: number, language: Language = "en"): CircuitExplanation {
   const a = analyzeCircuit(ops, numQubits);
   const sorted = a.operations;
 
@@ -112,7 +114,7 @@ export function explainCircuitStructured(ops: CircuitOp[], numQubits: number): C
     gate: op.gate === "CNOT" || op.gate === "SWAP"
       ? `${op.gate}(q${op.qubits[0]}, q${op.qubits[1]})`
       : `${op.gate}(q${op.qubits[0]})`,
-    effect: (GATE_EFFECT[op.gate] ?? (() => "applies an operation"))(op.qubits),
+    effect: localizeGenerated((GATE_EFFECT[op.gate] ?? (() => "applies an operation"))(op.qubits), language),
   }));
 
   const distribution = a.idealProbabilities.map((p, i) => ({ label: bitsLabel(i, numQubits), probability: p }));
@@ -143,7 +145,7 @@ export function explainCircuitStructured(ops: CircuitOp[], numQubits: number): C
     outcomes,
     entangled: a.entangled,
     hasMeasurement: a.hasMeasurement,
-    text: textParts.join(" "),
+    text: localizeGenerated(textParts.join(" "), language),
   };
 }
 
@@ -155,12 +157,12 @@ export interface DebugReport {
   distribution: { label: string; probability: number }[];
 }
 
-export function debugReport(ops: CircuitOp[], numQubits: number, spec?: ChallengeSpec): DebugReport {
+export function debugReport(ops: CircuitOp[], numQubits: number, spec?: ChallengeSpec, language: Language = "en"): DebugReport {
   const { issues, summary } = debugCircuit(ops, numQubits, spec);
   const a = analyzeCircuit(ops, numQubits);
   return {
-    summary,
-    issues: issues.map((i) => ({ severity: i.severity, title: i.issue, why: i.why, hint: i.hint })),
+    summary: localizeGenerated(summary, language),
+    issues: issues.map((i) => ({ severity: i.severity, title: localizeGenerated(i.issue, language), why: localizeGenerated(i.why, language), hint: localizeGenerated(i.hint, language) })),
     distribution: a.idealProbabilities.map((p, i2) => ({ label: bitsLabel(i2, numQubits), probability: p })),
   };
 }
@@ -180,6 +182,7 @@ export const TUTOR_MODES: { id: AiTutorMode; label: string; hint: string }[] = [
 ];
 
 export interface TutorContext {
+  language?: Language;
   /** Learner-facing level, from their profile. */
   level: "Beginner" | "Intermediate" | "Advanced";
   /** Mastery for the matched topic, if known. */
@@ -256,6 +259,7 @@ function depthFor(ctx: TutorContext, topicId: TopicId | null): KnowledgeMode {
  * from that circuit via the simulator. If we cannot ground the answer, we say so.
  */
 export function tutorRespond(question: string, mode: AiTutorMode, ctx: TutorContext): TutorAnswer {
+  const localize = (value: string) => localizeGenerated(value, ctx.language ?? "en");
   const q = question.trim();
   const topicId = matchTopic(q) ?? ctx.topicId ?? null;
   const topic = topicId ? topicName(topicId) : "Quantum computing";
@@ -269,7 +273,7 @@ export function tutorRespond(question: string, mode: AiTutorMode, ctx: TutorCont
         topicId,
         topic,
         title: "What to learn next",
-        answer: advice,
+        answer: localize(advice),
         followUps: [
           "Give me a challenge on that",
           "Explain that topic simply",
@@ -285,7 +289,7 @@ export function tutorRespond(question: string, mode: AiTutorMode, ctx: TutorCont
     if (!ctx.circuit || ctx.circuit.ops.length === 0) {
       return {
         mode, topicId, topic, title: "Your circuit is empty",
-        answer: "There's nothing in the circuit builder yet, so there's no circuit for me to analyse. Add a gate (try H on q0) and ask me again — I'll read the actual circuit and explain exactly what it does.",
+        answer: localize("There's nothing in the circuit builder yet, so there's no circuit for me to analyse. Add a gate (try H on q0) and ask me again — I'll read the actual circuit and explain exactly what it does."),
         followUps: ["What does a Hadamard gate do?", "Show me a Bell state circuit"],
       };
     }
@@ -308,7 +312,7 @@ export function tutorRespond(question: string, mode: AiTutorMode, ctx: TutorCont
     }
     return {
       mode, topicId, topic, title: "What your circuit does",
-      answer: explainCircuitStructured(ctx.circuit.ops, ctx.circuit.numQubits).text,
+      answer: explainCircuitStructured(ctx.circuit.ops, ctx.circuit.numQubits, ctx.language ?? "en").text,
       grounded, followUps: ["Debug my circuit", "What happens if I remove the Hadamard?"],
     };
   }
@@ -320,22 +324,22 @@ export function tutorRespond(question: string, mode: AiTutorMode, ctx: TutorCont
     if (c2) {
       return {
         mode, topicId: targetTopic, topic: topicName(targetTopic), title: c2.title,
-        answer: `${c2.prompt}\n\n${c2.requirement}\n\nHint: ${c2.hints[0]}`,
+        answer: localize(`${c2.prompt}\n\n${c2.requirement}\n\nHint: ${c2.hints[0]}`),
         followUps: ["Give me a harder one", "Explain this concept simply"],
       };
     }
     return {
       mode, topicId: targetTopic, topic: topicName(targetTopic), title: "Practice idea",
-      answer: `Build a circuit for ${topicName(targetTopic)} and run it — then ask me "explain my circuit". I'll check the real distribution and tell you whether it matches the goal.`,
+      answer: localize(`Build a circuit for ${topicName(targetTopic)} and run it — then ask me "explain my circuit". I'll check the real distribution and tell you whether it matches the goal.`),
       followUps: ["What is a Bell state?", "Explain superposition"],
     };
   }
 
   if (!topicId) {
-    const res = answerQuery(q, depthFor(ctx, null));
+    const res = answerQuery(q, depthFor(ctx, null), ctx.language ?? "en");
     return {
       mode, topicId: null, topic: "Quantum computing", title: "Here's what I know",
-      answer: res.simple,
+      answer: localize(res.simple),
       grounded: ctx.knownMistakes?.length
         ? [`Heads up — you've previously mixed up: ${ctx.knownMistakes.join(", ")}.`]
         : undefined,
@@ -343,21 +347,21 @@ export function tutorRespond(question: string, mode: AiTutorMode, ctx: TutorCont
     };
   }
 
-  const res = answerQuery(q, depthFor(ctx, topicId));
+  const res = answerQuery(q, depthFor(ctx, topicId), ctx.language ?? "en");
   const topicDef = topicById(topicId);
   const m = ctx.topicMastery;
 
   let answer: string;
   switch (mode) {
     case "simplify":
-      answer = answerQuery(q, "analogy").example;
+      answer = answerQuery(q, "analogy", ctx.language ?? "en").example;
       break;
     case "advanced":
-      answer = answerQuery(q, "math").math;
+      answer = answerQuery(q, "math", ctx.language ?? "en").math;
       break;
     case "step": {
       // Curated deeper text, decomposed into explicit steps for readability.
-      const deeper = answerQuery(q, "deeper").deeper;
+      const deeper = answerQuery(q, "deeper", ctx.language ?? "en").deeper;
       const sentences = deeper.split(/(?<=\.)\s+/).filter(Boolean);
       answer = [`Let's take ${topic} step by step.`, ...sentences.map((s, i) => `${i + 1}. ${s}`)].join("\n");
       break;
@@ -396,7 +400,7 @@ export function tutorRespond(question: string, mode: AiTutorMode, ctx: TutorCont
   return {
     mode, topicId, topic,
     title: `${TUTOR_MODES.find((t) => t.id === mode)?.label ?? "Explain"} — ${topic}`,
-    answer,
+    answer: localize(answer),
     grounded: grounded.length ? grounded : undefined,
     followUps: [
       `Give me a ${topic} challenge`,

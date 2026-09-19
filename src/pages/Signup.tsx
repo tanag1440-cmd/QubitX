@@ -4,7 +4,8 @@ import { AlertCircle, Compass } from "lucide-react";
 import { AuthShell, Field, inputClass } from "../components/auth/AuthShell";
 import { Button } from "../components/ui";
 import { useStore } from "../lib/store";
-import type { Level } from "../types";
+import { useI18n } from "../lib/i18n";
+import type { Language, Level } from "../types";
 
 const LEVELS: { id: Level; label: string; hint: string }[] = [
   { id: "Beginner", label: "Beginner", hint: "New to quantum — start from scratch" },
@@ -14,6 +15,7 @@ const LEVELS: { id: Level; label: string; hint: string }[] = [
 
 export default function Signup() {
   const { signup, enterDemo } = useStore();
+  const { language, setLanguage, languages } = useI18n();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -81,6 +83,25 @@ export default function Signup() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+        </Field>
+        <Field label="🌐 How would you like to learn?">
+          <div className="grid grid-cols-2 gap-2">
+            {languages.map((l) => (
+              <button
+                type="button"
+                key={l.code}
+                onClick={() => setLanguage(l.code as Language)}
+                className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-left transition ${
+                  language === l.code
+                    ? "border-qx-violet/60 bg-qx-violet/10"
+                    : "border-line bg-card2/50 hover:bg-card2"
+                }`}
+              >
+                <span className={`text-sm font-semibold ${language === l.code ? "text-qx-violet" : "text-ink"}`}>{l.nativeLabel}</span>
+                <span className={`h-4 w-4 rounded-full border-2 ${language === l.code ? "border-qx-violet bg-qx-violet" : "border-slate-600"}`} />
+              </button>
+            ))}
+          </div>
         </Field>
         <Field label="What's your learning level?">
           <div className="grid gap-2">
